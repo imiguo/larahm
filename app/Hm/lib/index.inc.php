@@ -295,7 +295,7 @@ function do_login(&$userinfo)
 
     $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from hm2_users where username = \''.$username.'\' and (status=\'on\' or status=\'suspended\') '.$add_opt_in_check;
     $sth = db_query($q);
-    while ($row = mysql_fetch_array($sth)) {
+    if ($row = mysql_fetch_array($sth)) {
         if (((extension_loaded('gd') and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars'])) {
             session_start();
             if ($_SESSION['validation_number'] != $frm['validation_number']) {
