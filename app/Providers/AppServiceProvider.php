@@ -39,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
 
             $smarty->assign('tag', crc32(THEME));
 
+            $smarty->assign('csrf_token', csrf_token());
+
             $smarty->assign('app_name', env('APP_NAME'));
             $smarty->assign('app_full_name', env('APP_FULL_NAME'));
             $smarty->assign('app_site', env('APP_SITE'));
