@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use Illuminate\Support\Facades\Auth;
+
 require app_path('Hm').'/lib/config.inc.php';
 require app_path('Hm').'/lib/index.inc.php';
 
@@ -55,15 +57,7 @@ db_query($q);
 $userinfo = [];
 $userinfo['logged'] = 0;
 if ($frm['a'] == 'logout') {
-    setcookie('password', 'deleted', time() + 630720000);
-    $frm_cookie['username'] = '';
-    $frm_cookie['password'] = '';
-    if ($settings['redirect_logout'] != '') {
-        header('Location: '.$settings['redirect_logout']);
-        exit;
-    }
-
-    $frm['a'] = '';
+    Auth::logout();
 }
 
 if ($frm['a'] == 'home') {
@@ -91,6 +85,8 @@ $smarty->assign('settings', $settings);
 
 if ($frm['a'] == 'do_login') {
     do_login($userinfo);
+    Auth::loginUsingId($userinfo['id']);
+    return response()->redirectTo('/?a=account');
 } else {
     do_login_else($userinfo);
 }

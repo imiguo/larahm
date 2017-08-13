@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use Illuminate\Support\Facades\Auth;
+
 function bind_ref()
 {
     global $frm;
@@ -330,18 +332,13 @@ function do_login(&$userinfo)
             exit;
         }
 
-        $hid = get_rand_md5(20);
-        $qhid = get_rand_md5(5).$hid.get_rand_md5(5);
-        $chid = $row['id'].'-'.md5($hid);
         $userinfo = $row;
         $userinfo['logged'] = 1;
         $ip = $frm_env['REMOTE_ADDR'];
-        $q = 'update hm2_users set hid = \''.$qhid.'\', bf_counter = 0, last_access_time = now(), last_access_ip = \''.$ip.'\' where id = '.$row['id'];
+        $q = 'update hm2_users set bf_counter = 0, last_access_time = now(), last_access_ip = \''.$ip.'\' where id = '.$row['id'];
         db_query($q);
         $q = 'insert into hm2_user_access_log set user_id = '.$userinfo['id'].(', date = now(), ip = \''.$ip.'\'');
         db_query($q);
-
-        setcookie('password', $chid, time() + 630720000);
     }
 
     if ($userinfo['logged'] == 0) {
@@ -359,69 +356,21 @@ function do_login(&$userinfo)
         flush();
         exit;
     }
-    header('location:/?a=account');
 }
 
 function do_login_else(&$userinfo)
 {
-    global $frm_cookie;
-    global $settings;
-    global $frm_env;
-    global $frm;
-    $username = quote($frm_cookie['username']);
-    $password = $frm_cookie['password'];
-    $ip = $frm_env['REMOTE_ADDR'];
-    $add_login_check = ' and last_access_time + interval 30 minute > now() and last_access_ip = \''.$ip.'\'';
-    if ($settings['demomode'] == 1) {
-        $add_login_check = '';
-    }
-
-    list($user_id, $chid) = explode('-', $password, 2);
-    $user_id = sprintf('%d', $user_id);
-    $chid = quote($chid);
-    if (0 < $user_id) {
-        $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from hm2_users where id = '.$user_id.' and (status=\'on\' or status=\'suspended\') '.$add_login_check;
+    if (Auth::check()) {
+        $user_id = Auth::id();
+        $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from hm2_users where id = '.$user_id.' and (status=\'on\' or status=\'suspended\')';
         $sth = db_query($q);
-        while ($row = mysql_fetch_array($sth)) {
-            if (($settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
-                setcookie('password', '', time() + 630720000);
-                header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-                exit;
-            }
-
-            $qhid = $row['hid'];
-            $hid = substr($qhid, 5, 20);
-            // 通过cookie验证用户登陆成功
-            if ($chid == md5($hid)) {
-                $userinfo = $row;
-                $userinfo['logged'] = 1;
-                $q = 'update hm2_users set last_access_time = now() where username=\''.$username.'\'';
-                db_query($q);
-
-                continue;
-            } else {
-                // 通过cookie验证用户登陆失败
-                $q = 'update hm2_users set bf_counter = bf_counter + 1 where id = '.$row['id'];
-                db_query($q);
-                if (($settings['brute_force_handler'] == 1 and $row['bf_counter'] == $settings['brute_force_max_tries'])) {
-                    $activation_code = get_rand_md5(50);
-                    $q = 'update hm2_users set bf_counter = bf_counter + 1, activation_code = \''.$activation_code.'\' where id = '.$row['id'];
-                    db_query($q);
-                    $info = [];
-                    $info['activation_code'] = $activation_code;
-                    $info['username'] = $row['username'];
-                    $info['name'] = $row['name'];
-                    $info['ip'] = $frm_env['REMOTE_ADDR'];
-                    $info['max_tries'] = $settings['brute_force_max_tries'];
-                    send_template_mail('brute_force_activation', $row['email'], $settings['system_email'], $info);
-                    setcookie('password', '', time() + 630720000);
-                    header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-                    exit;
-                    continue;
-                }
-
-                continue;
-            }
+        if ($row = mysql_fetch_array($sth)) {
+            $q = 'update hm2_users set last_access_time = now() where username=\''.$row['username'].'\'';
+            $userinfo = $row;
+            $userinfo['logged'] = 1;
+            db_query($q);
+        } else {
+            Auth::logout();
         }
     }
 }
