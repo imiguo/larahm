@@ -234,7 +234,7 @@ if ($frm['action'] == 'edit_account') {
     }
 }
 
-include HM_PATH.'/inc/countries.inc';
+include app_path('Hm').'/inc/countries.inc';
 $q = 'select date_format(\''.$userinfo['date_register'].'\' + interval '.$settings['time_dif'].' day, \'%b-%e-%Y %r\') as date_registered';
 $sth = db_query($q);
 $row = mysql_fetch_array($sth);

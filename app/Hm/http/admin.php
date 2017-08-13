@@ -11,13 +11,10 @@
 
 $frm['a'] = '';
 
-include HM_PATH.'/lib/config.inc.php';
-require HM_PATH.'/lib/admin.inc.php';
+include app_path('Hm').'/lib/config.inc.php';
+require app_path('Hm').'/lib/admin.inc.php';
 
 global $frm;
-if (HTTPS) {
-    $frm_env['HTTPS'] = 1;
-}
 
 $userinfo = [];
 $userinfo['logged'] = 0;
@@ -63,7 +60,7 @@ if (($frm['a'] == 'exchange_rates' and $frm['action'] == 'save')) {
  * @action test_egold_settings
  */
 if ($frm['a'] == 'test_egold_settings') {
-    include HM_PATH.'/inc/admin/auto_pay_settings_test.inc.php';
+    include app_path('Hm').'/inc/admin/auto_pay_settings_test.inc.php';
     exit;
 }
 
@@ -71,7 +68,7 @@ if ($frm['a'] == 'test_egold_settings') {
  * @action test_evocash_settings
  */
 if ($frm['a'] == 'test_evocash_settings') {
-    include HM_PATH.'/inc/admin/auto_pay_settings_evocash_test.inc.php';
+    include app_path('Hm').'/inc/admin/auto_pay_settings_evocash_test.inc.php';
     exit;
 }
 
@@ -79,7 +76,7 @@ if ($frm['a'] == 'test_evocash_settings') {
  * @action test_intgold_settings
  */
 if ($frm['a'] == 'test_intgold_settings') {
-    include HM_PATH.'/inc/admin/auto_pay_settings_intgold_test.inc.php';
+    include app_path('Hm').'/inc/admin/auto_pay_settings_intgold_test.inc.php';
     exit;
 }
 
@@ -87,7 +84,7 @@ if ($frm['a'] == 'test_intgold_settings') {
  * @action test_eeecurrency_settings
  */
 if ($frm['a'] == 'test_eeecurrency_settings') {
-    include HM_PATH.'/inc/admin/auto_pay_settings_eeecurrency_test.inc.php';
+    include app_path('Hm').'/inc/admin/auto_pay_settings_eeecurrency_test.inc.php';
     exit;
 }
 
@@ -95,7 +92,7 @@ if ($frm['a'] == 'test_eeecurrency_settings') {
  * @action test_ebullion_settings
  */
 if ($frm['a'] == 'test_ebullion_settings') {
-    include HM_PATH.'/inc/admin/auto_pay_settings_ebullion_test.inc.php';
+    include app_path('Hm').'/inc/admin/auto_pay_settings_ebullion_test.inc.php';
     exit;
 }
 
@@ -1225,13 +1222,13 @@ if (($frm['a'] == 'settings' and $frm['action'] == 'settings')) {
 
         $pubring_gpg = $_FILES['pubring_gpg'];
         if ((0 < $pubring_gpg['size'] and $pubring_gpg['error'] == 0)) {
-            copy($pubring_gpg['tmp_name'], CACHE_PATH.'/pubring.gpg');
+            copy($pubring_gpg['tmp_name'], storage_path('tmpl_c').'/pubring.gpg');
             unlink($pubring_gpg['tmp_name']);
         }
 
         $secring_gpg = $_FILES['secring_gpg'];
         if ((0 < $secring_gpg['size'] and $secring_gpg['error'] == 0)) {
-            copy($secring_gpg['tmp_name'], CACHE_PATH.'/secring.gpg');
+            copy($secring_gpg['tmp_name'], storage_path('tmpl_c').'/secring.gpg');
             unlink($secring_gpg['tmp_name']);
         }
 
@@ -2146,7 +2143,7 @@ if ($frm['a'] == 'delete_processing') {
     exit;
 }
 
-include HM_PATH.'/inc/admin/html.header.inc.php';
+include app_path('Hm').'/inc/admin/html.header.inc.php';
 echo '
   <tr>
     <td valign="top">
@@ -2157,7 +2154,7 @@ echo '
              <tr bgcolor="#FFFFFF" valign="top">
               <td width=300 align=center>
 				   <!-- Image Table: Start -->';
-include HM_PATH.'/inc/admin/menu.inc.php';
+include app_path('Hm').'/inc/admin/menu.inc.php';
 echo '				   <br>
 
               </td>
@@ -2171,118 +2168,118 @@ echo '=100% valign=top>';
 
 switch ($frm['a']) {
     case 'rates':
-        include HM_PATH.'/inc/admin/rates.inc.php';
+        include app_path('Hm').'/inc/admin/rates.inc.php';
         break;
     case 'editrate':
-        include HM_PATH.'/inc/admin/edit_hyip.inc.php';
+        include app_path('Hm').'/inc/admin/edit_hyip.inc.php';
         break;
     case 'add_hyip':
-        include HM_PATH.'/inc/admin/add_hyip.inc.php';
+        include app_path('Hm').'/inc/admin/add_hyip.inc.php';
         break;
     case 'members':
-        include HM_PATH.'/inc/admin/members.inc.php';
+        include app_path('Hm').'/inc/admin/members.inc.php';
         break;
     case 'editaccount':
-        include HM_PATH.'/inc/admin/editaccount.inc.php';
+        include app_path('Hm').'/inc/admin/editaccount.inc.php';
         break;
     case 'addmember':
-        include HM_PATH.'/inc/admin/addmember.inc.php';
+        include app_path('Hm').'/inc/admin/addmember.inc.php';
         break;
     case 'userexists':
-        include HM_PATH.'/inc/admin/error_userexists.inc.php';
+        include app_path('Hm').'/inc/admin/error_userexists.inc.php';
         break;
     case 'userfunds':
-        include HM_PATH.'/inc/admin/manage_user_funds.inc.php';
+        include app_path('Hm').'/inc/admin/manage_user_funds.inc.php';
         break;
     case 'addbonuse':
-        include HM_PATH.'/inc/admin/addbonuse.inc.php';
+        include app_path('Hm').'/inc/admin/addbonuse.inc.php';
         break;
     case 'mass':
-        include HM_PATH.'/inc/admin/prepare_mass_pay.inc.php';
+        include app_path('Hm').'/inc/admin/prepare_mass_pay.inc.php';
         break;
     case 'thistory':
-        include HM_PATH.'/inc/admin/transactions_history.php';
+        include app_path('Hm').'/inc/admin/transactions_history.php';
         break;
     case 'addpenality':
-        include HM_PATH.'/inc/admin/addpenality.inc.php';
+        include app_path('Hm').'/inc/admin/addpenality.inc.php';
         break;
     case 'releasedeposits':
-        include HM_PATH.'/inc/admin/releaseusersdeposits.inc.php';
+        include app_path('Hm').'/inc/admin/releaseusersdeposits.inc.php';
         break;
     case 'pay_withdraw':
-        include HM_PATH.'/inc/admin/process_withdraw.php';
+        include app_path('Hm').'/inc/admin/process_withdraw.php';
         break;
     case 'settings':
-        include HM_PATH.'/inc/admin/settings.inc.php';
+        include app_path('Hm').'/inc/admin/settings.inc.php';
         break;
     case 'info_box':
-        include HM_PATH.'/inc/admin/info_box_settings.inc.php';
+        include app_path('Hm').'/inc/admin/info_box_settings.inc.php';
         break;
     case 'send_bonuce':
-        include HM_PATH.'/inc/admin/send_bonuce.inc.php';
+        include app_path('Hm').'/inc/admin/send_bonuce.inc.php';
         break;
     case 'send_penality':
-        include HM_PATH.'/inc/admin/send_penality.inc.php';
+        include app_path('Hm').'/inc/admin/send_penality.inc.php';
         break;
     case 'newsletter':
-        include HM_PATH.'/inc/admin/newsletter.inc.php';
+        include app_path('Hm').'/inc/admin/newsletter.inc.php';
         break;
     case 'edit_emails':
-        include HM_PATH.'/inc/admin/emails.inc.php';
+        include app_path('Hm').'/inc/admin/emails.inc.php';
         break;
     case 'referal':
-        include HM_PATH.'/inc/admin/referal.inc.php';
+        include app_path('Hm').'/inc/admin/referal.inc.php';
         break;
     case 'auto-pay-settings':
-        include HM_PATH.'/inc/admin/auto_pay_settings.inc.php';
+        include app_path('Hm').'/inc/admin/auto_pay_settings.inc.php';
         break;
     case 'error_pay_log':
-        include HM_PATH.'/inc/admin/error_pay_log.inc.php';
+        include app_path('Hm').'/inc/admin/error_pay_log.inc.php';
         break;
     case 'news':
-        include HM_PATH.'/inc/admin/news.inc.php';
+        include app_path('Hm').'/inc/admin/news.inc.php';
         break;
     case 'wire_settings':
-        include HM_PATH.'/inc/admin/wire_settings.inc.php';
+        include app_path('Hm').'/inc/admin/wire_settings.inc.php';
         break;
     case 'wires':
-        include HM_PATH.'/inc/admin/wires.inc.php';
+        include app_path('Hm').'/inc/admin/wires.inc.php';
         break;
     case 'wiredetails':
-        include HM_PATH.'/inc/admin/wiredetails.inc.php';
+        include app_path('Hm').'/inc/admin/wiredetails.inc.php';
         break;
     case 'affilates':
-        include HM_PATH.'/inc/admin/affilates.inc.php';
+        include app_path('Hm').'/inc/admin/affilates.inc.php';
         break;
     case 'custompages':
-        include HM_PATH.'/inc/admin/custompage.inc.php';
+        include app_path('Hm').'/inc/admin/custompage.inc.php';
         break;
     case 'exchange_rates':
-        include HM_PATH.'/inc/admin/exchange_rates.inc.php';
+        include app_path('Hm').'/inc/admin/exchange_rates.inc.php';
         break;
     case 'security':
-        include HM_PATH.'/inc/admin/security.inc.php';
+        include app_path('Hm').'/inc/admin/security.inc.php';
         break;
     case 'processings':
-        include HM_PATH.'/inc/admin/processings.inc.php';
+        include app_path('Hm').'/inc/admin/processings.inc.php';
         break;
     case 'add_processing':
-        include HM_PATH.'/inc/admin/add_processing.inc.php';
+        include app_path('Hm').'/inc/admin/add_processing.inc.php';
         break;
     case 'edit_processing':
-        include HM_PATH.'/inc/admin/edit_processing.inc.php';
+        include app_path('Hm').'/inc/admin/edit_processing.inc.php';
         break;
     case 'pending_deposits':
-        include HM_PATH.'/inc/admin/pending_deposits.inc.php';
+        include app_path('Hm').'/inc/admin/pending_deposits.inc.php';
         break;
     case 'pending_deposit_details':
-        include HM_PATH.'/inc/admin/pending_deposit_details.inc.php';
+        include app_path('Hm').'/inc/admin/pending_deposit_details.inc.php';
         break;
     case 'startup_bonus':
-        include HM_PATH.'/inc/admin/startup_bonus.inc.php';
+        include app_path('Hm').'/inc/admin/startup_bonus.inc.php';
         break;
     default:
-        include HM_PATH.'/inc/admin/main.inc.php';
+        include app_path('Hm').'/inc/admin/main.inc.php';
 }
 echo '</td></tr></table><!-- Main: END --></td></tr></table></td></tr></table></td></tr>';
-include HM_PATH.'/inc/admin/html.footer.inc.php';
+include app_path('Hm').'/inc/admin/html.footer.inc.php';

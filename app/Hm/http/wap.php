@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-require HM_PATH.'/lib/config.inc.php';
+require app_path('Hm').'/lib/config.inc.php';
 
 $smarty = app('smarty');
 
@@ -100,22 +100,22 @@ if ($userinfo['logged'] == 1) {
 
 $smarty->assign('userinfo', $userinfo);
 if ($frm['a'] == 'login') {
-    include HM_PATH.'/inc/wap/login.inc';
+    include app_path('Hm').'/inc/wap/login.inc';
 } else {
     if ((($frm['a'] == 'do_login' or $frm['a'] == 'account') and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/wap/account_main.inc';
+        include app_path('Hm').'/inc/wap/account_main.inc';
     } else {
         if (($frm['a'] == 'earnings' and $userinfo['logged'] == 1)) {
-            include HM_PATH.'/inc/wap/earning_history.inc';
+            include app_path('Hm').'/inc/wap/earning_history.inc';
         } else {
             if (($frm['a'] == 'admin_pending' and $userinfo['id'] == 1)) {
-                include HM_PATH.'/inc/admin/wap/pending.inc.php';
+                include app_path('Hm').'/inc/admin/wap/pending.inc.php';
             } else {
                 if ($userinfo['id'] == 1) {
-                    include HM_PATH.'/inc/admin/wap/main.inc.php';
+                    include app_path('Hm').'/inc/admin/wap/main.inc.php';
                     exit();
                 } else {
-                    include HM_PATH.'/inc/wap/home.inc';
+                    include app_path('Hm').'/inc/wap/home.inc';
                     exit();
                 }
             }

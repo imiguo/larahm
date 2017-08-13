@@ -12,19 +12,19 @@
 */
 
 Route::match(['get', 'post'], '/', function () {
-    include HM_PATH.'/http/index.php';
+    include app_path('Hm').'/http/index.php';
 });
 
 Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), function () {
-    include HM_PATH.'/http/admin.php';
+    include app_path('Hm').'/http/admin.php';
 });
 
 Route::match(['get', 'post'], '/test', function () {
-    include HM_PATH.'/http/test.php';
+    include app_path('Hm').'/http/test.php';
 });
 
 Route::match(['get', 'post'], '/wap', function () {
-    include HM_PATH.'/http/wap.php';
+    include app_path('Hm').'/http/wap.php';
 });
 
 Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request) {
@@ -34,7 +34,7 @@ Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request
     ];
     $payment = $request->inpput('payment');
     if (in_array($payment, $payments)) {
-        include HM_PATH.'/http/payments/'.$payment.'.php';
+        include app_path('Hm').'/http/payments/'.$payment.'.php';
     } else {
         abort(404);
     }

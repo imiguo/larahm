@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-include HM_PATH.'/inc/index.plans.inc';
+include app_path('Hm').'/inc/index.plans.inc';
 
 $q = 'select max(percent) as percent from hm2_referal';
 $sth = db_query($q);

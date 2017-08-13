@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Cache;
 
 class ChangeTheme
 {
@@ -15,23 +16,20 @@ class ChangeTheme
      */
     public function handle($request, Closure $next)
     {
-        define('THEME', theme(env('THEME')));
-
-        define('TMPL_PATH', dirname(base_path()).'/templates/'.THEME.'/tmpl');
-
-        $cacheThemeFile = CACHE_PATH.'/theme';
-        if (!is_file($cacheThemeFile) || THEME != file_get_contents($cacheThemeFile)) {
+        $theme = theme();
+        config(['hm.theme' => $theme]);
+        if ($theme != Cache::get('last_theme', false)) {
             foreach (glob(public_path().'/*') as $file) {
                 if (strpos($file, 'index.php') !== false) {
                     continue;
                 }
                 unlink($file);
             }
-            foreach (glob(dirname(TMPL_PATH).'/public/*') as $file) {
+            foreach (glob(dirname(tmpl_path()).'/public/*') as $file) {
                 $target = public_path().'/'.basename($file);
                 symlink($file, $target);
             }
-            file_put_contents($cacheThemeFile, THEME);
+            Cache::forever('last_theme', $theme);
         }
 
         return $next($request);

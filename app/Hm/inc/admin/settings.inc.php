@@ -367,10 +367,10 @@ if ($gpg_version != '') {
     echo $settings['ebullion_keyID'] ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
     echo '</td></tr>
          <tr><td>pubring.gpg :</td><td><input type=file name=pubring_gpg class=inpts></td><td>';
-    echo is_file(CACHE_PATH.'/pubring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
+    echo is_file(storage_path('tmpl_c').'/pubring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
     echo '</tr>
          <tr><td>secring.gpg :</td><td><input type=file name=secring_gpg class=inpts></td><td>';
-    echo is_file(CACHE_PATH.'/secring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
+    echo is_file(storage_path('tmpl_c').'/secring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
     echo '</tr>
         </table>
         then save settings. The system will parse the selected files and will get the required information which you will see in the fields above. You will have to enter your e-Bullion account name then.<br><br>

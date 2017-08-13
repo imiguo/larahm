@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-include HM_PATH.'/lib/config.inc.php';
+include app_path('Hm').'/lib/config.inc.php';
 
 $mymd5 = $settings['md5altphrase_eeecurrency'];
 if (($mymd5 == $frm['HASH'] and ($frm['TRANSACTION_ID'] != '' and $exchange_systems[8]['status'] == 1))) {

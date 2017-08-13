@@ -9,15 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-require HM_PATH.'/lib/config.inc.php';
-require HM_PATH.'/lib/index.inc.php';
+require app_path('Hm').'/lib/config.inc.php';
+require app_path('Hm').'/lib/index.inc.php';
 
 $smarty = app('smarty');
 $smarty->default_modifiers = ['escape'];
-
-if (HTTPS) {
-    $frm_env['HTTPS'] = 1;
-}
 
 if (isset($frm['ref']) && $frm['ref'] != '') {
     bind_ref();
@@ -173,9 +169,9 @@ $smarty->assign('frm', $frm);
 if ($settings['banner_extension'] == 1) {
     if ($frm['a'] == 'show_banner') {
         $id = sprintf('%d', $frm['id']);
-        $f = @fopen(CACHE_PATH.'/banners/'.$id, 'rb');
+        $f = @fopen(storage_path('tmpl_c').'/banners/'.$id, 'rb');
         if ($f) {
-            $contents = fread($f, filesize(CACHE_PATH.'/banners/'.$id));
+            $contents = fread($f, filesize(storage_path('tmpl_c').'/banners/'.$id));
             header('Content-type: image/gif');
             echo $contents;
             fclose($fd);
@@ -216,34 +212,34 @@ if (isset($userinfo['id']) && $id = $userinfo['id']) {
     $smarty->assign('ab_formated', $ab_formated);
 }
 
-include HM_PATH.'/inc/news_box.inc';
+include app_path('Hm').'/inc/news_box.inc';
 if (($frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
-    include HM_PATH.'/inc/signup.inc';
+    include app_path('Hm').'/inc/signup.inc';
     exit;
 }
 if (($frm['a'] == 'forgot_password' and $userinfo['logged'] != 1)) {
-    include HM_PATH.'/inc/forgot_password.inc';
+    include app_path('Hm').'/inc/forgot_password.inc';
     exit;
 }
 if (($frm['a'] == 'confirm_registration' and $settings['use_opt_in'] == 1)) {
-    include HM_PATH.'/inc/confirm_registration.inc';
+    include app_path('Hm').'/inc/confirm_registration.inc';
     exit;
 }
 if ($frm['a'] == 'login') {
-    include HM_PATH.'/inc/login.inc';
+    include app_path('Hm').'/inc/login.inc';
     exit;
 }
 if ((($frm['a'] == 'do_login' or $frm['a'] == 'account') and $userinfo['logged'] == 1)) {
-    include HM_PATH.'/inc/account_main.inc';
+    include app_path('Hm').'/inc/account_main.inc';
     exit;
 }
 if (($frm['a'] == 'deposit' and $userinfo['logged'] == 1)) {
     if (substr($frm['type'], 0, 8) == 'account_') {
         $ps = substr($frm['type'], 8);
         if ($exchange_systems[$ps]['status'] == 1) {
-            include HM_PATH.'/inc/deposit.account.confirm.inc';
+            include app_path('Hm').'/inc/deposit.account.confirm.inc';
         } else {
-            include HM_PATH.'/inc/deposit.inc';
+            include app_path('Hm').'/inc/deposit.inc';
         }
     } else {
         if (substr($frm['type'], 0, 8) == 'process_') {
@@ -251,196 +247,196 @@ if (($frm['a'] == 'deposit' and $userinfo['logged'] == 1)) {
             if ($exchange_systems[$ps]['status'] == 1) {
                 switch ($ps) {
                     case 0:
-                        include HM_PATH.'/inc/deposit.egold.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.egold.confirm.inc';
                         break;
                     case 1:
-                        include HM_PATH.'/inc/deposit.evocash.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.evocash.confirm.inc';
                         break;
                     case 2:
-                        include HM_PATH.'/inc/deposit.intgold.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.intgold.confirm.inc';
                         break;
                     case 3:
-                        include HM_PATH.'/inc/deposit.perfectmoney.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.perfectmoney.confirm.inc';
                         break;
                     case 4:
-                        include HM_PATH.'/inc/deposit.stormpay.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.stormpay.confirm.inc';
                         break;
                     case 5:
-                        include HM_PATH.'/inc/deposit.ebullion.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.ebullion.confirm.inc';
                         break;
                     case 6:
-                        include HM_PATH.'/inc/deposit.paypal.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.paypal.confirm.inc';
                         break;
                     case 7:
-                        include HM_PATH.'/inc/deposit.goldmoney.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.goldmoney.confirm.inc';
                         break;
                     case 8:
-                        include HM_PATH.'/inc/deposit.eeecurrency.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.eeecurrency.confirm.inc';
                         break;
                     case 9:
-                        include HM_PATH.'/inc/deposit.pecunix.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.pecunix.confirm.inc';
                         break;
                     case 1:
-                        include HM_PATH.'/inc/deposit.payeer.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.payeer.confirm.inc';
                         break;
                     case 1:
-                        include HM_PATH.'/inc/deposit.bitcoin.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.bitcoin.confirm.inc';
                         break;
                     default:
-                        include HM_PATH.'/inc/deposit.other.confirm.inc';
+                        include app_path('Hm').'/inc/deposit.other.confirm.inc';
                 }
             } else {
-                include HM_PATH.'/inc/deposit.inc';
+                include app_path('Hm').'/inc/deposit.inc';
             }
         } else {
-            include HM_PATH.'/inc/deposit.inc';
+            include app_path('Hm').'/inc/deposit.inc';
         }
     }
 } else {
     if ((($frm['a'] == 'add_funds' and $settings['use_add_funds'] == 1) and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/add_funds.inc';
+        include app_path('Hm').'/inc/add_funds.inc';
         exit;
     }
     if (($frm['a'] == 'withdraw' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/withdrawal.inc';
+        include app_path('Hm').'/inc/withdrawal.inc';
         exit;
     }
     if (($frm['a'] == 'withdraw_history' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/withdrawal_history.inc';
+        include app_path('Hm').'/inc/withdrawal_history.inc';
         exit;
     }
     if (($frm['a'] == 'deposit_history' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/deposit_history.inc';
+        include app_path('Hm').'/inc/deposit_history.inc';
         exit;
     }
     if (($frm['a'] == 'earnings' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/earning_history.inc';
+        include app_path('Hm').'/inc/earning_history.inc';
         exit;
     }
     if (($frm['a'] == 'deposit_list' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/deposit_list.inc';
+        include app_path('Hm').'/inc/deposit_list.inc';
         exit;
     }
     if (($frm['a'] == 'edit_account' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/edit_account.inc';
+        include app_path('Hm').'/inc/edit_account.inc';
         exit;
     }
     if (($frm['a'] == 'withdraw_principal' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/withdraw_principal.inc';
+        include app_path('Hm').'/inc/withdraw_principal.inc';
         exit;
     }
     if (($frm['a'] == 'change_compound' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/change_compound.inc';
+        include app_path('Hm').'/inc/change_compound.inc';
         exit;
     }
     if (($frm['a'] == 'internal_transfer' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/internal_transfer.inc';
+        include app_path('Hm').'/inc/internal_transfer.inc';
         exit;
     }
     if ($frm['a'] == 'support') {
-        include HM_PATH.'/inc/support.inc';
+        include app_path('Hm').'/inc/support.inc';
         exit;
     }
     if ($frm['a'] == 'faq') {
-        include HM_PATH.'/inc/faq.inc';
+        include app_path('Hm').'/inc/faq.inc';
         exit;
     }
     if ($frm['a'] == 'company') {
-        include HM_PATH.'/inc/company.inc';
+        include app_path('Hm').'/inc/company.inc';
         exit;
     }
     if ($frm['a'] == 'rules') {
-        include HM_PATH.'/inc/rules.inc';
+        include app_path('Hm').'/inc/rules.inc';
         exit;
     }
     if ($frm['a'] == 'show_validation_image') {
-        include HM_PATH.'/inc/show_validation_image.inc';
+        include app_path('Hm').'/inc/show_validation_image.inc';
         exit;
     }
     if ((($frm['a'] == 'members_stats' and $settings['show_stats_box']) and $settings['show_members_stats'])) {
-        include HM_PATH.'/inc/members_stats.inc';
+        include app_path('Hm').'/inc/members_stats.inc';
         exit;
     }
     if ((($frm['a'] == 'paidout' and $settings['show_stats_box']) and $settings['show_paidout_stats'])) {
-        include HM_PATH.'/inc/paidout.inc';
+        include app_path('Hm').'/inc/paidout.inc';
         exit;
     }
     if ((($frm['a'] == 'top10' and $settings['show_stats_box']) and $settings['show_top10_stats'])) {
-        include HM_PATH.'/inc/top10.inc';
+        include app_path('Hm').'/inc/top10.inc';
         exit;
     }
     if ((($frm['a'] == 'last10' and $settings['show_stats_box']) and $settings['show_last10_stats'])) {
-        include HM_PATH.'/inc/last10.inc';
+        include app_path('Hm').'/inc/last10.inc';
         exit;
     }
     if ((($frm['a'] == 'refs10' and $settings['show_stats_box']) and $settings['show_refs10_stats'])) {
-        include HM_PATH.'/inc/refs10.inc';
+        include app_path('Hm').'/inc/refs10.inc';
         exit;
     }
     if ($_GET['a'] == 'return_egold') {
-        include HM_PATH.'/inc/deposit.egold.status.inc';
+        include app_path('Hm').'/inc/deposit.egold.status.inc';
         exit;
     }
     if ($_GET['a'] == 'return_perfectmoney') {
-        include HM_PATH.'/inc/deposit.perfectmoney.status.inc';
+        include app_path('Hm').'/inc/deposit.perfectmoney.status.inc';
         exit;
     }
     if ($_GET['a'] == 'return_payeer') {
-        include HM_PATH.'/inc/deposit.payeer.status.inc';
+        include app_path('Hm').'/inc/deposit.payeer.status.inc';
         exit;
     }
     if ((($frm['a'] == 'referallinks' and $settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/referal.links.inc';
+        include app_path('Hm').'/inc/referal.links.inc';
         exit;
     }
     if ((($frm['a'] == 'referals' and $settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/referals.inc';
+        include app_path('Hm').'/inc/referals.inc';
         exit;
     }
     if ($frm['a'] == 'news') {
-        include HM_PATH.'/inc/news.inc';
+        include app_path('Hm').'/inc/news.inc';
         exit;
     }
     if ($frm['a'] == 'calendar') {
-        include HM_PATH.'/inc/calendar.inc';
+        include app_path('Hm').'/inc/calendar.inc';
         exit;
     }
     if (($frm['a'] == 'exchange' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/exchange.inc';
+        include app_path('Hm').'/inc/exchange.inc';
         exit;
     }
     if (($frm['a'] == 'banner' and $userinfo['logged'] == 1)) {
-        include HM_PATH.'/inc/banner.inc';
+        include app_path('Hm').'/inc/banner.inc';
         exit;
     }
     if ($frm['a'] == 'activate') {
-        include HM_PATH.'/inc/activate.inc';
+        include app_path('Hm').'/inc/activate.inc';
         exit;
     }
     if ($frm['a'] == 'show_package_info') {
-        include HM_PATH.'/inc/package_info.inc';
+        include app_path('Hm').'/inc/package_info.inc';
         exit;
     }
     if ($frm['a'] == 'ref_plans') {
-        include HM_PATH.'/inc/ref_plans.inc';
+        include app_path('Hm').'/inc/ref_plans.inc';
     } else {
         if ($frm['a'] == 'cust') {
             $file = $frm['page'];
             $file = basename($file);
-            if (file_exists(TMPL_PATH.'/custom/'.$file.'.tpl')) {
+            if (file_exists(tmpl_path().'/custom/'.$file.'.tpl')) {
                 $smarty->display('custom/'.$file.'.tpl');
             } else {
-                include HM_PATH.'/inc/home.inc';
+                include app_path('Hm').'/inc/home.inc';
             }
         } else {
             if ($frm['a'] == 'invest_page') {
                 $smarty->assign('frm',
                     $frm);
-                include HM_PATH.'/inc/invest_page.inc';
+                include app_path('Hm').'/inc/invest_page.inc';
             } else {
                 $smarty->assign('frm',
                     $frm);
-                include HM_PATH.'/inc/home.inc';
+                include app_path('Hm').'/inc/home.inc';
             }
         }
     }

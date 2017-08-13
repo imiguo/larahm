@@ -719,7 +719,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
     $fd = fopen($infile, 'w');
     fwrite($fd, $payment);
     fclose($fd);
-    $atippath = CACHE_PATH;
+    $atippath = storage_path('tmpl_c');
     $gpg_path = escapeshellcmd($settings['gpg_path']);
     $passphrase = decode_pass_for_mysql($settings['md5altphrase_ebullion']);
     $atip_status_url = $settings['site_url'];

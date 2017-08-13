@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-include HM_PATH.'/lib/config.inc.php';
+include app_path('Hm').'/lib/config.inc.php';
 
 list($action, $user_id, $h_id) = preg_split('/\\|/', $frm['custom']);
 if ($action == 'pay_withdraw') {

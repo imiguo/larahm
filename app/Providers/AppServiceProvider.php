@@ -31,13 +31,13 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('smarty', function () {
             $smarty = new Smarty();
-            $smarty->template_dir = TMPL_PATH;
-            $smarty->compile_dir = CACHE_PATH;
+            $smarty->template_dir = tmpl_path();
+            $smarty->compile_dir = storage_path('tmpl_c');
             $smarty->compile_check = true;
             $smarty->force_compile = true;
             $smarty->debugging = env('smarty_debug');
 
-            $smarty->assign('tag', crc32(THEME));
+            $smarty->assign('tag', crc32(config('hm.theme')));
 
             $smarty->assign('csrf_token', csrf_token());
 

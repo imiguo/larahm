@@ -281,7 +281,7 @@
       }
   }
 
-  include HM_PATH.'/inc/countries.inc';
+  include app_path('Hm').'/inc/countries.inc';
   $ref = quote($frm_cookie['Referer']);
   $q = 'select * from hm2_users where username = \''.$ref.'\'';
   $sth = db_query($q);

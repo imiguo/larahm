@@ -10,7 +10,7 @@
  */
 
 header('HTTP/1.1 202 Accepted');
-include HM_PATH.'/lib/config.inc.php';
+include app_path('Hm').'/lib/config.inc.php';
 
 $frm['transaction_id'] = sprintf('%d', $frm['transaction_id']); if ((((($frm['status'] == 'SUCCESS' and $exchange_systems[4]['status'] == 1) and $frm['secret_code'] == $settings['md5altphrase_stormpay']) and 0 < $frm['transaction_id']) and $frm['transaction_type'] == 'Payment')) {
     $user_id = sprintf('%d', $frm['user1']);

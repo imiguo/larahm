@@ -27,18 +27,18 @@ function show_program_stat()
         echo '<center>Wrong login or password</center>';
     } else {
         if ($frm['page'] == 'members') {
-            include HM_PATH.'/inc/admin/members_program.inc.php';
+            include app_path('Hm').'/inc/admin/members_program.inc.php';
         } else {
             if ($frm['page'] == 'pendingwithdrawal') {
-                include HM_PATH.'/inc/admin/pending_program.inc.php';
+                include app_path('Hm').'/inc/admin/pending_program.inc.php';
             } else {
                 if ($frm['page'] == 'whoonline') {
-                    include HM_PATH.'/inc/admin/whoonline_program.inc.php';
+                    include app_path('Hm').'/inc/admin/whoonline_program.inc.php';
                 } else {
                     if ($frm['page'] == 'TrayInfo') {
-                        include HM_PATH.'/inc/admin/tray_info.php';
+                        include app_path('Hm').'/inc/admin/tray_info.php';
                     } else {
-                        include HM_PATH.'/inc/admin/main_program.inc.php';
+                        include app_path('Hm').'/inc/admin/main_program.inc.php';
                     }
                 }
             }

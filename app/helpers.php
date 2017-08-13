@@ -50,18 +50,14 @@ if (!function_exists('theme_list')) {
 if (!function_exists('old_theme')) {
     function old_theme()
     {
-        $cacheThemeFile = CACHE_PATH.'/theme';
-        if (is_file($cacheThemeFile)) {
-            return file_get_contents($cacheThemeFile);
-        }
-
-        return false;
+        return cache('last_theme');
     }
 }
 
 if (!function_exists('theme')) {
-    function theme($theme)
+    function theme()
     {
+        $theme = config('hm.theme');
         if ($theme == 'random') {
             return array_rand(array_flip(theme_list()));
         }
@@ -78,5 +74,12 @@ if (!function_exists('theme')) {
         }
 
         return $theme ?: 'default';
+    }
+}
+
+if (!function_exists('tmpl_path')) {
+    function tmpl_path()
+    {
+        return dirname(base_path()).'/templates/'.config('hm.theme').'/tmpl';
     }
 }

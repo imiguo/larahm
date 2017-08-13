@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-include HM_PATH.'/lib/config.inc.php';
+include app_path('Hm').'/lib/config.inc.php';
 
 if ($frm['a'] == 'pay_withdraw') {
     $batch = $frm['ATIP_TRANSACTION_ID'];
@@ -69,7 +69,7 @@ if ($frm['a'] == 'pay_withdraw') {
 }
 
 $gpg_path = escapeshellcmd($settings['gpg_path']);
-$atippath = CACHE_PATH;
+$atippath = storage_path('tmpl_c');
 $passphrase = decode_pass_for_mysql($settings['md5altphrase_ebullion']);
 $xmlfile = tempnam('', 'xml.cert.');
 $tmpfile = tempnam('', 'xml.tmp.');

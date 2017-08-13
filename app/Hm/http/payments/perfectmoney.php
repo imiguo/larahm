@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-include HM_PATH.'/lib/config.inc.php';
+include app_path('Hm').'/lib/config.inc.php';
 
 file_put_contents('../log/perfectmoney_processing_'.ENV.'.txt', json_encode($frm).PHP_EOL, FILE_APPEND);
 file_put_contents('../log/perfectmoney_processing_'.ENV.'.txt', 'IP:'.$frm_env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);

@@ -452,7 +452,7 @@ for (i = 0; i';
 }
 </script>
 ';
-  include HM_PATH.'/inc/admin/calendar.inc.php';
+  include app_path('Hm').'/inc/admin/calendar.inc.php';
   echo '
 <br>';
   echo start_info_table('100%');
