@@ -359,6 +359,7 @@ function do_login(&$userinfo)
         flush();
         exit;
     }
+    header('location:/?a=account');
 }
 
 function do_login_else(&$userinfo)
@@ -390,6 +391,7 @@ function do_login_else(&$userinfo)
 
             $qhid = $row['hid'];
             $hid = substr($qhid, 5, 20);
+            // 通过cookie验证用户登陆成功
             if ($chid == md5($hid)) {
                 $userinfo = $row;
                 $userinfo['logged'] = 1;
@@ -398,6 +400,7 @@ function do_login_else(&$userinfo)
 
                 continue;
             } else {
+                // 通过cookie验证用户登陆失败
                 $q = 'update hm2_users set bf_counter = bf_counter + 1 where id = '.$row['id'];
                 db_query($q);
                 if (($settings['brute_force_handler'] == 1 and $row['bf_counter'] == $settings['brute_force_max_tries'])) {
