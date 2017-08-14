@@ -41,11 +41,6 @@ function bind_ref()
             break;
         }
     }
-
-    if ($settings['redirect_referrals'] != '') {
-        header('Location: '.$settings['redirect_referrals']);
-        exit;
-    }
 }
 
 function redirect_https()

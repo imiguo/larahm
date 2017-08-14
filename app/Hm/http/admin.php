@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use Illuminate\Support\Facades\Auth;
+
 $frm['a'] = '';
 
 include app_path('Hm').'/lib/config.inc.php';
@@ -31,14 +33,12 @@ if ($frm['a'] == 'showprogramstat') {
  * @action logout
  */
 if ($frm['a'] == 'logout') {
-    setcookie('password', '', time() - 86400);
-    header('Location: /');
-    exit;
+    Auth::logout();
+    return response()->redirectTo('/');
 }
 
-$username = quote($frm_cookie['username']);
-$password = $frm_cookie['password'];
-try_auth($password, $userinfo);
+try_auth($userinfo);
+$username = $userinfo['username'];
 
 /*
  * @action startup_bonus_set

@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use Illuminate\Support\Facades\Auth;
+
 function show_program_stat()
 {
     global $frm;
@@ -46,92 +48,15 @@ function show_program_stat()
     }
 }
 
-function try_auth($password, &$userinfo)
+function try_auth(&$userinfo)
 {
-    global $frm;
-    global $settings;
-    global $frm_env;
-
-    $ip = $frm_env['REMOTE_ADDR'];
-    $add_login_check = ' and last_access_time + interval 30 minute > now() and last_access_ip = \''.$ip.'\'';
-    if ($settings['demomode'] == 1) {
-        $add_login_check = '';
-    }
-    list($user_id, $chid) = explode('-', $password, 2);
-    $user_id = sprintf('%d', $user_id);
-    $chid = quote($chid);
-    if ($settings['htaccess_authentication'] == 1) {
-        $login = $frm_env['PHP_AUTH_USER'];
-        $password = $frm_env['PHP_AUTH_PW'];
+    if (Auth::check() && Auth::id() == 1) {
         $q = 'select * from hm2_users where id = 1';
         $sth = db_query($q);
-        while ($row = mysql_fetch_array($sth)) {
-            if (($login == $row['username'] and md5($password) == $row['password'])) {
-                $userinfo = $row;
-                $userinfo[logged] = 1;
-                continue;
-            }
-        }
-
-        if ($userinfo[logged] != 1) {
-            header('WWW-Authenticate: Basic realm="Authorization Required!"');
-            header('HTTP/1.0 401 Unauthorized');
-            echo 'Authorization Required!';
-            exit;
-        }
+        $row = mysql_fetch_array($sth);
+        $userinfo = $row;
+        $userinfo['logged'] = 1;
     } else {
-        if ($settings['htpasswd_authentication'] == 1) {
-            if ((file_exists('./.htpasswd') and file_exists('./.htaccess'))) {
-                $q = 'select * from hm2_users where id = 1';
-                $sth = db_query($q);
-                while ($row = mysql_fetch_array($sth)) {
-                    $userinfo = $row;
-                    $userinfo[logged] = 1;
-                }
-            }
-        } else {
-            $q = 'select *, date_format(date_register + interval '.$settings['time_dif'].(''.' day, \'%b-%e-%Y\') as create_account_date, l_e_t + interval 15 minute < now() as should_count from hm2_users where id = '.$user_id.' and (status=\'on\' or status=\'suspended\') '.$add_login_check.' and id = 1');
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                if (($settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
-                    header('Location: /?a=login&say=invalid_login&username='.$frm['username']);
-                    exit;
-                }
-
-                $qhid = $row['hid'];
-                $hid = substr($qhid, 5, 20);
-                if ($chid == md5($hid)) {
-                    $userinfo = $row;
-                    $userinfo['logged'] = 1;
-                    $q = 'update hm2_users set last_access_time = now() where id = 1';
-                    db_query($q);
-                    continue;
-                } else {
-                    $q = 'update hm2_users set bf_counter = bf_counter + 1 where id = '.$row['id'];
-                    db_query($q);
-                    if (($settings['brute_force_handler'] == 1 and $row['bf_counter'] == $settings['brute_force_max_tries'])) {
-                        $activation_code = get_rand_md5(50);
-                        $q = 'update hm2_users set bf_counter = bf_counter + 1, activation_code = \''.$activation_code.'\' where id = '.$row['id'];
-                        db_query($q);
-                        $info = [];
-                        $info['activation_code'] = $activation_code;
-                        $info['username'] = $row['username'];
-                        $info['name'] = $row['name'];
-                        $info['ip'] = $frm_env['REMOTE_ADDR'];
-                        $info['max_tries'] = $settings['brute_force_max_tries'];
-                        send_template_mail('brute_force_activation', $row['email'], $settings['system_email'], $info);
-                        header('Location: /?a=login&say=invalid_login&username='.$frm['username']);
-                        exit;
-                        continue;
-                    }
-
-                    continue;
-                }
-            }
-        }
-    }
-
-    if ($userinfo['logged'] != 1) {
         header('Location: /');
         exit;
     }
