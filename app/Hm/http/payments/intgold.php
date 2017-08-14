@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 $mymd5 = $settings['md5altphrase_intgold'];
@@ -52,12 +54,12 @@ if ($frm['CUSTOM2'] == 'pay_withdraw') {
     }
 
     echo 1;
-    exit();
+    throw new EmptyException();
 }
 
 if (($mymd5 == $frm['HASH'] and ($frm['TRANSACTION_ID'] != '' and $exchange_systems[2]['status'] == 1))) {
     if ($frm['RESULT'] != '0') {
-        exit();
+        throw new EmptyException();
     }
 
     $user_id = sprintf('%d', $frm['ITEM_NUMBER']);

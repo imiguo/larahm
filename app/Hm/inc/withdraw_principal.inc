@@ -9,10 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+use App\Exceptions\EmptyException;
+
 if ($frm['complete']) {
     $smarty->assign('fatal', 'withdraw_complete');
     $smarty->display('withdraw_principal.tpl');
-    exit();
+    throw new EmptyException();
 }
 
   $user_id = $userinfo['id'];
@@ -31,7 +34,7 @@ if ($frm['complete']) {
   if (!$deposit) {
       $smarty->assign('fatal', 'deposit_not_found');
       $smarty->display('withdraw_principal.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   $q = 'select * from hm2_types where id = '.$deposit['type_id'];
@@ -40,19 +43,19 @@ if ($frm['complete']) {
   if (!$type['withdraw_principal']) {
       $smarty->assign('fatal', 'withdraw_forbidden');
       $smarty->display('withdraw_principal.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if ($deposit['deposit_duration'] < $type['withdraw_principal_duration']) {
       $smarty->assign('fatal', 'too_early_withdraw');
       $smarty->display('withdraw_principal.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if (($type['withdraw_principal_duration_max'] <= $deposit['deposit_duration'] and $type['withdraw_principal_duration_max'] != 0)) {
       $smarty->assign('fatal', 'too_late_withdraw');
       $smarty->display('withdraw_principal.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   $deposit['deposit'] = sprintf('%.02f', floor($deposit['actual_amount'] * 100) / 100);
@@ -63,7 +66,7 @@ if ($frm['complete']) {
           $smarty->assign('type', $type);
           $smarty->assign('say', 'too_big_amount');
           $smarty->display('withdraw_principal.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($withdraw_amount <= 0) {
@@ -71,7 +74,7 @@ if ($frm['complete']) {
           $smarty->assign('type', $type);
           $smarty->assign('say', 'too_small_amount');
           $smarty->display('withdraw_principal.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $fee = floor($withdraw_amount * $type['withdraw_principal_percent']) / 100;
@@ -91,7 +94,7 @@ if ($frm['complete']) {
       $smarty->assign('fee', $fee);
       $smarty->assign('to_balance', $to_balance);
       $smarty->display('withdraw_principal.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if ($frm['action'] == 'withdraw') {
@@ -101,7 +104,7 @@ if ($frm['complete']) {
           $smarty->assign('type', $type);
           $smarty->assign('say', 'too_big_amount');
           $smarty->display('withdraw_principal.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($withdraw_amount <= 0) {
@@ -109,7 +112,7 @@ if ($frm['complete']) {
           $smarty->assign('type', $type);
           $smarty->assign('say', 'too_small_amount');
           $smarty->display('withdraw_principal.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $fee = floor($withdraw_amount * $type['withdraw_principal_percent']) / 100;
@@ -137,11 +140,9 @@ if ($frm['complete']) {
                type = \'early_deposit_release\',
                description = \'Pincipal withdraw '.$withdraw_amount.' from $'.$deposit['deposit'].' deposit from the '.quote($type['name']).'\',
                date = now(),
-               ec = '.$deposit['ec'].'
-          ';
+               ec = '.$deposit['ec'];
       db_query($q);
-      header('Location: ?a=withdraw_principal&complete=1&deposit='.$deposit['id']);
-      exit();
+      throw new RedirectException('/?a=withdraw_principal&complete=1&deposit='.$deposit['id']);
   }
 
   $smarty->assign('deposit', $deposit);

@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 echo ' <b>Process Withdrawal:</b><br><br>';
 
 $id = sprintf('%d', $frm['id']);
@@ -21,7 +23,7 @@ if ($trans = mysql_fetch_array($sth)) {
     if ($user = mysql_fetch_array($sth1)) {
     } else {
         echo 'User not found!';
-        exit();
+        throw new EmptyException();
     }
 
     if ($trans['str'] == '') {

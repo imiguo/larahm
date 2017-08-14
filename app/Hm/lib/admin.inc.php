@@ -10,6 +10,7 @@
  */
 
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\RedirectException;
 
 function show_program_stat()
 {
@@ -57,8 +58,7 @@ function try_auth(&$userinfo)
         $userinfo = $row;
         $userinfo['logged'] = 1;
     } else {
-        header('Location: /');
-        exit;
+        throw new RedirectException('/');
     }
 }
 
@@ -72,7 +72,7 @@ function startup_bonus()
     $settings['forbid_withdraw_before_deposit'] = ($frm['forbid_withdraw_before_deposit'] ? 1 : 0);
     $settings['activation_fee'] = sprintf('%0.2f', $frm['activation_fee']);
     save_settings();
-    header('Location: ?a=startup_bonus&say=yes');
+    throw new RedirectException('/?a=startup_bonus&say=yes');
 }
 
 function save_exchange_rates()
@@ -82,8 +82,7 @@ function save_exchange_rates()
     global $exchange_systems;
 
     if ($settings['demomode']) {
-        header('Location: ?a=exchange_rates&say=demo');
-        exit;
+        throw new RedirectException('/?a=exchange_rates&say=demo');
     }
 
     $exch = $frm['exch'];
@@ -117,5 +116,5 @@ function save_exchange_rates()
         }
     }
 
-    header('Location: ?a=exchange_rates');
+    throw new RedirectException('/?a=exchange_rates');
 }

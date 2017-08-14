@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Auth;
 
 require app_path('Hm').'/lib/config.inc.php';
@@ -23,7 +25,7 @@ if (isset($frm['ref']) && $frm['ref'] != '') {
 
 if ($frm['a'] == 'run_crontab') {
     count_earning(-2);
-    exit;
+    throw new EmptyException();
 }
 
 $q = 'delete from hm2_online where ip=\''.$frm_env['REMOTE_ADDR'].'\' or date + interval 30 minute < now()';
@@ -65,9 +67,10 @@ if ($frm['a'] == 'do_login') {
         $admin_url = env('ADMIN_URL');
         $html = "<head><title>HYIP Manager</title><meta http-equiv=\"Refresh\" content=\"1; URL={$admin_url}\"></head>";
         $html .= "<body><center><a href=\"{$admin_url}\">Go to admin area</a></center></body>";
-        return $html;
+        echo $html;
+        throw new EmptyException($html);
     }
-    return response()->redirectTo('/?a=account');
+    throw new RedirectException('/?a=account');
 } else {
     do_login_else($userinfo);
 }
@@ -123,8 +126,7 @@ if (($frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
     $id = sprintf('%d', $frm['id']);
     $q = 'delete from hm2_history where id = '.$id.' and type=\'withdraw_pending\' and user_id = '.$userinfo['id'];
     db_query($q);
-    header('Location: ?a=withdraw_history');
-    exit;
+    throw new RedirectException('/?a=withdraw_history');
 }
 
 $smarty->assign('userinfo', $userinfo);

@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
   if ($frm['action'] == 'send') {
       $from = ($userinfo['logged'] ? $userinfo['email'] : $frm['email']);
       $message = $settings['site_name'].' Support request from '.date('l dS of F Y h:i:s A').'
@@ -72,10 +74,7 @@
       }
 
       send_mail($admin_email, $settings['site_name'].' Support Request', $message, 'From: '.$from);
-      header('Location: ?a=support&say=send
-
-');
-      exit();
+      throw new RedirectException('/?a=support&say=send');
   }
 
   $smarty->assign('token', $token);

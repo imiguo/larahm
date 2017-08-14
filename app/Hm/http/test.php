@@ -9,12 +9,14 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 require app_path('Hm').'/../common/function.php';
 
 if (!validate()) {
     header('HTTP/1.1 403 Forbidden');
     echo 'Invalid request.';
-    exit;
+    throw new EmptyException();
 }
 
 include app_path('Hm').'/lib/config.inc.php';

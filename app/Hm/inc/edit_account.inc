@@ -9,10 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
+
 if ($frm['action'] == 'confirm') {
     $smarty->assign('say', $frm['say']);
     $smarty->display('edit_account_confirmation.tpl');
-    exit();
+    throw new EmptyException();
 }
 
 if ($frm['action'] == 'edit_account') {
@@ -91,12 +94,10 @@ if ($frm['action'] == 'edit_account') {
                     if (is_array($_SESSION['fields'])) {
                         $frm = array_merge($frm, $_SESSION['fields']);
                     } else {
-                        header('Location: ?a=edit_account');
-                        exit();
+                        throw new RedirectException('/?a=edit_account');
                     }
                 } else {
-                    header('Location: ?a=edit_account&action=confirm&say=invalid_code');
-                    exit();
+                    throw new RedirectException('/?a=edit_account&action=confirm&say=invalid_code');
                 }
             } else {
                 $code = get_rand_md5(50);
@@ -108,8 +109,7 @@ if ($frm['action'] == 'edit_account') {
                 $info['name'] = $userinfo['name'];
                 $info['ip'] = $frm_env['REMOTE_ADDR'];
                 send_template_mail('account_update_confirmation', $userinfo['email'], $settings['system_email'], $info);
-                header('Location: ?a=edit_account&action=confirm');
-                exit();
+                throw new RedirectException('/?a=edit_account&action=confirm');
             }
         }
 
@@ -229,8 +229,7 @@ if ($frm['action'] == 'edit_account') {
             send_template_mail('change_account', $frm['email'], $settings['opt_in_email'], $info);
         }
 
-        header('Location: ?a=edit_account&say=changed');
-        exit();
+        throw new RedirectException('/?a=edit_account&say=changed');
     }
 }
 

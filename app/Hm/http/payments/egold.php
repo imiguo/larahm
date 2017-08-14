@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 $mymd5 = $settings['md5altphrase'];
@@ -52,14 +54,14 @@ if ($frm['a'] == 'pay_withdraw') {
     }
 
     echo 1;
-    exit();
+    throw new EmptyException();
 }
 
 $hash = strtoupper(md5($frm['PAYMENT_ID'].':'.$frm['PAYEE_ACCOUNT'].':'.$frm['PAYMENT_AMOUNT'].':'.$frm['PAYMENT_UNITS'].':'.$frm['PAYMENT_METAL_ID'].':'.$frm['PAYMENT_BATCH_NUM'].':'.$frm['PAYER_ACCOUNT'].':'.$mymd5.':'.$frm['ACTUAL_PAYMENT_OUNCES'].':'.$frm['USD_PER_OUNCE'].':'.$frm['FEEWEIGHT'].':'.$frm['TIMESTAMPGMT']));
 if (($hash == strtoupper($frm['V2_HASH']) and $exchange_systems[0]['status'] == 1)) {
     $ip = $frm_env['REMOTE_ADDR'];
     if (!preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
-        exit();
+        throw new EmptyException();
     }
 
     $user_id = sprintf('%d', $frm['userid']);

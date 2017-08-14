@@ -9,11 +9,14 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+use App\Exceptions\EmptyException;
+
 $id = $userinfo['id'];
   if ($frm['display'] == 'ok') {
       $smarty->assign('exchanged', 1);
       $smarty->display('exchange_preview.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if ($frm['action'] == 'preview') {
@@ -25,14 +28,14 @@ $id = $userinfo['id'];
       if ((!isset($exchange_systems[$from]) or ($exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           $smarty->assign('error', 'no_from');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $to = intval($frm[''.'to_'.$from]);
       if (((($frm['to'] === '' or !isset($exchange_systems[$to])) or $exchange_systems[$to]['status'] != 1) or $to == $from)) {
           $smarty->assign('error', 'no_to');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $frm[''.'amount_'.$from] = str_replace(',', '.', $frm[''.'amount_'.$from]);
@@ -61,19 +64,19 @@ $id = $userinfo['id'];
       if ($amount <= 0) {
           $smarty->assign('error', 'no_amount');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($row['sm'] < $amount) {
           $smarty->assign('error', 'to_big_amount');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($row['sm'] - $on_hold < $amount) {
           $smarty->assign('error', 'on_hold');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $q = 'select * from hm2_exchange_rates where sfrom = '.$from.' and sto = '.$to;
@@ -84,14 +87,14 @@ $id = $userinfo['id'];
       if (1 <= $percent) {
           $smarty->assign('error', 'exchange_forbidden');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $exchange_amount = sprintf('%.02f', (1 - $percent) * $amount);
       if ($exchange_amount <= 0) {
           $smarty->assign('error', 'to_small_amount');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $smarty->assign('from', $from);
@@ -101,7 +104,7 @@ $id = $userinfo['id'];
       $smarty->assign('amount', $amount);
       $smarty->assign('exchange_amount', $exchange_amount);
       $smarty->display('exchange_preview.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if ($frm['action'] == 'exchange') {
@@ -113,14 +116,14 @@ $id = $userinfo['id'];
       if ((!isset($exchange_systems[$from]) or ($exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           $smarty->assign('error', 'no_from');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $to = intval($frm['to']);
       if ((($frm['to'] == '' or !isset($exchange_systems[$to])) or $exchange_systems[$to]['status'] != 1)) {
           $smarty->assign('error', 'no_to');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $amount = sprintf('%.02f', $frm['amount']);
@@ -148,19 +151,19 @@ $id = $userinfo['id'];
       if ($amount <= 0) {
           $smarty->assign('error', 'no_amount');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($row['sm'] < $amount) {
           $smarty->assign('error', 'to_big_amount');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($row['sm'] - $on_hold < $amount) {
           $smarty->assign('error', 'on_hold');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $q = 'select * from hm2_exchange_rates where sfrom = '.$from.' and sto = '.$to;
@@ -171,14 +174,14 @@ $id = $userinfo['id'];
       if (1 <= $percent) {
           $smarty->assign('error', 'exchange_forbidden');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $exchange_amount = sprintf('%.02f', (1 - $percent) * $amount);
       if ($exchange_amount <= 0) {
           $smarty->assign('error', 'to_small_amount');
           $smarty->display('exchange_preview.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $from_name = $exchange_systems[$from]['name'];
@@ -219,8 +222,7 @@ $id = $userinfo['id'];
 
       send_template_mail('exchange_admin_notification', $admin_email, $settings['system_email'], $info);
       send_template_mail('exchange_user_notification', $userinfo[email], $settings['system_email'], $info);
-      header('Location: ?a=exchange&display=ok');
-      exit();
+      throw new RedirectException('/?a=exchange&display=ok');
   }
 
   $balances = [];

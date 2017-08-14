@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 $id = intval($frm['type']);
   $plans = [];
   $q = 'select *,
@@ -22,7 +24,7 @@ $id = intval($frm['type']);
   if (!$trow) {
       $smarty->assign('error', 'type_not_found');
       $smarty->display('calendar_simple.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   $i = 0;

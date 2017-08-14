@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
   if ($frm['say'] == 'invalid_passphrase') {
       echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
   }
@@ -19,7 +21,7 @@
   }
 
   if ($userinfo['logged'] == 0) {
-      exit();
+      throw new EmptyException();
   }
 
   echo '

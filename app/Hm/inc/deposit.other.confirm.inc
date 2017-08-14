@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
 $ok = 1;
   $amount = sprintf('%0.2f', $frm['amount']);
   $h_id = sprintf('%d', $frm['h_id']);
@@ -161,9 +163,9 @@ $ok = 1;
       $admin_row = mysql_fetch_array($sth);
       send_template_mail('pending_deposit_admin_notification', $admin_row['email'], $settings['opt_in_email'], $info);
       if ($h_id == 0) {
-          header('Location: ?a=add_funds&say=deposit_saved');
+          throw new RedirectException('/?a=add_funds&say=deposit_saved');
       } else {
-          header('Location: ?a=deposit&say=deposit_saved');
+          throw new RedirectException('/?a=deposit&say=deposit_saved');
       }
   }
 

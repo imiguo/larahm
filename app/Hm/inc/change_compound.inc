@@ -9,10 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+use App\Exceptions\EmptyException;
+
 if ($frm['complete']) {
     $smarty->assign('fatal', 'update_completed');
     $smarty->display('change_compound.tpl');
-    exit();
+    throw new EmptyException();
 }
 
   $user_id = $userinfo['id'];
@@ -31,7 +34,7 @@ if ($frm['complete']) {
   if (!$deposit) {
       $smarty->assign('fatal', 'deposit_not_found');
       $smarty->display('change_compound.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   $q = 'select * from hm2_types where id = '.$deposit['type_id'];
@@ -40,7 +43,7 @@ if ($frm['complete']) {
   if (!$type['use_compound']) {
       $smarty->assign('fatal', 'compound_forbidden');
       $smarty->display('change_compound.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   $amount = $deposit['actual_amount'];
@@ -98,8 +101,7 @@ if ($frm['complete']) {
 
       $q = 'update hm2_deposits set compound = '.$c_percent.' where user_id = '.$user_id.' and id = '.$deposit_id;
       db_query($q);
-      header('Location: ?a=change_compound&complete=1');
-      exit();
+      throw new RedirectException('/?a=change_compound&complete=1');
   }
 
   $deposit['deposit'] = number_format($deposit['actual_amount'], 2);

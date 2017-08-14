@@ -9,7 +9,10 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+use App\Exceptions\EmptyException;
 use Illuminate\Support\Facades\Auth;
+
 $frm['a'] = '';
 
 include app_path('Hm').'/lib/config.inc.php';
@@ -25,7 +28,7 @@ $userinfo['logged'] = 0;
  */
 if ($frm['a'] == 'showprogramstat') {
     show_program_stat();
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -33,7 +36,7 @@ if ($frm['a'] == 'showprogramstat') {
  */
 if ($frm['a'] == 'logout') {
     Auth::logout();
-    return response()->redirectTo('/');
+    throw new RedirectException('/');
 }
 
 try_auth($userinfo);
@@ -44,7 +47,7 @@ $username = $userinfo['username'];
  */
 if (($frm['a'] == 'startup_bonus' and $frm['act'] == 'set')) {
     startup_bonus();
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -52,7 +55,7 @@ if (($frm['a'] == 'startup_bonus' and $frm['act'] == 'set')) {
  */
 if (($frm['a'] == 'exchange_rates' and $frm['action'] == 'save')) {
     save_exchange_rates();
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -60,7 +63,7 @@ if (($frm['a'] == 'exchange_rates' and $frm['action'] == 'save')) {
  */
 if ($frm['a'] == 'test_egold_settings') {
     include app_path('Hm').'/inc/admin/auto_pay_settings_test.inc.php';
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -68,7 +71,7 @@ if ($frm['a'] == 'test_egold_settings') {
  */
 if ($frm['a'] == 'test_evocash_settings') {
     include app_path('Hm').'/inc/admin/auto_pay_settings_evocash_test.inc.php';
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -76,7 +79,7 @@ if ($frm['a'] == 'test_evocash_settings') {
  */
 if ($frm['a'] == 'test_intgold_settings') {
     include app_path('Hm').'/inc/admin/auto_pay_settings_intgold_test.inc.php';
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -84,7 +87,7 @@ if ($frm['a'] == 'test_intgold_settings') {
  */
 if ($frm['a'] == 'test_eeecurrency_settings') {
     include app_path('Hm').'/inc/admin/auto_pay_settings_eeecurrency_test.inc.php';
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -92,7 +95,7 @@ if ($frm['a'] == 'test_eeecurrency_settings') {
  */
 if ($frm['a'] == 'test_ebullion_settings') {
     include app_path('Hm').'/inc/admin/auto_pay_settings_ebullion_test.inc.php';
-    exit;
+    throw new EmptyException();
 }
 
 if ($userinfo['should_count'] == 1) {
@@ -110,8 +113,7 @@ if (($frm['a'] == 'affilates' and $frm['action'] == 'remove_ref')) {
     $ref = sprintf('%d', $frm['ref']);
     $q = 'update hm2_users set ref = 0 where id = '.$ref;
     db_query($q);
-    header(''.'Location: ?a=affilates&u_id='.$u_id);
-    exit;
+    throw new RedirectException('/?a=affilates&u_id='.$u_id);
 }
 
 /*
@@ -129,8 +131,7 @@ if (($frm['a'] == 'affilates' and $frm['action'] == 'change_upline')) {
 
     $q = 'update hm2_users set ref = '.$id.' where id = '.$u_id;
     db_query($q);
-    header(''.'Location: ?a=affilates&u_id='.$u_id);
-    exit;
+    throw new RedirectException('/?a=affilates&u_id='.$u_id);
 }
 
 /*
@@ -140,8 +141,7 @@ if (($frm['a'] == 'pending_deposit_details' and $frm['action'] == 'movetoproblem
     $id = sprintf('%d', $frm['id']);
     $q = 'update hm2_pending_deposits set status=\'problem\' where id = '.$id;
     db_query($q);
-    header('Location: ?a=pending_deposits');
-    exit;
+    throw new RedirectException('/?a=pending_deposits');
 }
 
 /*
@@ -151,8 +151,7 @@ if (($frm['a'] == 'pending_deposit_details' and $frm['action'] == 'movetonew')) 
     $id = sprintf('%d', $frm['id']);
     $q = 'update hm2_pending_deposits set status=\'new\' where id = '.$id;
     db_query($q);
-    header('Location: ?a=pending_deposits&type=problem');
-    exit;
+    throw new RedirectException('/?a=pending_deposits&type=problem');
 }
 
 /*
@@ -162,8 +161,7 @@ if (($frm['a'] == 'pending_deposit_details' and $frm['action'] == 'delete')) {
     $id = sprintf('%d', $frm['id']);
     $q = 'delete from hm2_pending_deposits where id = '.$id;
     db_query($q);
-    header('Location: ?a=pending_deposits&type='.$frm['type']);
-    exit;
+    throw new RedirectException('/?a=pending_deposits&type='.$frm['type']);
 }
 
 /*
@@ -195,7 +193,7 @@ if ((($frm['a'] == 'pending_deposit_details' and ($frm['action'] == 'movetodepos
         }
 
         $q = 'insert into hm2_history set
-            user_id = '.$row['user_id'].(''.',
+            user_id = '.$row['user_id'].(',
             date = now(),
             amount = '.$amount.',
             actual_amount = '.$amount.',
@@ -214,7 +212,7 @@ if ((($frm['a'] == 'pending_deposit_details' and ($frm['action'] == 'movetodepos
 
             $q = 'insert into hm2_deposits set
               user_id = '.$row['user_id'].',
-              type_id = '.$row['type_id'].(''.',
+              type_id = '.$row['type_id'].(',
               deposit_date = now(),
               last_pay_date = now() + interval '.$delay.' day,
               status = \'on\',
@@ -226,12 +224,12 @@ if ((($frm['a'] == 'pending_deposit_details' and ($frm['action'] == 'movetodepos
             db_query($q);
             $deposit_id = mysql_insert_id();
             $q = 'insert into hm2_history set
-              user_id = '.$row['user_id'].(''.',
+              user_id = '.$row['user_id'].(',
               date = now(),
               amount = -'.$amount.',
               actual_amount = -'.$amount.',
               type=\'deposit\',
-              description=\'Deposit to ').quote($row1[name]).(''.'\',
+              description=\'Deposit to ').quote($row1[name]).('\',
               ec = '.$ps.',
               deposit_id = '.$deposit_id.'
            ');
@@ -277,8 +275,7 @@ if ((($frm['a'] == 'pending_deposit_details' and ($frm['action'] == 'movetodepos
     $id = sprintf('%d', $frm['id']);
     $q = 'update hm2_pending_deposits set status=\'processed\' where id = '.$id;
     db_query($q);
-    header('Location: ?a=pending_deposits');
-    exit;
+    throw new RedirectException('/?a=pending_deposits');
 }
 
 /*
@@ -293,8 +290,7 @@ if ($frm['a'] == 'mass') {
             db_query($q);
         }
 
-        header('Location: ?a=thistory&ttype=withdraw_pending&say=massremove');
-        exit;
+        throw new RedirectException('/?a=thistory&ttype=withdraw_pending&say=massremove');
     }
 
     if ($frm['action2'] == 'masssetprocessed') {
@@ -336,15 +332,14 @@ if ($frm['a'] == 'mass') {
             }
         }
 
-        header('Location: ?a=thistory&ttype=withdraw_pending&say=massprocessed');
-        exit;
+        throw new RedirectException('/?a=thistory&ttype=withdraw_pending&say=massprocessed');
     }
 
     if ($frm['action2'] == 'masscsv') {
         $ids = $frm['pend'];
         if (!$ids) {
             echo 'Nothing selected.';
-            exit;
+            throw new EmptyException();
         }
 
         reset($ids);
@@ -424,12 +419,12 @@ if ($frm['a'] == 'mass') {
             echo $ac.','.abs($to_withdraw).'';
         }
 
-        exit;
+        throw new EmptyException();
     }
 
     if (($frm['action2'] == 'masspay' and $frm['action3'] == 'masspay')) {
         if ($settings['demomode'] == 1) {
-            exit;
+            throw new EmptyException();
         }
 
         $ids = $frm['pend'];
@@ -547,19 +542,19 @@ if ($frm['a'] == 'mass') {
 
                 if ($row['ec'] == 1) {
                     $error_txt = 'Error, tried to send '.$to_withdraw.' to evocash account # '.$row['evocash_account'].'. Error:';
-                    list($res, $text, $batch) = send_money_to_evocash(''.$evocash_password.'|'.$evocash_code,
+                    list($res, $text, $batch) = send_money_to_evocash($evocash_password.'|'.$evocash_code,
                         $to_withdraw, $row['evocash_account'], $success_txt, $error_txt);
                 }
 
                 if ($row['ec'] == 2) {
                     $error_txt = 'Error, tried to send '.$to_withdraw.' to IntGold account # '.$row['intgold_account'].'. Error:';
-                    list($res, $text, $batch) = send_money_to_intgold(''.$intgold_password.'|'.$intgold_code,
+                    list($res, $text, $batch) = send_money_to_intgold($intgold_password.'|'.$intgold_code,
                         $to_withdraw, $row['intgold_account'], $success_txt, $error_txt);
                 }
 
                 if ($row['ec'] == 3) {
                     $error_txt = 'Error, tried to send '.$to_withdraw.' to Perfect Money account # '.$row['perfectmoney_account'].'. Error:';
-                    list($res, $text, $batch) = send_money_to_perfectmoney(''.$perfectmoney_password.'|'.$perfectmoney_code,
+                    list($res, $text, $batch) = send_money_to_perfectmoney($perfectmoney_password.'|'.$perfectmoney_code,
                         $to_withdraw, $row['perfectmoney_account'], $success_txt, $error_txt);
                 }
 
@@ -571,7 +566,7 @@ if ($frm['a'] == 'mass') {
 
                 if ($row['ec'] == 8) {
                     $error_txt = 'Error, tried to send '.$to_withdraw.' to eeeCurrency account # '.$row['eeecurrency_account'].'. Error:';
-                    list($res, $text, $batch) = send_money_to_eeecurrency(''.$eeecurrency_password.'|'.$eeecurrency_code,
+                    list($res, $text, $batch) = send_money_to_eeecurrency($eeecurrency_password.'|'.$eeecurrency_code,
                         $to_withdraw, $row['eeecurrency_account'], $success_txt, $error_txt);
                 }
 
@@ -590,13 +585,13 @@ if ($frm['a'] == 'mass') {
                         $row[eeecurrency_account],
                     ];
                     $q = 'insert into hm2_history set
-              user_id = '.$row['user_id'].(''.',
+              user_id = '.$row['user_id'].(',
               amount = -'.$amount.',
               actual_amount = -'.$amount.',
               type=\'withdrawal\',
               date = now(),
               ec = ').$row['ec'].',
-              description = \'Withdrawal to account '.$d_account[$row[ec]].(''.'. Batch is '.$batch.'\'');
+              description = \'Withdrawal to account '.$d_account[$row[ec]].('. Batch is '.$batch.'\'');
                     db_query($q);
                     $info = [];
                     $info['username'] = $row['username'];
@@ -606,7 +601,7 @@ if ($frm['a'] == 'mass') {
                     $info['batch'] = $batch;
                     $info['currency'] = $exchange_systems[$row['ec']]['name'];
                     send_template_mail('withdraw_user_notification', $row['email'], $settings['system_email'], $info);
-                    echo 'Sent $ '.$to_withdraw.' to account'.$d_account[$row[ec]].' on '.$exchange_systems[$row['ec']]['name'].(''.'. Batch is '.$batch.'<br>');
+                    echo 'Sent $ '.$to_withdraw.' to account'.$d_account[$row[ec]].' on '.$exchange_systems[$row['ec']]['name'].('. Batch is '.$batch.'<br>');
                 } else {
                     echo $text.'<br>';
                 }
@@ -615,7 +610,7 @@ if ($frm['a'] == 'mass') {
             }
         }
 
-        exit;
+        throw new EmptyException();
     }
 }
 
@@ -625,8 +620,7 @@ if ($frm['a'] == 'mass') {
 if (($frm['a'] == 'auto-pay-settings' and $frm['action'] == 'auto-pay-settings')) {
     if ($settings['demomode'] != 1) {
         if (($userinfo['transaction_code'] != '' and $userinfo['transaction_code'] != $frm['alternative_passphrase'])) {
-            header('Location: ?a=auto-pay-settings&say=invalid_passphrase');
-            exit;
+            throw new RedirectException('/?a=auto-pay-settings&say=invalid_passphrase');
         }
 
         $settings['use_auto_payment'] = $frm['use_auto_payment'];
@@ -696,8 +690,7 @@ if (($frm['a'] == 'auto-pay-settings' and $frm['action'] == 'auto-pay-settings')
         }
     }
 
-    header('Location: ?a=auto-pay-settings&say=done');
-    exit;
+    throw new RedirectException('/?a=auto-pay-settings&say=done');
 }
 
 /*
@@ -752,8 +745,7 @@ if (($frm['a'] == 'referal' and $frm['action'] == 'change')) {
         save_settings();
     }
 
-    header('Location: ?a=referal');
-    exit;
+    throw new RedirectException('/?a=referal');
 }
 
 /*
@@ -769,8 +761,7 @@ if ($frm['a'] == 'deleterate') {
         db_query($q);
     }
 
-    header('Location: ?a=rates');
-    exit;
+    throw new RedirectException('/?a=rates');
 }
 
 /*
@@ -789,8 +780,7 @@ if (($frm['a'] == 'newsletter' and $frm['action'] == 'newsletter')) {
                 if ($frm['to'] == 'passive') {
                     $q = 'select u.* from hm2_users as u left outer join hm2_deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
                 } else {
-                    header('Location: ?a=newsletter&say=someerror');
-                    exit;
+                    throw new RedirectException('/?a=newsletter&say=someerror');
                 }
             }
         }
@@ -826,7 +816,7 @@ Reply-To: '.$settings['system_email']);
             echo '<script>var obj = document.getElementById(\'newsletterplace\');
 var menulast = document.getElementById(\'self_menu'.($total - 1).'\');
 menulast.style.display=\'none\';</script>';
-            echo '<div id=\'self_menu'.$total.'\'>Just sent to '.$row[email].(''.'<br>Total '.$total.' messages sent.</div>');
+            echo '<div id=\'self_menu'.$total.'\'>Just sent to '.$row[email].('<br>Total '.$total.' messages sent.</div>');
             echo '<script>var menu = document.getElementById(\'self_menu'.$total.'\');
 obj.appendChild(menu);
 </script>';
@@ -838,7 +828,7 @@ obj.appendChild(menu);
     }
 
     echo '<br><br><br>Sent '.$total.'.</center></body></html>';
-    exit;
+    throw new EmptyException();
 }
 
 /*
@@ -855,8 +845,7 @@ if (($frm['a'] == 'edit_emails' and $frm['action'] == 'update_statuses')) {
         }
     }
 
-    header('Location: ?a=edit_emails');
-    exit;
+    throw new RedirectException('/?a=edit_emails');
 }
 
 /*
@@ -865,8 +854,7 @@ if (($frm['a'] == 'edit_emails' and $frm['action'] == 'update_statuses')) {
 if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['action'] == 'confirm'))) {
     $amount = sprintf('%0.2f', $frm['amount']);
     if ($amount == 0) {
-        header('Location: ?a=send_bonuce&say=wrongamount');
-        exit;
+        throw new RedirectException('/?a=send_bonuce&say=wrongamount');
     }
 
     $deposit = intval($frm['deposit']);
@@ -876,8 +864,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         if (!$type) {
-            header('Location: ?a=send_bonuce&say=wrongplan');
-            exit;
+            throw new RedirectException('/?a=send_bonuce&say=wrongplan');
         }
     }
 
@@ -894,8 +881,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
                 if ($frm['to'] == 'passive') {
                     $q = 'select u.* from hm2_users as u left outer join hm2_deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
                 } else {
-                    header('Location: ?a=send_bonuce&say=someerror');
-                    exit;
+                    throw new RedirectException('/?a=send_bonuce&say=someerror');
                 }
             }
         }
@@ -913,7 +899,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
                 $flag = 1;
                 $total += $amount;
                 $q = 'insert into hm2_history set
-    	user_id = '.$row['id'].(''.',
+    	user_id = '.$row['id'].(',
     	amount = '.$amount.',
     	description = \''.$description.'\',
     	type=\'bonus\',
@@ -945,7 +931,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
                user_id = '.$user_id.',
                amount = \'-'.$amount.'\',
                type = \'deposit\',
-               description = \'Deposit to '.quote($type['name']).(''.'\',
+               description = \'Deposit to '.quote($type['name']).('\',
                actual_amount = -'.$amount.',
                ec = '.$ec.',
                date = now(),
@@ -972,16 +958,15 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
             }
 
             if ($flag == 1) {
-                header(''.'Location: ?a=send_bonuce&say=send&total='.$total);
+                throw new RedirectException('/?a=send_bonuce&say=send&total='.$total);
             } else {
-                header('Location: ?a=send_bonuce&say=notsend');
+                throw new RedirectException('/?a=send_bonuce&say=notsend');
             }
 
             $_SESSION['code'] = '';
-            exit;
+            throw new EmptyException();
         } else {
-            header('Location: ?a=send_bonuce&say=invalid_code');
-            exit;
+            throw new RedirectException('/?a=send_bonuce&say=invalid_code');
         }
     }
 
@@ -1005,8 +990,7 @@ Reply-To: '.$settings['system_email']);
 if (($frm['a'] == 'send_penality' and $frm['action'] == 'send_penality')) {
     $amount = sprintf('%0.2f', abs($frm['amount']));
     if ($amount == 0) {
-        header('Location: ?a=send_penality&say=wrongamount');
-        exit;
+        throw new RedirectException('/?a=send_penality&say=wrongamount');
     }
 
     $ec = sprintf('%d', $frm['ec']);
@@ -1022,8 +1006,7 @@ if (($frm['a'] == 'send_penality' and $frm['action'] == 'send_penality')) {
                 if ($frm['to'] == 'passive') {
                     $q = 'select u.* from hm2_users as u left outer join hm2_deposits as d on u.id = d.user_id where u.user_id > 1 and d.user_id is NULL';
                 } else {
-                    header('Location: ?a=send_penality&say=someerror');
-                    exit;
+                    throw new RedirectException('/?a=send_penality&say=someerror');
                 }
             }
         }
@@ -1037,7 +1020,7 @@ if (($frm['a'] == 'send_penality' and $frm['action'] == 'send_penality')) {
         $flag = 1;
         $total += $amount;
         $q = 'insert into hm2_history set
-	user_id = '.$row['id'].(''.',
+	user_id = '.$row['id'].(',
 	amount = -'.$amount.',
 	description = \''.$description.'\',
 	type=\'penality\',
@@ -1048,12 +1031,10 @@ if (($frm['a'] == 'send_penality' and $frm['action'] == 'send_penality')) {
     }
 
     if ($flag == 1) {
-        header(''.'Location: ?a=send_penality&say=send&total='.$total);
+        throw new RedirectException('/?a=send_penality&say=send&total='.$total);
     } else {
-        header('Location: ?a=send_penality&say=notsend');
+        throw new RedirectException('/?a=send_penality&say=notsend');
     }
-
-    exit;
 }
 
 /*
@@ -1098,8 +1079,7 @@ if (($frm['a'] == 'settings' and $frm['action'] == 'settings')) {
     if ($settings['demomode'] == 1) {
     } else {
         if (($userinfo['transaction_code'] != '' and $userinfo['transaction_code'] != $frm['alternative_passphrase'])) {
-            header('Location: ?a=settings&say=invalid_passphrase');
-            exit;
+            throw new RedirectException('/?a=settings&say=invalid_passphrase');
         }
 
         if ($frm['admin_stat_password'] == '') {
@@ -1285,8 +1265,7 @@ if (($frm['a'] == 'settings' and $frm['action'] == 'settings')) {
         save_settings();
     }
 
-    header('Location: ?a=settings&say=done');
-    exit;
+    throw new RedirectException('/?a=settings&say=done');
 }
 
 /*
@@ -1296,8 +1275,7 @@ if ($frm['a'] == 'rm_withdraw') {
     $id = sprintf('%d', $frm['id']);
     $q = 'delete from hm2_history where id = '.$id;
     db_query($q);
-    header('Location: ?a=thistory&ttype=withdraw_pending');
-    exit;
+    throw new RedirectException('/?a=thistory&ttype=withdraw_pending');
 }
 
 /*
@@ -1382,8 +1360,7 @@ if (($frm['a'] == 'releasedeposits' and $frm['action'] == 'releasedeposits')) {
         }
     }
 
-    header(''.'Location: ?a=releasedeposits&u_id='.$u_id);
-    exit;
+    throw new RedirectException('/?a=releasedeposits&u_id='.$u_id);
 }
 
 /*
@@ -1397,8 +1374,7 @@ if (($frm['a'] == 'addbonuse' and ($frm['action'] == 'addbonuse' or $frm['action
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         if (!$type) {
-            header('Location: ?a=send_bonuce&say=wrongplan');
-            exit;
+            throw new RedirectException('/?a=send_bonuce&say=wrongplan');
         }
     }
 
@@ -1445,7 +1421,7 @@ if (($frm['a'] == 'addbonuse' and ($frm['action'] == 'addbonuse' or $frm['action
              user_id = '.$user_id.',
              amount = \'-'.$amount.'\',
              type = \'deposit\',
-             description = \'Deposit to '.quote($type['name']).(''.'\',
+             description = \'Deposit to '.quote($type['name']).('\',
              actual_amount = -'.$amount.',
              ec = '.$ec.',
              date = now(),
@@ -1475,12 +1451,10 @@ if (($frm['a'] == 'addbonuse' and ($frm['action'] == 'addbonuse' or $frm['action
                 send_template_mail('bonus', $row['email'], $settings['system_email'], $info);
             }
 
-            header(''.'Location: ?a=addbonuse&say=done&id='.$id);
-            exit;
+            throw new RedirectException('/?a=addbonuse&say=done&id='.$id);
         } else {
             $id = sprintf('%d', $frm['id']);
-            header(''.'Location: ?a=addbonuse&id='.$id.'&say=invalid_code');
-            exit;
+            throw new RedirectException('/?a=addbonuse&id='.$id.'&say=invalid_code');
         }
     }
 
@@ -1527,8 +1501,7 @@ if (($frm['a'] == 'addpenality' and $frm['action'] == 'addpenality')) {
         send_template_mail('penalty', $row['email'], $settings['system_email'], $info);
     }
 
-    header(''.'Location: ?a=addpenality&say=done&id='.$id);
-    exit;
+    throw new RedirectException('/?a=addpenality&say=done&id='.$id);
 }
 
 /*
@@ -1538,8 +1511,7 @@ if ($frm['a'] == 'deleteaccount') {
     $id = sprintf('%d', $frm['id']);
     $q = 'delete from hm2_users where id = '.$id.' and id <> 1';
     db_query($q);
-    header('Location: ?a=members&q='.$frm['q'].'&p='.$frm['p'].'&status='.$frm['status']);
-    exit;
+    throw new RedirectException('/?a=members&q='.$frm['q'].'&p='.$frm['p'].'&status='.$frm['status']);
 }
 
 /*
@@ -1548,8 +1520,7 @@ if ($frm['a'] == 'deleteaccount') {
 if (($frm['a'] == 'editaccount' and $frm['action'] == 'editaccount')) {
     $id = sprintf('%d', $frm['id']);
     if ((($settings['demomode'] == 1 and $id <= 3) and 0 < $id)) {
-        header('Location: ?a=editaccount&id='.$frm['id']);
-        exit;
+        throw new RedirectException('/?a=editaccount&id='.$frm['id']);
     }
 
     $username = quote($frm['username']);
@@ -1557,18 +1528,15 @@ if (($frm['a'] == 'editaccount' and $frm['action'] == 'editaccount')) {
     $sth = db_query($q);
     ($row = mysql_fetch_array($sth));
     if ($row) {
-        header('Location: ?a=editaccount&say=userexists&id='.$frm['id']);
-        exit;
+        throw new RedirectException('/?a=editaccount&say=userexists&id='.$frm['id']);
     }
 
     if (($frm['password'] != '' and $frm['password'] != $frm['password2'])) {
-        header('Location: ?a=editaccount&say=incorrect_password&id='.$frm['id']);
-        exit;
+        throw new RedirectException('/?a=editaccount&say=incorrect_password&id='.$frm['id']);
     }
 
     if (($frm['transaction_code'] != '' and $frm['transaction_code'] != $frm['transaction_code2'])) {
-        header('Location: ?a=editaccount&say=incorrect_transaction_code&id='.$frm['id']);
-        exit;
+        throw new RedirectException('/?a=editaccount&say=incorrect_transaction_code&id='.$frm['id']);
     }
 
     if ($id == 0) {
@@ -1698,8 +1666,7 @@ if (($frm['a'] == 'editaccount' and $frm['action'] == 'editaccount')) {
         }
     }
 
-    header('Location: ?a=editaccount&id='.$frm['id'].'&say=saved');
-    exit;
+    throw new RedirectException('/?a=editaccount&id='.$frm['id'].'&say=saved');
 }
 
 /*
@@ -1715,8 +1682,7 @@ if (($frm['a'] == 'members' and $frm['action'] == 'modify_status')) {
         }
     }
 
-    header('Location: ?a=members');
-    exit;
+    throw new RedirectException('/?a=members');
 }
 
 /*
@@ -1729,8 +1695,7 @@ if (($frm['a'] == 'members' and $frm['action'] == 'activate')) {
         db_query($q);
     }
 
-    header('Location: ?a=members&status=blocked');
-    exit;
+    throw new RedirectException('/?a=members&status=blocked');
 }
 
 /*
@@ -1783,10 +1748,10 @@ if ($frm['action'] == 'add_hyip') {
     $hold = sprintf('%d', $frm[hold]);
     $delay = sprintf('%d', $frm[delay]);
     $q = 'insert into hm2_types set
-	name=\''.quote($frm['hname']).(''.'\',
+	name=\''.quote($frm['hname']).('\',
 	q_days = '.$q_days.',
 	period = \'').quote($frm['hperiod']).'\',
-	status = \''.quote($frm['hstatus']).(''.'\',
+	status = \''.quote($frm['hstatus']).('\',
 	return_profit = \''.$return_profit.'\',
 	return_profit_percent = '.$return_profit_percent.',
 	pay_to_egold_directly = '.$pay_to_egold_directly.',
@@ -1831,8 +1796,7 @@ if ($frm['action'] == 'add_hyip') {
         }
     }
 
-    header('Location: ?a=rates');
-    exit;
+    throw new RedirectException('/?a=rates');
 }
 
 /*
@@ -1841,8 +1805,7 @@ if ($frm['action'] == 'add_hyip') {
 if ($frm['action'] == 'edit_hyip') {
     $id = sprintf('%d', $frm['hyip_id']);
     if (($id < 3 and $settings['demomode'] == 1)) {
-        header('Location: ?a=rates');
-        exit;
+        throw new RedirectException('/?a=rates');
     }
 
     $q_days = sprintf('%d', $frm['hq_days']);
@@ -1892,10 +1855,10 @@ if ($frm['action'] == 'edit_hyip') {
     $hold = sprintf('%d', $frm[hold]);
     $delay = sprintf('%d', $frm[delay]);
     $q = 'update hm2_types set
-	name=\''.quote($frm['hname']).(''.'\',
+	name=\''.quote($frm['hname']).('\',
 	q_days = '.$q_days.',
 	period = \'').quote($frm['hperiod']).'\',
-	status = \''.quote($frm['hstatus']).(''.'\',
+	status = \''.quote($frm['hstatus']).('\',
 	return_profit = \''.$return_profit.'\',
 	return_profit_percent = '.$return_profit_percent.',
 	pay_to_egold_directly = '.$pay_to_egold_directly.',
@@ -1948,8 +1911,7 @@ if ($frm['action'] == 'edit_hyip') {
         }
     }
 
-    header('Location: ?a=rates');
-    exit;
+    throw new RedirectException('/?a=rates');
 }
 
 /*
@@ -1995,7 +1957,7 @@ if (($frm['a'] == 'thistory' and $frm['action2'] == 'download_csv')) {
         $ecwhere = ' and ec = '.$ec;
     }
 
-    $q = 'select *, date_format(date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date desc, id desc');
+    $q = 'select *, date_format(date + interval '.$settings['time_dif'].(' hour, \'%b-%e-%Y %r\') as d from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date desc, id desc');
     $sth = db_query($q);
     $trans = [];
     while ($row = mysql_fetch_array($sth)) {
@@ -2013,15 +1975,13 @@ if (($frm['a'] == 'thistory' and $frm['action2'] == 'download_csv')) {
 
     $from = $frm['month_from'].'_'.$frm['day_from'].'_'.$frm['year_from'];
     $to = $frm['month_to'].'_'.$frm['day_to'].'_'.$frm['year_to'];
-    header('Content-Disposition: attachment; filename='.$frm['ttype'].(''.'history-'.$from.'-'.$to.'.csv'));
+    header('Content-Disposition: attachment; filename='.$frm['ttype'].('history-'.$from.'-'.$to.'.csv'));
     header('Content-type: text/coma-separated-values');
     echo '"Transaction Type","User","Amount","Currency","Date","Description"';
     for ($i = 0; $i < count($trans); ++$i) {
         echo '"'.$transtype[$trans[$i]['type']].'","'.$trans[$i]['username'].'","$'.number_format(abs($trans[$i]['actual_amount']),
                 2).'","'.$exchange_systems[$trans[$i]['ec']]['name'].'","'.$trans[$i]['d'].'","'.$trans[$i]['description'].'"'.'';
     }
-
-    exit;
 }
 
 /*
@@ -2066,8 +2026,7 @@ if (($frm['a'] == 'add_processing' and $frm[action] == 'add_processing')) {
         db_query($q);
     }
 
-    header('Location: ?a=processings');
-    exit;
+    throw new RedirectException('/?a=processings');
 }
 
 /*
@@ -2098,14 +2057,13 @@ if (($frm['a'] == 'edit_processing' and $frm[action] == 'edit_processing')) {
              status = '.$status.',
              name = \''.$name.'\',
              description = \''.$description.'\',
-             infofields = \''.quote($qfields).(''.'\'
+             infofields = \''.quote($qfields).('\'
            where id = '.$pid.'
          ');
         db_query($q);
     }
 
-    header('Location: ?a=processings');
-    exit;
+    throw new RedirectException('/?a=processings');
 }
 
 /*
@@ -2124,8 +2082,7 @@ if ($frm['a'] == 'update_processings') {
         }
     }
 
-    header('Location: ?a=processings');
-    exit;
+    throw new RedirectException('/?a=processings');
 }
 
 /*
@@ -2138,8 +2095,7 @@ if ($frm['a'] == 'delete_processing') {
         db_query($q);
     }
 
-    header('Location: ?a=processings');
-    exit;
+    throw new RedirectException('/?a=processings');
 }
 
 include app_path('Hm').'/inc/admin/html.header.inc.php';

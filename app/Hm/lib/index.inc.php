@@ -9,6 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Auth;
 
 function bind_ref()
@@ -284,14 +285,12 @@ function do_login(&$userinfo)
         if (((extension_loaded('gd') and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars'])) {
             session_start();
             if ($_SESSION['validation_number'] != $frm['validation_number']) {
-                header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-                exit;
+                throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
             }
         }
 
         if (($settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
-            header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-            exit;
+            throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
         }
 
         if (($settings['brute_force_handler'] == 1 and $row['bf_counter'] == $settings['brute_force_max_tries'])) {
@@ -305,14 +304,12 @@ function do_login(&$userinfo)
             $info['ip'] = $frm_env['REMOTE_ADDR'];
             $info['max_tries'] = $settings['brute_force_max_tries'];
             send_template_mail('brute_force_activation', $row['email'], $settings['system_email'], $info);
-            header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-            exit;
+            throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
         }
         if ($row['password'] != $password) {
             $q = 'update hm2_users set bf_counter = bf_counter + 1 where id = '.$row['id'];
             db_query($q);
-            header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-            exit;
+            throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
         }
 
         $userinfo = $row;
@@ -325,8 +322,7 @@ function do_login(&$userinfo)
     }
 
     if ($userinfo['logged'] == 0) {
-        header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-        exit;
+        throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
     }
 }
 

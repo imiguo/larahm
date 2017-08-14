@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
 $ok = 1;
   $amount = sprintf('%0.2f', $frm['amount']);
   $h_id = sprintf('%d', $frm['h_id']);
@@ -205,8 +207,7 @@ $ok = 1;
       db_query($q);
       $user_id = $userinfo['id'];
       referral_commission($user_id, $amount, $ec);
-      header('Location: ?a=deposit&say=deposit_success');
-      exit();
+      throw new RedirectException('/?a=deposit&say=deposit_success');
   }
 
   $smarty->assign('ok', $ok);

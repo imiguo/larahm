@@ -9,12 +9,14 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 $mymd5 = $settings['md5altphrase_eeecurrency'];
 if (($mymd5 == $frm['HASH'] and ($frm['TRANSACTION_ID'] != '' and $exchange_systems[8]['status'] == 1))) {
     if ($frm['RESULT'] != '0') {
-        exit();
+        throw new EmptyException();
     }
 
     $user_id = sprintf('%d', $frm['ITEM_NUMBER']);

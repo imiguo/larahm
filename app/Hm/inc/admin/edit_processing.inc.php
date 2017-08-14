@@ -9,13 +9,14 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
 $id = intval($frm['pid']);
   $q = 'select * from hm2_processings where id = '.$id;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   if (!$row) {
-      header('Location: ?a=processings');
-      exit();
+      throw new RedirectException('/?a=processings');
   }
 
   $fields = unserialize($row['infofields']);

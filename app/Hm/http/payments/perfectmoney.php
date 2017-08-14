@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 file_put_contents('../log/perfectmoney_processing_'.ENV.'.txt', json_encode($frm).PHP_EOL, FILE_APPEND);
@@ -56,7 +58,7 @@ if ($frm['a'] == 'pay_withdraw') {
     }
 
     echo 1;
-    exit();
+    throw new EmptyException();
 }
 
 if ($frm['a'] == 'checkpayment') {
@@ -70,7 +72,7 @@ if ($frm['a'] == 'checkpayment') {
     if ($hash == $frm['V2_HASH'] and $exchange_systems[3]['status'] == 1) {
         // $ip = $frm_env['REMOTE_ADDR'];
         // if ( ! preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
-        //     exit;
+        //     throw new EmptyException();
         // }
 
         $user_id = sprintf('%d', $frm['PAYMENT_ID']);

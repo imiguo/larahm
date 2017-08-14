@@ -11,16 +11,39 @@
 |
 */
 
+use App\Exceptions\HmException;
+
 Route::match(['get', 'post'], '/', function () {
-    return include app_path('Hm').'/http/index.php';
+    ob_start();
+    try {
+        include app_path('Hm').'/http/index.php';
+    } catch (HmException $e) {
+        $httpReturn = $e->resolveResponse();
+    }
+    $html = ob_get_clean();
+    return $httpReturn ?? $html;
 });
 
 Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), function () {
-    return include app_path('Hm').'/http/admin.php';
+    ob_start();
+    try {
+        include app_path('Hm').'/http/admin.php';
+    } catch (HmException $e) {
+        $httpReturn = $e->resolveResponse();
+    }
+    $html = ob_get_clean();
+    return $httpReturn ?? $html;
 });
 
 Route::match(['get', 'post'], '/test', function () {
-    return include app_path('Hm').'/http/test.php';
+    ob_start();
+    try {
+        include app_path('Hm').'/http/test.php';
+    } catch (HmException $e) {
+        $httpReturn = $e->resolveResponse();
+    }
+    $html = ob_get_clean();
+    return $httpReturn ?? $html;
 });
 
 Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request) {
@@ -30,7 +53,14 @@ Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request
     ];
     $payment = $request->inpput('payment');
     if (in_array($payment, $payments)) {
-        return include app_path('Hm').'/http/payments/'.$payment.'.php';
+        ob_start();
+        try {
+            include app_path('Hm').'/http/payments/'.$payment.'.php';
+        } catch (HmException $e) {
+            $httpReturn = $e->resolveResponse();
+        }
+        $html = ob_get_clean();
+        return $httpReturn ?? $html;
     } else {
         abort(404);
     }

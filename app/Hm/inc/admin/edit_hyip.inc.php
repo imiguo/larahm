@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 $id = sprintf('%d', $frm['id']);
   $q = 'select * from hm2_types where id= '.$id;
   if (!($sth = db_query($q))) {
@@ -16,7 +18,7 @@ $id = sprintf('%d', $frm['id']);
 
   $row = mysql_fetch_array($sth);
   if (!$row) {
-      exit();
+      throw new EmptyException();
   }
 
   $q = 'select * from hm2_plans where parent = '.$id.' order by id';

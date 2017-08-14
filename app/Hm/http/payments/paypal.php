@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 list($action, $user_id, $h_id) = preg_split('/\\|/', $frm['custom']);
@@ -52,8 +54,7 @@ if ($action == 'pay_withdraw') {
     }
 
     $admin_url = env('ADMIN_URL');
-    header("Location: {$admin_url}?a=pay_withdraw&say=yes");
-    exit();
+    throw new RedirectException("/{$admin_url}?a=pay_withdraw&say=yes");
 }
 
 if (function_exists('curl_init')) {
@@ -80,10 +81,9 @@ if (function_exists('curl_init')) {
         $account = $frm['payer_email'];
         if ($action == 'checkpayment') {
             add_deposit(6, $user_id, $amount, $batch, $account, $h_id, $compound);
-            header('Location: /?a=return_egold&process=yes');
-            exit();
+            throw new RedirectException('/?a=return_egold&process=yes');
         }
     }
 }
 
-header('Location: /?a=return_egold&process=no');
+throw new RedirectException('/?a=return_egold&process=no');

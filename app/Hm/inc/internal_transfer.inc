@@ -9,16 +9,19 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+use App\Exceptions\EmptyException;
+
 if ($frm['complete']) {
     $smarty->assign('fatal', 'completed');
     $smarty->display('internal_transfer.tpl');
-    exit();
+    throw new EmptyException();
 }
 
   if (!$settings['internal_transfer_enabled']) {
       $smarty->assign('fatal', 'forbidden');
       $smarty->display('internal_transfer.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if (0 < $settings['forbid_withdraw_before_deposit']) {
@@ -107,7 +110,7 @@ if ($frm['complete']) {
       if ($amount <= 0) {
           $smarty->assign('say', 'too_small_amount');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($settings['hold_only_first_days'] == 1) {
@@ -134,13 +137,13 @@ if ($frm['complete']) {
       if ($exchange_systems[$ec]['actual_balance'] < $amount) {
           $smarty->assign('say', 'too_big_amount');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
           $smarty->assign('say', 'on_hold');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $recipient = quote($frm['account']);
@@ -150,7 +153,7 @@ if ($frm['complete']) {
       if (!$user) {
           $smarty->assign('say', 'user_not_found');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $smarty->assign('user', $user);
@@ -160,7 +163,7 @@ if ($frm['complete']) {
       $smarty->assign('comment', $frm['comment']);
       $smarty->assign('preview', 1);
       $smarty->display('internal_transfer.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if ($frm['action'] == 'make_transaction') {
@@ -168,7 +171,7 @@ if ($frm['complete']) {
           if ($frm['transaction_code'] != $userinfo['transaction_code']) {
               $smarty->assign('fatal', 'invalid_transaction_code');
               $smarty->display('internal_transfer.tpl');
-              exit();
+              throw new EmptyException();
           }
       }
 
@@ -177,7 +180,7 @@ if ($frm['complete']) {
       if ($amount <= 0) {
           $smarty->assign('say', 'too_small_amount');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($settings['hold_only_first_days'] == 1) {
@@ -204,13 +207,13 @@ if ($frm['complete']) {
       if ($exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
           $smarty->assign('say', 'on_hold');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       if ($exchange_systems[$ec]['actual_balance'] < $amount) {
           $smarty->assign('say', 'too_big_amount');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $recipient = quote($frm['account']);
@@ -220,7 +223,7 @@ if ($frm['complete']) {
       if (!$user) {
           $smarty->assign('say', 'user_not_found');
           $smarty->display('internal_transfer.tpl');
-          exit();
+          throw new EmptyException();
       }
 
       $q = 'insert into hm2_history set
@@ -243,8 +246,7 @@ if ($frm['complete']) {
             ec = '.$ec.'
          ');
       db_query($q);
-      header('Location: ?a=internal_transfer&complete=1');
-      exit();
+      throw new RedirectException('/?a=internal_transfer&complete=1');
   }
 
   $smarty->display('internal_transfer.tpl');

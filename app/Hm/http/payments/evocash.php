@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 $mymd5 = $settings['md5altphrase_evocash'];
@@ -52,7 +54,7 @@ if ($frm['a'] == 'pay_withdraw') {
     }
 
     echo 1;
-    exit();
+    throw new EmptyException();
 }
 
 $hash = strtoupper(md5($frm['payingaccountid'].':'.$frm['receivingaccountid'].':'.$frm['payingtransactionid'].':'.$frm['receivingtransactionid'].':'.$frm['amount'].':'.strtoupper(md5($settings['md5altphrase_evocash'])).':'.$frm['timestampgmt']));

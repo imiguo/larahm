@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
 if ($frm['action'] == 'preview') {
     $ab = get_user_balance($userinfo['id']);
     $amount = sprintf('%0.2f', $frm['amount']);
@@ -19,14 +21,12 @@ if ($frm['action'] == 'preview') {
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         if ($row['cnt'] < 1) {
-            header('Location: ?a=withdraw&say=no_deposits');
-            exit();
+            throw new RedirectException('/?a=withdraw&say=no_deposits');
         }
     }
 
     if ($amount <= 0) {
-        header('Location: ?a=withdraw&say=zero');
-        exit();
+        throw new RedirectException('/?a=withdraw&say=zero');
     }
 
     $on_hold = 0;
@@ -39,7 +39,7 @@ if ($frm['action'] == 'preview') {
             array_push($deps, $row[id]);
         }
 
-        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
+        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 	deposit_id in (').join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));';
@@ -59,7 +59,7 @@ if ($frm['action'] == 'preview') {
     $deps = [];
     $deps[0] = 0;
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
+        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 		deposit_id = '.$row[id].' and date > now() - interval '.$row[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -69,7 +69,7 @@ if ($frm['action'] == 'preview') {
         }
     }
 
-    $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec);
+    $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec);
     $sth = db_query($q);
     $ab['total'] = 0;
     while ($row = mysql_fetch_array($sth)) {
@@ -78,17 +78,15 @@ if ($frm['action'] == 'preview') {
 
     if ($ab['total'] < $amount) {
         if ($amount <= $ab['total'] + $on_hold) {
-            header('Location: ?a=withdraw&say=on_hold');
+            throw new RedirectException('/?a=withdraw&say=on_hold');
         } else {
-            header('Location: ?a=withdraw&say=not_enought');
+            throw new RedirectException('/?a=withdraw&say=not_enought');
         }
 
-        exit();
     }
 
     if ($amount < $settings['min_withdrawal_amount']) {
-        header('Location: ?a=withdraw&say=less_min');
-        exit();
+        throw new RedirectException('/?a=withdraw&say=less_min');
     }
 
     if (0 < $settings[max_daily_withdraw]) {
@@ -100,8 +98,7 @@ if ($frm['action'] == 'preview') {
         }
 
         if ($settings[max_daily_withdraw] < $dw + $amount) {
-            header('Location: ?a=withdraw&say=daily_limit');
-            exit();
+            throw new RedirectException('/?a=withdraw&say=daily_limit');
         }
     }
 
@@ -165,8 +162,7 @@ if ($frm['action'] == 'preview') {
 } else {
     if ($frm['action'] == 'withdraw') {
         if (($settings['use_transaction_code'] == 1 and $frm['transaction_code'] != $userinfo['transaction_code'])) {
-            header('Location: ?a=withdraw&say=invalid_transaction_code');
-            exit();
+            throw new RedirectException('/?a=withdraw&say=invalid_transaction_code');
         }
 
         $ab = get_user_balance($userinfo['id']);
@@ -174,8 +170,7 @@ if ($frm['action'] == 'preview') {
         $description = quote($frm['comment']);
         $ec = sprintf('%d', $frm['ec']);
         if ($amount <= 0) {
-            header('Location: ?a=withdraw&say=zero');
-            exit();
+            throw new RedirectException('/?a=withdraw&say=zero');
         }
 
         if (0 < $settings['forbid_withdraw_before_deposit']) {
@@ -183,8 +178,7 @@ if ($frm['action'] == 'preview') {
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             if ($row['cnt'] < 1) {
-                header('Location: ?a=withdraw&say=no_deposits');
-                exit();
+                throw new RedirectException('/?a=withdraw&say=no_deposits');
             }
         }
 
@@ -198,7 +192,7 @@ if ($frm['action'] == 'preview') {
                 array_push($deps, $row[id]);
             }
 
-            $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
+            $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 	deposit_id in (').join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));';
@@ -218,7 +212,7 @@ if ($frm['action'] == 'preview') {
         $deps = [];
         $deps[0] = 0;
         while ($row = mysql_fetch_array($sth)) {
-            $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
+            $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 		deposit_id = '.$row[id].' and date > now() - interval '.$row[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -228,7 +222,7 @@ if ($frm['action'] == 'preview') {
             }
         }
 
-        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec);
+        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec);
         $sth = db_query($q);
         $ab['total'] = 0;
         while ($row = mysql_fetch_array($sth)) {
@@ -237,12 +231,11 @@ if ($frm['action'] == 'preview') {
 
         if ($ab['total'] < $amount) {
             if ($amount <= $ab['total'] + $on_hold) {
-                header('Location: ?a=withdraw&say=on_hold');
+                throw new RedirectException('/?a=withdraw&say=on_hold');
             } else {
-                header('Location: ?a=withdraw&say=not_enought');
+                throw new RedirectException('/?a=withdraw&say=not_enought');
             }
 
-            exit();
         }
 
         if (0 < $settings[max_daily_withdraw]) {
@@ -254,19 +247,17 @@ if ($frm['action'] == 'preview') {
             }
 
             if ($settings[max_daily_withdraw] < $dw + $amount) {
-                header('Location: ?a=withdraw&say=daily_limit');
-                exit();
+                throw new RedirectException('/?a=withdraw&say=daily_limit');
             }
         }
 
         if ($amount <= $ab['total']) {
             if ($amount < $settings['min_withdrawal_amount']) {
-                header('Location: ?a=withdraw&say=less_min');
-                exit();
+                throw new RedirectException('/?a=withdraw&say=less_min');
             }
 
             $q = 'insert into hm2_history set
-  	user_id = '.$userinfo['id'].(''.',
+  	user_id = '.$userinfo['id'].(',
   	amount = -'.$amount.',
   	actual_amount = -'.$amount.',
   	type=\'withdraw_pending\',
@@ -340,37 +331,34 @@ if ($frm['action'] == 'preview') {
                                 db_query($q);
                                 $d_account = [$userinfo['egold_account'], $userinfo['evocash_account'], $userinfo['intgold_account'], '', $userinfo['stormpay_account'], $userinfo['ebullion_account'], $userinfo['paypal_account'], $userinfo['goldmoney_account'], $userinfo['eeecurrency_account'], $userinfo['pecunix_account']];
                                 $q = 'insert into hm2_history set
-  		user_id = '.$userinfo['id'].(''.',
+  		user_id = '.$userinfo['id'].(',
   		amount = -'.$amount.',
   		actual_amount = -'.$amount.',
   		type=\'withdrawal\',
   		date = now(),
   		ec = '.$ec.',
-  		description = \'Withdraw to account ').$d_account[$ec].(''.'. Batch is '.$batch.'\'');
+  		description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
                                 db_query($q);
                                 $info['batch'] = $batch;
                                 $info['account'] = $d_account[$ec];
                                 $info['currency'] = $exchange_systems[$ec]['name'];
                                 send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
                                 send_template_mail('withdraw_admin_notification', $settings['system_email'], $settings['system_email'], $info);
-                                header(''.'Location: ?a=withdraw&say=processed&batch='.$batch);
-                                exit();
+                                throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
                             }
                         }
                     }
                 }
             }
 
-            header('Location: ?a=withdraw&say=processed');
-            exit();
+            throw new RedirectException('/?a=withdraw&say=processed');
         } else {
             if ($amount <= $ab[total] + $on_hold) {
-                header('Location: ?a=withdraw&say=on_hold');
+                throw new RedirectException('/?a=withdraw&say=on_hold');
             } else {
-                header('Location: ?a=withdraw&say=not_enought');
+                throw new RedirectException('/?a=withdraw&say=not_enought');
             }
 
-            exit();
         }
     } else {
         $id = $userinfo['id'];

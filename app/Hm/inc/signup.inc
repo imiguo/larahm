@@ -9,14 +9,17 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+use App\Exceptions\EmptyException;
+
   if ($frm['say'] == 'confirm') {
       $smarty->display('after_registration_confirm.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if ($frm['say'] == 'done') {
       $smarty->display('after_registration.tpl');
-      exit();
+      throw new EmptyException();
   }
 
   if (($frm['action'] == 'signup' and $settings['deny_registration'] == 0)) {
@@ -254,7 +257,7 @@
               $info['name'] = $frm['fullname'];
               $info['ip'] = $frm_env['REMOTE_ADDR'];
               send_template_mail('confirm_registration', $frm['email'], $settings['opt_in_email'], $info);
-              header('Location: ?a=signup&say=confirm');
+              throw new RedirectException('/?a=signup&say=confirm');
           } else {
               $q = 'select * from hm2_users where id = \''.$ref_id.'\'';
               $sth = db_query($q);
@@ -274,10 +277,10 @@
               $info['name'] = $frm['fullname'];
               $info['ip'] = $frm_env['REMOTE_ADDR'];
               send_template_mail('registration', $frm['email'], $settings['opt_in_email'], $info);
-              header('Location: ?a=signup&say=done');
+              throw new RedirectException('/?a=signup&say=done');
           }
 
-          exit();
+          throw new EmptyException();
       }
   }
 

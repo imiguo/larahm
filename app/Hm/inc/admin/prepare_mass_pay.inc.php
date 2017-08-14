@@ -9,9 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 if (!is_array($frm['pend'])) {
     echo 'Please select withdraw requests first';
-    exit();
+    throw new EmptyException();
 } else {
     $ids = implode(', ', array_keys($frm['pend']));
     $sum = 0;

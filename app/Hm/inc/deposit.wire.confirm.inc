@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\RedirectException;
+
 $ok = 1;
   $amount = sprintf('%0.2f', $frm['amount']);
   $h_id = sprintf('%d', $frm['h_id']);
@@ -155,7 +157,7 @@ $ok = 1;
       $admin_row = mysql_fetch_array($sth);
       send_template_mail('wire_admin_notification', $admin_row['email'], $settings['opt_in_email'], $info);
       send_template_mail('wire_user_notification', $userinfo['email'], $settings['opt_in_email'], $info);
-      header('Location: ?a=deposit&say=deposit_wire_saved');
+      throw new RedirectException('/?a=deposit&say=deposit_wire_saved');
   }
 
   $compound = sprintf('%d', $frm['compound']);

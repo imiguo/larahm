@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 if ($frm['a'] == 'pay_withdraw') {
@@ -65,7 +67,7 @@ if ($frm['a'] == 'pay_withdraw') {
     }
 
     echo 1;
-    exit();
+    throw new EmptyException();
 }
 
 $gpg_path = escapeshellcmd($settings['gpg_path']);
@@ -83,7 +85,7 @@ $keyID = '';
 $fp = @popen(''.$gpg_command, 'r');
 if (!$fp) {
     echo 'GPG not found';
-    exit();
+    throw new EmptyException();
 }
 
 while (!feof($fp)) {

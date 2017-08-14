@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Exceptions\EmptyException;
+
 include app_path('Hm').'/lib/config.inc.php';
 
 $mymd5 = $settings['md5altphrase_goldmoney'];
@@ -52,12 +54,12 @@ if ($frm['a'] == 'pay_withdraw') {
     }
 
     echo 1;
-    exit();
+    throw new EmptyException();
 }
 
 if ($frm['OMI_MODE'] != 'LIVE') {
     echo '1';
-    exit();
+    throw new EmptyException();
 }
 
 $hash = strtoupper(md5($frm['OMI_MERCHANT_REF_NO'].'?'.$frm['OMI_MODE'].'?'.$frm['OMI_MERCHANT_HLD_NO'].'?'.$frm['OMI_PAYER_HLD_NO'].'?'.$frm['OMI_CURRENCY_CODE'].'?'.$frm['OMI_CURRENCY_AMT'].'?'.$frm['OMI_GOLDGRAM_AMT'].'?'.$frm['OMI_TXN_ID'].'?'.$frm['OMI_TXN_DATETIME'].'?'.$mymd5));
