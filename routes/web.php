@@ -26,12 +26,11 @@ Route::match(['get', 'post'], '/test', function () {
     return hanlder_app($app_file);
 });
 
-Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request) {
+Route::match(['get', 'post'], '/payments/{payment}', function ($payment) {
     $payments = [
         'payeer',
         'perfectmoney',
     ];
-    $payment = $request->inpput('payment');
     if (in_array($payment, $payments)) {
         $app_file = app_path('Hm').'/http/payments/'.$payment.'.php';
         return hanlder_app($app_file);
