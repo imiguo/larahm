@@ -372,36 +372,31 @@ if ($frm['a'] == 'mass') {
                 $ec = $row['ec'];
             }
 
-            if ($row['ec'] == 0) {
-                $ac = $row['egold_account'];
-            } else {
-                if ($row['ec'] == 1) {
+            switch ($row['ec']) {
+                case 0:
+                    $ac = $row['egold_account'];
+                    break;
+                case 1:
                     $ac = $row['evocash_account'];
-                } else {
-                    if ($row['ec'] == 2) {
-                        $ac = $row['intgold_account'];
-                    } else {
-                        if ($row['ec'] == 4) {
-                            $ac = $row['stormpay_account'];
-                        } else {
-                            if ($row['ec'] == 5) {
-                                $ac = $row['ebullion_account'];
-                            } else {
-                                if ($row['ec'] == 6) {
-                                    $ac = $row['paypal_account'];
-                                } else {
-                                    if ($row['ec'] == 7) {
-                                        $ac = $row['goldmoney_account'];
-                                    } else {
-                                        if ($row['ec'] == 8) {
-                                            $ac = $row['eeecurrency_account'];
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                    break;
+                case 2:
+                    $ac = $row['intgold_account'];
+                    break;
+                case 4:
+                    $ac = $row['stormpay_account'];
+                    break;
+                case 5:
+                    $ac = $row['ebullion_account'];
+                    break;
+                case 6:
+                    $ac = $row['paypal_account'];
+                    break;
+                case 7:
+                    $ac = $row['goldmoney_account'];
+                    break;
+                case 8:
+                    $ac = $row['eeecurrency_account'];
+                    break;
             }
 
             $amount = abs($row['amount']);
