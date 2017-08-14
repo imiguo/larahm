@@ -104,7 +104,6 @@ if ($userinfo['logged'] == 1) {
 
 if (((((($frm['a'] != 'show_validation_image' and !$userinfo['logged']) and extension_loaded('gd')) and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars']) and $frm['action'] != 'signup')) {
     $userinfo['validation_enabled'] = 1;
-    session_start();
     $validation_number = gen_confirm_code($settings['graph_max_chars'], 0);
     if ($settings['use_number_validation_number']) {
         $i = 0;
@@ -116,7 +115,6 @@ if (((((($frm['a'] != 'show_validation_image' and !$userinfo['logged']) and exte
     }
 
     $_SESSION['validation_number'] = $validation_number;
-    session_register('validation_number');
     $userinfo['session_name'] = session_name();
     $userinfo['session_id'] = session_id();
     $userinfo['rand'] = rand();

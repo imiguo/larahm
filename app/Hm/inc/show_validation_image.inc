@@ -9,7 +9,6 @@
  * with this source code in the file LICENSE.
  */
 
-session_start();
   $string = $_SESSION['validation_number'];
   $BGred = 155;
   $BGgreen = 155;

@@ -283,7 +283,6 @@ function do_login(&$userinfo)
     $sth = db_query($q);
     if ($row = mysql_fetch_array($sth)) {
         if (((extension_loaded('gd') and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars'])) {
-            session_start();
             if ($_SESSION['validation_number'] != $frm['validation_number']) {
                 throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
             }

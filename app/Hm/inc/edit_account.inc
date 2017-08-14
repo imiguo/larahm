@@ -88,7 +88,6 @@ if ($frm['action'] == 'edit_account') {
 
     if (sizeof($errors) == 0) {
         if ($settings['account_update_confirmation'] == 1) {
-            session_start();
             if ($frm['action2'] == 'confirm') {
                 if ($_SESSION['account_update_confirmation_code'] == $frm['account_update_confirmation_code']) {
                     if (is_array($_SESSION['fields'])) {

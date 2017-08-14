@@ -887,7 +887,6 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
         }
     }
 
-    session_start();
     if ($frm['action'] == 'send_bonuce') {
         $code = substr($_SESSION['code'], 23, -32);
         if ($code === md5($frm['code'])) {
@@ -1378,7 +1377,6 @@ if (($frm['a'] == 'addbonuse' and ($frm['action'] == 'addbonuse' or $frm['action
         }
     }
 
-    session_start();
     if ($frm['action'] == 'addbonuse') {
         $code = substr($_SESSION['code'], 23, -32);
         if ($code === md5($frm['code'])) {
