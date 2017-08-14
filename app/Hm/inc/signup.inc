@@ -304,9 +304,6 @@ use App\Exceptions\EmptyException;
       }
 
       session(['validation_number' => $validation_number]);
-      $userinfo[session_name] = session_name();
-      $userinfo[session_id] = session_id();
-      $userinfo[rand] = rand();
       $smarty->assign('userinfo', $userinfo);
   }
 
