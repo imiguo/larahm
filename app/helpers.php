@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\HmException;
+
 if (!function_exists('mysql_query')) {
     function mysql_query($query)
     {
@@ -81,5 +83,19 @@ if (!function_exists('tmpl_path')) {
     function tmpl_path()
     {
         return dirname(base_path()).'/templates/'.config('hm.theme').'/tmpl';
+    }
+}
+
+if (! function_exists('hanlder_app')) {
+    function hanlder_app($app_file)
+    {
+        ob_start();
+        try {
+            include $app_file;
+        } catch (HmException $e) {
+            $httpReturn = $e->resolveResponse();
+        }
+        $html = ob_get_clean();
+        return $httpReturn ?? $html;
     }
 }

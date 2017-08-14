@@ -11,39 +11,19 @@
 |
 */
 
-use App\Exceptions\HmException;
-
 Route::match(['get', 'post'], '/', function () {
-    ob_start();
-    try {
-        include app_path('Hm').'/http/index.php';
-    } catch (HmException $e) {
-        $httpReturn = $e->resolveResponse();
-    }
-    $html = ob_get_clean();
-    return $httpReturn ?? $html;
+    $app_file = app_path('Hm').'/http/index.php';
+    return hanlder_app($app_file);
 });
 
 Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), function () {
-    ob_start();
-    try {
-        include app_path('Hm').'/http/admin.php';
-    } catch (HmException $e) {
-        $httpReturn = $e->resolveResponse();
-    }
-    $html = ob_get_clean();
-    return $httpReturn ?? $html;
+    $app_file = app_path('Hm').'/http/admin.php';
+    return hanlder_app($app_file);
 });
 
 Route::match(['get', 'post'], '/test', function () {
-    ob_start();
-    try {
-        include app_path('Hm').'/http/test.php';
-    } catch (HmException $e) {
-        $httpReturn = $e->resolveResponse();
-    }
-    $html = ob_get_clean();
-    return $httpReturn ?? $html;
+    $app_file = app_path('Hm').'/http/test.php';
+    return hanlder_app($app_file);
 });
 
 Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request) {
@@ -53,14 +33,8 @@ Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request
     ];
     $payment = $request->inpput('payment');
     if (in_array($payment, $payments)) {
-        ob_start();
-        try {
-            include app_path('Hm').'/http/payments/'.$payment.'.php';
-        } catch (HmException $e) {
-            $httpReturn = $e->resolveResponse();
-        }
-        $html = ob_get_clean();
-        return $httpReturn ?? $html;
+        $app_file = app_path('Hm').'/http/payments/'.$payment.'.php';
+        return hanlder_app($app_file);
     } else {
         abort(404);
     }
