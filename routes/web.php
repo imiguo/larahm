@@ -23,10 +23,6 @@ Route::match(['get', 'post'], '/test', function () {
     return include app_path('Hm').'/http/test.php';
 });
 
-Route::match(['get', 'post'], '/wap', function () {
-    return include app_path('Hm').'/http/wap.php';
-});
-
 Route::match(['get', 'post'], '/payments/[:payment]', function (Request $request) {
     $payments = [
         'payeer',
