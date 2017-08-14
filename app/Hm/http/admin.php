@@ -883,7 +883,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
     }
 
     if ($frm['action'] == 'send_bonuce') {
-        $code = substr($_SESSION['code'], 23, -32);
+        $code = substr(session('code'), 23, -32);
         if ($code === md5($frm['code'])) {
             $sth = db_query($q);
             $flag = 0;
@@ -957,7 +957,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
                 throw new RedirectException('/?a=send_bonuce&say=notsend');
             }
 
-            $_SESSION['code'] = '';
+            session(['code' => '']);
             throw new EmptyException();
         } else {
             throw new RedirectException('/?a=send_bonuce&say=invalid_code');
@@ -974,7 +974,7 @@ if (($frm['a'] == 'send_bonuce' and ($frm['action'] == 'send_bonuce' or $frm['ac
         send_mail($conf_email, 'Bonus Confirmation Code', 'Code is: '.$code, 'From: '.$settings['system_email'].'
 Reply-To: '.$settings['system_email']);
         $code = get_rand_md5(23).md5($code).get_rand_md5(32);
-        $_SESSION['code'] = $code;
+        session(['code' => $code]);
     }
 }
 
@@ -1373,7 +1373,7 @@ if (($frm['a'] == 'addbonuse' and ($frm['action'] == 'addbonuse' or $frm['action
     }
 
     if ($frm['action'] == 'addbonuse') {
-        $code = substr($_SESSION['code'], 23, -32);
+        $code = substr(session('code'), 23, -32);
         if ($code === md5($frm['code'])) {
             $id = sprintf('%d', $frm['id']);
             $amount = sprintf('%f', $frm['amount']);
@@ -1461,7 +1461,7 @@ if (($frm['a'] == 'addbonuse' and ($frm['action'] == 'addbonuse' or $frm['action
         send_mail($conf_email, 'Bonus Confirmation Code', 'Code is: '.$code, 'From: '.$settings['system_email'].'
 Reply-To: '.$settings['system_email']);
         $code = get_rand_md5(23).md5($code).get_rand_md5(32);
-        $_SESSION['code'] = $code;
+        session(['code' => $code]);
     }
 }
 

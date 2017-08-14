@@ -89,9 +89,9 @@ if ($frm['action'] == 'edit_account') {
     if (sizeof($errors) == 0) {
         if ($settings['account_update_confirmation'] == 1) {
             if ($frm['action2'] == 'confirm') {
-                if ($_SESSION['account_update_confirmation_code'] == $frm['account_update_confirmation_code']) {
-                    if (is_array($_SESSION['fields'])) {
-                        $frm = array_merge($frm, $_SESSION['fields']);
+                if (session('account_update_confirmation_code') == $frm['account_update_confirmation_code']) {
+                    if (is_array(session('fields'))) {
+                        $frm = array_merge($frm, session('fields'));
                     } else {
                         throw new RedirectException('/?a=edit_account');
                     }
@@ -100,8 +100,8 @@ if ($frm['action'] == 'edit_account') {
                 }
             } else {
                 $code = get_rand_md5(50);
-                $_SESSION['account_update_confirmation_code'] = $code;
-                $_SESSION['fields'] = $frm;
+                session(['account_update_confirmation_code' => $code]);
+                session(['fields' => $frm]);
                 $info = [];
                 $info['confirmation_code'] = $code;
                 $info['username'] = $userinfo['username'];

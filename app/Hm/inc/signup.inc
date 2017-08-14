@@ -25,7 +25,7 @@ use App\Exceptions\EmptyException;
   if (($frm['action'] == 'signup' and $settings['deny_registration'] == 0)) {
       $errors = [];
       if (((extension_loaded('gd') and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars'])) {
-          if ($_SESSION['validation_number'] != $frm['validation_number']) {
+          if (session('validation_number') != $frm['validation_number']) {
               array_push($errors, 'turing_image');
           }
       }
@@ -303,7 +303,7 @@ use App\Exceptions\EmptyException;
           }
       }
 
-      $_SESSION['validation_number'] = $validation_number;
+      session(['validation_number' => $validation_number]);
       $userinfo[session_name] = session_name();
       $userinfo[session_id] = session_id();
       $userinfo[rand] = rand();

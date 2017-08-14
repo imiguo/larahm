@@ -114,7 +114,8 @@ if (((((($frm['a'] != 'show_validation_image' and !$userinfo['logged']) and exte
         }
     }
 
-    $_SESSION['validation_number'] = $validation_number;
+    session(['validation_number' => $validation_number]);
+
     $userinfo['session_name'] = session_name();
     $userinfo['session_id'] = session_id();
     $userinfo['rand'] = rand();
