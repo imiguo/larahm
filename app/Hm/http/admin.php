@@ -10,7 +10,6 @@
  */
 
 use Illuminate\Support\Facades\Auth;
-
 $frm['a'] = '';
 
 include app_path('Hm').'/lib/config.inc.php';

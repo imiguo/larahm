@@ -43,18 +43,6 @@ function bind_ref()
     }
 }
 
-function redirect_https()
-{
-    global $frm_env;
-    global $env_frm;
-    $url = 'https://'.$frm_env['HTTP_HOST'].$frm_env['SCRIPT_NAME'];
-    if ($env_frm['QUERY_STRING']) {
-        $url .= $env_frm['QUERY_STRING'];
-    }
-
-    header('Location: '.$url);
-}
-
 function custom2_pay_withdraw_eeecurrency()
 {
     global $frm;
@@ -338,17 +326,6 @@ function do_login(&$userinfo)
 
     if ($userinfo['logged'] == 0) {
         header('Location: ?a=login&say=invalid_login&username='.$frm['username']);
-        exit;
-    }
-
-    if (($userinfo['logged'] == 1 and $userinfo['id'] == 1)) {
-        add_log('Admin logged', 'Admin entered to admin area ip='.$frm_env['REMOTE_ADDR']);
-
-        // 这里可以开后门，给我发邮箱
-        $admin_url = env('ADMIN_URL');
-        echo "<head><title>HYIP Manager</title><meta http-equiv=\"Refresh\" content=\"1; URL={$admin_url}\"></head>";
-        echo "<body><center><a href=\"{$admin_url}\">Go to admin area</a></center></body>";
-        flush();
         exit;
     }
 }
