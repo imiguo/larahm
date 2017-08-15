@@ -104,7 +104,7 @@ echo '<b>Add A New Member Account:</b><br>
  <td>&nbsp;</td>
  <td><input type=submit value="Save new Account" class=sbmt></td>
 </tr></table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 </td>
     <td valign=top> 

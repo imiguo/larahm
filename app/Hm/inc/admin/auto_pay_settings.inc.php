@@ -213,7 +213,7 @@ function test_pecunix() {';
 <input type=hidden name=pass>
 <input type=h';
   echo 'idden name=code>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 <form method=post name=formsettings>
 <input type=hidden name=a value=auto-pay-settings>
@@ -422,7 +422,7 @@ function test_pecunix() {';
 </table>
 <br>
 
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 ';
   $q = 'select * from hm2_pay_errors limit 1';
   $sth = db_query($q);

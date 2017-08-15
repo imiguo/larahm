@@ -64,7 +64,7 @@ function en_dis() {
 </tr>
 </table>
 
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   echo '<s';
   echo 'cript language=javascript>
 en_dis();

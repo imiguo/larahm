@@ -282,7 +282,7 @@ function checkref(a) {
   echo '</table><br><br>
 
 <input type=submit value="Change" class=sbmt>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <br><br>';
   echo start_info_table('100%');
   echo 'Change the referral program rates here.<br>

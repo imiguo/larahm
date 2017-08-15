@@ -53,7 +53,7 @@ E-mail:<br>
   echo $acsent_settings['email'];
   echo '" class=inpts size=50><br>
 <input type=submit value="Set" class=sbmt>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <hr>
   <br><br><br>';
   $dirs = [];
@@ -79,6 +79,6 @@ Please upload the .htaccess file to the following folders:<br>';
 
       echo 'You can find the .htaccess files in the latest archive with the hyip manager script.<br>';
   }
-  echo '</form>
+  echo '<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <hr>
 <br><br>';

@@ -225,7 +225,7 @@ You cannot release deposits!';
       echo '<input type=submit value="Save Changes" class=sbmt>';
   }
 
-  echo '</form>
+  echo '<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <br>
 ';
   echo start_info_table('100%');

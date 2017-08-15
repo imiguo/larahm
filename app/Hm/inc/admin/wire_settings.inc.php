@@ -50,7 +50,7 @@ Wire details:<br>
 <br><br>
 
 <input type=submit value="Save" class=sbmt>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <br><br>';
   echo start_info_table('100%');
   echo 'This screen helps you to accept Wire Transfers.<br>

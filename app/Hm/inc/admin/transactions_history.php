@@ -300,7 +300,7 @@ function func5() {
 	&nbsp; <input type=button value="Download CSV" class=sbmt onClick="func5();">
  </td>
 </tr></table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 <br><br>
 <form method=post target=_blank name=massform>
@@ -555,7 +555,7 @@ function func4() {
 </center><br>';
   }
 
-  echo '</form>
+  echo '<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <center>';
   if (1 < $colpages) {
       for ($i = 1; $i <= $colpages; ++$i) {

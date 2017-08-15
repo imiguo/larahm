@@ -872,4 +872,4 @@ InitCalendar(CurDate.getMonth()+1, CurDate.getFullYear());
   echo 'cript>
 CalculatePercent();
 </script>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';

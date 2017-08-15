@@ -207,5 +207,5 @@ If you omit Full Text than the system will show Small Text on all the news page.
   echo !$edit_row ? 'Add' : 'Edit';
   echo '" class=sbmt></td>
 </tr></table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 ';

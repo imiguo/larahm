@@ -92,7 +92,7 @@ function reverce(flag)
 		<option value=\'blocked\' ';
   echo $qstatus == 'blocked' ? 'selected' : '';
   echo '>Blocked
-	</select> <input type=submit value="Go" class=sbmt></form></td>
+	</select> <input type=submit value="Go" class=sbmt><input type="hidden" name="_token" value="'.csrf_token().'"></form></td>
 </tr>
 <tr>
  <td colspan=2>
@@ -104,7 +104,7 @@ function reverce(flag)
 	<input type=text name=q value=\'';
   echo quote($frm['q']);
   echo '\' class=inpts size=30> <input type=submit value="Search" class=sbmt>
-	</form>
+	<input type="hidden" name="_token" value="'.csrf_token().'"></form>
  </td>
 </table>
 
@@ -257,7 +257,7 @@ function reverce(flag)
   }
 
   echo '<input type=submit value="Modify" class=sbmt> &nbsp; <input type=button value="Add a new member" class=sbmt onClick="document.location=\'?a=addmember\';">
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 <br>';
   echo start_info_table('100%');

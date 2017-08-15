@@ -107,7 +107,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br>
 <br><input type=submit value="Go to e-gold.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
     } else {
         if ($trans['ec'] == 1) {
             echo 'Sending <b>$';
@@ -150,7 +150,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br>
 <br><input type=submit value="Go to evocash.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
         } else {
             if ($trans['ec'] == 2) {
                 echo 'Sending <b>$';
@@ -194,7 +194,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br>
 <br><input type=submit value="Go to intgold.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
             } else {
                 if ($trans['ec'] == 4) {
                     echo 'Sending <b>$';
@@ -238,7 +238,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br>
 <br><input type=submit value="Go to stormpay.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                 } else {
                     if ($trans['ec'] == 5) {
                         echo 'Sending <b>$';
@@ -288,7 +288,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
                         echo '">
 <br><input type=submit value="Go to e-Bullion.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                     } else {
                         if ($trans['ec'] == 6) {
                             echo 'Sending <b>$';
@@ -327,7 +327,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
   <input type=hidden name=currency_code value=USD>
 <br><input type=submit value="Go to paypal.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                         } else {
                             if ($trans['ec'] == 7) {
                                 echo 'Sending <b>$';
@@ -369,7 +369,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <input type="hidden" name="OMI_FAIL_URL_METHOD" value="post">
 <br><input type=submit value="Go to goldmoney.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                             } else {
                                 if ($trans['ec'] == 8) {
                                     echo 'Sending <b>$';
@@ -413,7 +413,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br>
 <br><input type=submit value="Go to eeeCurrency.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                                 } else {
                                     if ($trans['ec'] == 9) {
                                         echo 'Sending <b>$';
@@ -458,7 +458,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br>
 <br><input type=submit value="Go to Pecunix.com" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 ';
                                     } else {
                                         if ($trans['ec'] == 999) {
@@ -491,7 +491,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
   <br><input type=submit value="Confirm transaction" class=sbmt> &nbsp;
   <input type=button class=sbmt value="Cancel" onclick="window.close();">
 
-  </form>
+  <input type="hidden" name="_token" value="'.csrf_token().'"></form>
   ';
                                             }
                                         } else {
@@ -529,7 +529,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
                                                 echo 'Withdrawal has been processed.<br><br>
 <form>
 <input type=button class=sbmt value="Close" onclick="window.close();">
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                                             } else {
                                                 echo 'You should send <b>$';
                                                 echo $to_withdraw;
@@ -546,7 +546,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
 <br><input type=submit value="Confirm transaction" class=sbmt> &nbsp;
 <input type=button class=sbmt value="Cancel" onclick="window.close();">
 
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
                                             }
                                         }
                                     }

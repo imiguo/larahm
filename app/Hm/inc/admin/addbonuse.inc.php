@@ -208,7 +208,7 @@ E-mail: <input type=text name=conf_email value="admin" class=inpts size=10>@';
  <td>&nbsp;</td>
  <td><input type=submit value="Send bonus" class=sbmt></td>
 </tr></table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 </td>
 <td valign=top align=center>

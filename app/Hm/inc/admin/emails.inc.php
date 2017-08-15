@@ -59,7 +59,7 @@ You cannot change change e-mail templates! ';
  <td colspan=2><input type=submit value="Update" class=sbmt></td>
 </tr>
 </table>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   if ($found) {
       if ($settings['demomode'] != 1) {
           if ($frm['action'] == 'save') {
@@ -108,7 +108,7 @@ You cannot change change e-mail templates! ';
 <tr>
  <td><input type=submit value="Save Changes" class=sbmt></td>
 </tr></table>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   }
 
   echo '

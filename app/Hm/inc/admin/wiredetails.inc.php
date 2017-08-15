@@ -58,10 +58,10 @@ echo '<b>Wire Transfer Details.</b><br>
 
   if (($frm['action'] == 'movetodeposit' or $frm['action'] == 'movetoaccount')) {
       echo '<tr>
-      <td colspan=2> 
+      <td colspan=2>
         ';
       echo start_info_table('70%');
-      echo '        You can change the deposit amount here. 
+      echo '        You can change the deposit amount here.
         ';
       echo end_info_table();
       echo '      </td>
@@ -191,7 +191,7 @@ echo '<b>Wire Transfer Details.</b><br>
       }
   }
 
-  echo '</form>
+  echo '<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 <br>';
   echo start_info_table('100%');
@@ -202,7 +202,7 @@ echo '<b>Wire Transfer Details.</b><br>
           echo 'You can change the amount before moving this transfer to the account. ';
       } else {
           echo 'This screen helps you to manage Wire Transfers.<br>
-Move to deposit - if you have really received this Wire Transfer, you can move 
+Move to deposit - if you have really received this Wire Transfer, you can move
 this Wire to \'processed\', and create a deposit for this Wire Transfer.<br>
 Move to \'problem\' - move this Wire Transfer to the \'problem\' Wires.<br>
 Delete - delete this Wire Transfer if you have not received it. ';

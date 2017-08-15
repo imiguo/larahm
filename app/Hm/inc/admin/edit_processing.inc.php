@@ -95,7 +95,7 @@ function c1()
 
   echo '</table>
 <input type="submit" value="Update Processing" class=sbmt>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   echo '<s';
   echo 'cript>
 c1();

@@ -62,7 +62,7 @@ $processings = [];
   }
 
   echo '<input type="button" value="Add Processing" class=sbmt onclick="document.location=\'?a=add_processing\'">
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <br>';
   echo start_info_table('100%');
   echo 'You can add or edit any payment processing in this section by clicking the "edit" or "add new" link.

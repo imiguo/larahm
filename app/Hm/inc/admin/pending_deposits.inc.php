@@ -29,7 +29,7 @@ echo '<form method=post name=nform>
 </td>
 </tr>
 </table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <br>
 <table cellspacing=1 cellpadding=2 border=0 width=100%>
 <tr>

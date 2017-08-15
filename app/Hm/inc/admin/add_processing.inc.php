@@ -73,7 +73,7 @@ function c1()
 </tr>
 </table>
 <input type="submit" value="Add Processing" class=sbmt>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   echo '<s';
   echo 'cript>
 c1();

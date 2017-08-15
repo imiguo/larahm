@@ -404,7 +404,7 @@ function checkb(i) {
  <td><br>&nbsp;</td>
  <td><input type=submit value="Change settings" class=sbmt></td>
 </tr></table>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   echo '<s';
   echo 'cript language=javascript>
 checkb(1);

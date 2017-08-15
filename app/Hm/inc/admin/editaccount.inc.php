@@ -230,7 +230,7 @@
   echo ' <td>&nbsp;</td>
  <td><input type=submit value="Save changes" class=sbmt></td>
 </tr></table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 
 </td><td valign=top>';
   echo start_info_table('200');

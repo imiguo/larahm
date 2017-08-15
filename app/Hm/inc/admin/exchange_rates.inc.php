@@ -93,5 +93,5 @@ You cannot change the exchange rates!';
   echo end_info_table();
   echo '      </td>
     </tr></table>
-</form>
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>
 <br><br>';

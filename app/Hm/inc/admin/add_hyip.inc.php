@@ -321,7 +321,7 @@ checkd();checkd1();
 <input type=hidden name=a value=\'add_hyip\'>
 <input type=hidden name=action value="add_hyip">
 <input type=submit value="Add Package" class=sbmt size=15>
-</form>';
+<input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   echo '<s';
   echo 'cript language=javascript>
 function checkrates(a, flag) {
