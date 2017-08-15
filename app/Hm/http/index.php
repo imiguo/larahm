@@ -12,6 +12,7 @@
 use App\Exceptions\EmptyException;
 use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 require app_path('Hm').'/lib/config.inc.php';
 require app_path('Hm').'/lib/index.inc.php';
@@ -47,7 +48,7 @@ if ($settings['crontab_stats'] == 1) {
 
 show_info_box();
 
-$ref = isset($frm_cookie['Referer']) ? quote($frm_cookie['Referer']) : '';
+$ref = Cookie::get('referer', '');
 if ($ref) {
     $q = 'select * from hm2_users where username = \''.$ref.'\'';
     $sth = db_query($q);

@@ -11,8 +11,9 @@
 
 use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
+use Illuminate\Support\Facades\Cookie;
 
-  if ($frm['say'] == 'confirm') {
+if ($frm['say'] == 'confirm') {
       $smarty->display('after_registration_confirm.tpl');
       throw new EmptyException();
   }
@@ -113,7 +114,7 @@ use App\Exceptions\EmptyException;
           array_push($errors, 'agree');
       }
 
-      $ref = quote($frm_cookie['Referer']);
+      $ref = Cookie::get('referer');
       $ref_id = 0;
       if ($settings['use_names_in_referral_links'] == 1) {
           $q = 'select id from hm2_users where REPLACE (username, \' \', \'_\') = \''.$ref.'\'';
@@ -169,7 +170,7 @@ use App\Exceptions\EmptyException;
           $zip = quote($frm['zip']);
           $country = quote($frm['country']);
           $transaction_code = quote($frm['transaction_code']);
-          $referer_url = quote($frm_cookie['CameFrom']);
+          $referer_url = Cookie::get('came_from');
           $confirm_string = gen_confirm_code(10);
           if ($settings['use_opt_in'] != 1) {
               $confirm_string = '';
@@ -284,7 +285,7 @@ use App\Exceptions\EmptyException;
   }
 
   include app_path('Hm').'/inc/countries.inc';
-  $ref = quote($frm_cookie['Referer']);
+  $ref = Cookie::get('referer');
   $q = 'select * from hm2_users where username = \''.$ref.'\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {

@@ -11,14 +11,13 @@
 
 use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 function bind_ref()
 {
     global $frm;
-    global $frm_cookie;
-    global $settings;
-    setcookie('Referer', $frm['ref'], time() + 630720000);
-    if ($frm_cookie['Referer'] == '') {
+    Cookie::queue('referer', $frm['ref'], 43200);
+    if (Cookie::get('referer') == '') {
         $ref = quote($frm['ref']);
         $q = 'select id from hm2_users where username = \''.$ref.'\'';
         $sth = db_query($q);

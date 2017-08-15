@@ -9,15 +9,15 @@
  * with this source code in the file LICENSE.
  */
 
+use Illuminate\Support\Facades\Cookie;
+
 ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 
 require 'function.inc.php';
 
 global $frm;
-global $frm_cookie;
 global $settings;
 global $frm_env;
-global $env_frm;
 global $exchange_systems;
 global $stats;
 
@@ -30,7 +30,6 @@ $get = $_GET;
 $post = $_POST;
 $frm = array_merge($get, $post);
 $frm_orig = $frm;
-$frm_cookie = $_COOKIE;
 $gpc = ini_get('magic_quotes_gpc');
 reset($frm);
 while (list($kk, $vv) = each($frm)) {
@@ -51,30 +50,13 @@ while (list($kk, $vv) = each($frm)) {
     $frm_orig[$kk] = $vv_orig;
 }
 
-reset($frm_cookie);
-while (list($kk, $vv) = each($frm_cookie)) {
-    if (is_array($vv)) {
-    } else {
-        if ($gpc == '1') {
-            $vv = str_replace('\\\'', '\'', $vv);
-            $vv = str_replace('\\"', '"', $vv);
-            $vv = str_replace('\\\\', '\\', $vv);
-        }
-
-        $vv = trim($vv);
-        $vv = strip_tags($vv);
-    }
-
-    $frm_cookie[$kk] = $vv;
-}
-
 $frm_env = array_merge($_ENV, $_SERVER);
 $frm_env['HTTP_HOST'] = preg_replace('/^www\./', '', $frm_env['HTTP_HOST']);
 
 $referer = isset($frm_env['HTTP_REFERER']) ? $frm_env['HTTP_REFERER'] : null;
 $host = $frm_env['HTTP_HOST'];
 if (!strpos($referer, '//'.$host)) {
-    setcookie('CameFrom', $referer, time() + 630720000);
+    Cookie::queue('came_from', $referer, 43200);
 }
 
 $transtype = [
