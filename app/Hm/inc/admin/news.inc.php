@@ -12,9 +12,9 @@
 if ($settings['demomode'] != 1) {
     if ($frm['action'] == 'add') {
         $title = quote($frm['title']);
-        $small_text = quote($frm_orig['small_text']);
+        $small_text = quote($frm['small_text']);
         $small_text = preg_replace('/\\r/', '', $small_text);
-        $full_text = quote($frm_orig['full_text']);
+        $full_text = quote($frm['full_text']);
         $full_text = preg_replace('/\\r/', '', $full_text);
         $q = 'insert into hm2_news set date=now(), title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\'';
         db_query($q);
@@ -23,9 +23,9 @@ if ($settings['demomode'] != 1) {
     if (($frm['action'] == 'edit' and $frm['save'] == 1)) {
         $id = intval($frm['id']);
         $title = quote($frm['title']);
-        $small_text = quote($frm_orig['small_text']);
+        $small_text = quote($frm['small_text']);
         $small_text = preg_replace('/\\r/', '', $small_text);
-        $full_text = quote($frm_orig['full_text']);
+        $full_text = quote($frm['full_text']);
         $full_text = preg_replace('/\\r/', '', $full_text);
         $q = 'update hm2_news set title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\' where id = '.$id;
         db_query($q);

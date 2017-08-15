@@ -76,7 +76,7 @@ $passphrase = decode_pass_for_mysql($settings['md5altphrase_ebullion']);
 $xmlfile = tempnam('', 'xml.cert.');
 $tmpfile = tempnam('', 'xml.tmp.');
 $fd = fopen(''.$tmpfile, 'w');
-fwrite($fd, $frm_orig['ATIP_VERIFICATION']);
+fwrite($fd, $frm['ATIP_VERIFICATION']);
 fclose($fd);
 $gpg_options = ' --yes --no-tty --no-secmem-warning --no-options --no-default-keyring --batch --homedir '.$atippath.' --keyring=pubring.gpg --secret-keyring=secring.gpg --armor --passphrase-fd 0';
 $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --output '.$xmlfile.' --decrypt '.$tmpfile.' 2>&1';

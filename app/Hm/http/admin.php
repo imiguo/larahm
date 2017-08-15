@@ -1709,7 +1709,7 @@ if ($frm['action'] == 'add_hyip') {
     $use_compound = sprintf('%d', $frm['use_compound']);
     $work_week = sprintf('%d', $frm['work_week']);
     $parent = sprintf('%d', $frm['parent']);
-    $desc = quote($frm_orig[plan_description]);
+    $desc = quote($frm[plan_description]);
     $withdraw_principal = sprintf('%d', $frm['withdraw_principal']);
     $withdraw_principal_percent = sprintf('%.02f', $frm['withdraw_principal_percent']);
     $withdraw_principal_duration = sprintf('%d', $frm['withdraw_principal_duration']);
@@ -1815,7 +1815,7 @@ if ($frm['action'] == 'edit_hyip') {
     $work_week = sprintf('%d', $frm['work_week']);
     $use_compound = sprintf('%d', $frm['use_compound']);
     $parent = sprintf('%d', $frm['parent']);
-    $desc = quote($frm_orig[plan_description]);
+    $desc = quote($frm[plan_description]);
     $withdraw_principal = sprintf('%d', $frm['withdraw_principal']);
     $withdraw_principal_percent = sprintf('%.02f', $frm['withdraw_principal_percent']);
     $withdraw_principal_duration = sprintf('%d', $frm['withdraw_principal_duration']);
@@ -1984,7 +1984,7 @@ if (($frm['a'] == 'add_processing' and $frm[action] == 'add_processing')) {
     if (!$settings['demomode']) {
         $status = ($frm['status'] ? 1 : 0);
         $name = quote($frm['name']);
-        $description = quote($frm_orig['description']);
+        $description = quote($frm['description']);
         $use = $frm['field'];
         $fields = [];
         if ($use) {
@@ -2030,7 +2030,7 @@ if (($frm['a'] == 'edit_processing' and $frm[action] == 'edit_processing')) {
         $pid = intval($frm['pid']);
         $status = ($frm['status'] ? 1 : 0);
         $name = quote($frm['name']);
-        $description = quote($frm_orig['description']);
+        $description = quote($frm['description']);
         $use = $frm['field'];
         $fields = [];
         if ($use) {

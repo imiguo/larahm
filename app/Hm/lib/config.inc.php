@@ -26,29 +26,7 @@ if (!extension_loaded('gd')) {
     dl($prefix.'gd.'.PHP_SHLIB_SUFFIX);
 }
 
-$get = $_GET;
-$post = $_POST;
-$frm = array_merge($get, $post);
-$frm_orig = $frm;
-$gpc = ini_get('magic_quotes_gpc');
-reset($frm);
-while (list($kk, $vv) = each($frm)) {
-    if (is_array($vv)) {
-    } else {
-        if ($gpc == '1') {
-            $vv = str_replace('\\\'', '\'', $vv);
-            $vv = str_replace('\\"', '"', $vv);
-            $vv = str_replace('\\\\', '\\', $vv);
-        }
-
-        $vv = trim($vv);
-        $vv_orig = $vv;
-        $vv = strip_tags($vv);
-    }
-
-    $frm[$kk] = $vv;
-    $frm_orig[$kk] = $vv_orig;
-}
+$frm = request()->toArray();
 
 $frm_env = array_merge($_ENV, $_SERVER);
 $frm_env['HTTP_HOST'] = preg_replace('/^www\./', '', $frm_env['HTTP_HOST']);
