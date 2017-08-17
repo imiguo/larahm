@@ -21,5 +21,5 @@ $activation_code = quote(app('data')->frm['code']);
       }
   }
 
-  $smarty->assign('activated', $code_found);
-  $smarty->display('activate.tpl');
+  view_assign('activated', $code_found);
+  view_execute('activate.tpl');

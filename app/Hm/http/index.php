@@ -53,11 +53,11 @@ if ($ref) {
     $q = 'select * from hm2_users where username = \''.$ref.'\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
-        $smarty->assign('referer', $row);
+        view_assign('referer', $row);
     }
 }
 
-$smarty->assign('settings', app('data')->settings);
+view_assign('settings', app('data')->settings);
 
 if (app('data')->frm['a'] == 'do_login') {
     do_login($userinfo);
@@ -125,9 +125,9 @@ if ((app('data')->frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
     throw new RedirectException('/?a=withdraw_history');
 }
 
-$smarty->assign('userinfo', $userinfo);
+view_assign('userinfo', $userinfo);
 
-$smarty->assign('frm', app('data')->frm);
+view_assign('frm', app('data')->frm);
 
 if (isset($userinfo['id']) && $id = $userinfo['id']) {
     $ab = get_user_balance($id);
@@ -139,8 +139,8 @@ if (isset($userinfo['id']) && $id = $userinfo['id']) {
         $ab_formated[$kk] = number_format(abs($vv), 2);
     }
 
-    $smarty->assign('currency_sign', '$');
-    $smarty->assign('ab_formated', $ab_formated);
+    view_assign('currency_sign', '$');
+    view_assign('ab_formated', $ab_formated);
 }
 
 if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
@@ -282,16 +282,16 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
             $file = app('data')->frm['page'];
             $file = basename($file);
             if (file_exists(tmpl_path().'/custom/'.$file.'.tpl')) {
-                $smarty->display('custom/'.$file.'.tpl');
+                view_execute('custom/'.$file.'.tpl');
             } else {
                 include app_path('Hm').'/inc/home.inc';
             }
         } else {
             if (app('data')->frm['a'] == 'invest_page') {
-                $smarty->assign('frm', app('data')->frm);
+                view_assign('frm', app('data')->frm);
                 include app_path('Hm').'/inc/invest_page.inc';
             } else {
-                $smarty->assign('frm', app('data')->frm);
+                view_assign('frm', app('data')->frm);
                 include app_path('Hm').'/inc/home.inc';
             }
         }

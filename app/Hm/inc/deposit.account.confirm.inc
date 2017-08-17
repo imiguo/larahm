@@ -61,11 +61,11 @@ $ok = 1;
   $type = mysql_fetch_array($sth);
   $delay = -1;
   if (!$type) {
-      $smarty->assign('wrong_plan', 1);
+      view_assign('wrong_plan', 1);
       $ok = 0;
   } else {
       $plan_name = $type['name'];
-      $smarty->assign('plan_name', $plan_name);
+      view_assign('plan_name', $plan_name);
       $delay += $type[delay];
   }
 
@@ -94,35 +94,35 @@ $ok = 1;
                   array_push($compound_percents, ['percent' => sprintf('%d', $cp)]);
               }
 
-              $smarty->assign('compound_percents', $compound_percents);
+              view_assign('compound_percents', $compound_percents);
           } else {
-              $smarty->assign('compound_min_percents', $type['compound_min_percent']);
-              $smarty->assign('compound_max_percents', $type['compound_max_percent']);
+              view_assign('compound_min_percents', $type['compound_min_percent']);
+              view_assign('compound_max_percents', $type['compound_max_percent']);
           }
       }
   }
 
-  $smarty->assign('use_compound', $use_compound);
+  view_assign('use_compound', $use_compound);
   $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   if ($row) {
       if ($row['col'] == 0) {
-          $smarty->assign('wrong_plan', 1);
+          view_assign('wrong_plan', 1);
           $ok = 0;
       }
 
       if ($amount < $row['min']) {
-          $smarty->assign('less_than_min', 1);
-          $smarty->assign('min_amount', number_format($row['min'], 2));
+          view_assign('less_than_min', 1);
+          view_assign('min_amount', number_format($row['min'], 2));
           $ok = 0;
       }
   } else {
-      $smarty->assign('wrong_plan', 1);
+      view_assign('wrong_plan', 1);
       $ok = 0;
   }
 
-  $smarty->assign('type', app('data')->frm['type']);
+  view_assign('type', app('data')->frm['type']);
   $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
@@ -145,9 +145,9 @@ $ok = 1;
   $ps = substr(app('data')->frm['type'], 8);
   if (app('data')->exchange_systems[$ps]['balance'] < $amount + $on_hold) {
       if ($amount <= app('data')->exchange_systems[$ps]['balance']) {
-          $smarty->assign('on_hold', 1);
+          view_assign('on_hold', 1);
       } else {
-          $smarty->assign('not_enough_funds', 1);
+          view_assign('not_enough_funds', 1);
       }
 
       $max_deposit = app('data')->exchange_systems[$ps]['balance'];
@@ -155,12 +155,12 @@ $ok = 1;
   }
 
   if ($max_deposit < $amount) {
-      $smarty->assign('max_deposit_less', 1);
-      $smarty->assign('max_deposit_format', number_format($max_deposit, 2));
+      view_assign('max_deposit_less', 1);
+      view_assign('max_deposit_format', number_format($max_deposit, 2));
       $ok = 0;
   }
 
-  $smarty->assign('ps', app('data')->exchange_systems[$ps]['name']);
+  view_assign('ps', app('data')->exchange_systems[$ps]['name']);
   if (($ok == 1 and app('data')->frm['action'] == 'confirm')) {
       $ec = $ps;
       $compound = sprintf('%.02f', app('data')->frm['compound']);
@@ -210,8 +210,8 @@ $ok = 1;
       throw new RedirectException('/?a=deposit&say=deposit_success');
   }
 
-  $smarty->assign('ok', $ok);
-  $smarty->assign('h_id', $h_id);
-  $smarty->assign('amount', number_format($amount, 2));
-  $smarty->assign('famount', $amount);
-  $smarty->display('deposit.account.confirm.tpl');
+  view_assign('ok', $ok);
+  view_assign('h_id', $h_id);
+  view_assign('amount', number_format($amount, 2));
+  view_assign('famount', $amount);
+  view_execute('deposit.account.confirm.tpl');

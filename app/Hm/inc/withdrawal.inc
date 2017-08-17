@@ -150,15 +150,15 @@ if (app('data')->frm['action'] == 'preview') {
         $account = $userinfo['pecunix_account'];
     }
 
-    $smarty->assign('preview', 1);
-    $smarty->assign('amount', $amount);
-    $smarty->assign('fee', $fee);
-    $smarty->assign('to_withdraw', $to_withdraw);
-    $smarty->assign('currency', app('data')->exchange_systems[$ec]['name']);
-    $smarty->assign('ec', $ec);
-    $smarty->assign('account', $account);
-    $smarty->assign('comment', app('data')->frm['comment']);
-    $smarty->display('withdrawal.tpl');
+    view_assign('preview', 1);
+    view_assign('amount', $amount);
+    view_assign('fee', $fee);
+    view_assign('to_withdraw', $to_withdraw);
+    view_assign('currency', app('data')->exchange_systems[$ec]['name']);
+    view_assign('ec', $ec);
+    view_assign('account', $account);
+    view_assign('comment', app('data')->frm['comment']);
+    view_execute('withdrawal.tpl');
 } else {
     if (app('data')->frm['action'] == 'withdraw') {
         if ((app('data')->settings['use_transaction_code'] == 1 and app('data')->frm['transaction_code'] != $userinfo['transaction_code'])) {
@@ -371,9 +371,9 @@ if (app('data')->frm['action'] == 'preview') {
             $ab_formated[$kk] = number_format($vv, 2);
         }
 
-        $smarty->assign('ab_formated', $ab_formated);
-        $smarty->assign('say', app('data')->frm['say']);
-        $smarty->assign('batch', app('data')->frm['batch']);
+        view_assign('ab_formated', $ab_formated);
+        view_assign('say', app('data')->frm['say']);
+        view_assign('batch', app('data')->frm['batch']);
         $format = (app('data')->settings['show_full_sum'] ? 5 : 2);
         $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
         $sth = db_query($q);
@@ -384,7 +384,7 @@ if (app('data')->frm['action'] == 'preview') {
 
             app('data')->exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], $format);
             if (100 < $row['ec']) {
-                $smarty->assign('other_processings', 1);
+                view_assign('other_processings', 1);
                 continue;
             }
         }
@@ -459,8 +459,8 @@ if (app('data')->frm['action'] == 'preview') {
             array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[am], 2)]);
         }
 
-        $smarty->assign('hold', $hold);
-        $smarty->assign('ps', $ps);
-        $smarty->display('withdrawal.tpl');
+        view_assign('hold', $hold);
+        view_assign('ps', $ps);
+        view_execute('withdrawal.tpl');
     }
 }

@@ -62,7 +62,7 @@ function compare($a, $b)
   $total['deposit'] = number_format($total['deposit'], 2);
   $total['earning'] = number_format($total['earning'], 2);
   $total['withdrawal'] = number_format($total['withdrawal'], 2);
-  $smarty->assign('total', $total);
+  view_assign('total', $total);
   usort($astats, compare);
   $page = app('data')->frm['page'];
   $onpage = 20;
@@ -77,7 +77,7 @@ function compare($a, $b)
 
   $from = ($page - 1) * $onpage;
   $astats = array_slice($astats, $from, $onpage);
-  $smarty->assign('stats', $astats);
+  view_assign('stats', $astats);
   $pages = [];
   for ($i = 1; $i <= $colpages; ++$i) {
       $apage = [];
@@ -86,15 +86,15 @@ function compare($a, $b)
       array_push($pages, $apage);
   }
 
-  $smarty->assign('pages', $pages);
-  $smarty->assign('colpages', $colpages);
-  $smarty->assign('current_page', $page);
+  view_assign('pages', $pages);
+  view_assign('colpages', $colpages);
+  view_assign('current_page', $page);
   if (1 < $page) {
-      $smarty->assign('prev_page', $page - 1);
+      view_assign('prev_page', $page - 1);
   }
 
   if ($page < $colpages) {
-      $smarty->assign('next_page', $page + 1);
+      view_assign('next_page', $page + 1);
   }
 
-  $smarty->display('members_stats.tpl');
+  view_execute('members_stats.tpl');

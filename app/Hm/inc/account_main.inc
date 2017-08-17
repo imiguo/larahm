@@ -16,7 +16,7 @@ $id = $userinfo['id'];
       $last_access = $row['last_login'];
   }
 
-  $smarty->assign('last_access', $last_access);
+  view_assign('last_access', $last_access);
   if (app('data')->settings[estimate_earnings_for_end_of_day] == 1) {
       $q = 'select * from hm2_deposits where user_id = '.$userinfo['id'];
       $sth = db_query($q);
@@ -63,7 +63,7 @@ $id = $userinfo['id'];
           }
       }
 
-      $smarty->assign('earned_est', number_format($est_earn, 2));
+      view_assign('earned_est', number_format($est_earn, 2));
   }
 
   $ab = get_user_balance($id);
@@ -75,8 +75,8 @@ $id = $userinfo['id'];
       $ab_formated[$kk] = number_format(abs($vv), 2);
   }
 
-  $smarty->assign('currency_sign', '$');
-  $smarty->assign('ab_formated', $ab_formated);
+  view_assign('currency_sign', '$');
+  view_assign('ab_formated', $ab_formated);
   $q = 'select count(*) as col, sum(amount) as actual_amount, ec from hm2_pending_deposits where user_id = '.$id.' and status != \'processed\' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
@@ -96,26 +96,26 @@ $id = $userinfo['id'];
       array_push($ps, array_merge(['id' => $id], $data));
   }
 
-  $smarty->assign('ps', $ps);
+  view_assign('ps', $ps);
   $id = $userinfo['id'];
   $q = 'select *, date_format(deposit_date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as dd from hm2_deposits where user_id = '.$id.' and status = \'on\' order by deposit_date desc limit 1');
   $sth = db_query($q);
   if ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('last_deposit', number_format($row['amount'], 2));
-      $smarty->assign('last_deposit_date', $row['dd']);
+      view_assign('last_deposit', number_format($row['amount'], 2));
+      view_assign('last_deposit_date', $row['dd']);
   }
 
   $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as dd from hm2_history where user_id = '.$id.' and type = \'withdrawal\' order by date desc limit 1');
   $sth = db_query($q);
   if ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('last_withdrawal', number_format(abs($row['actual_amount']), 2));
-      $smarty->assign('last_withdrawal_date', $row['dd']);
+      view_assign('last_withdrawal', number_format(abs($row['actual_amount']), 2));
+      view_assign('last_withdrawal_date', $row['dd']);
   }
 
   $q = 'select count(*) as col from hm2_wires where user_id = '.$id.' and status != \'processed\'';
   $sth = db_query($q);
   if ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('wires', $row['col']);
+      view_assign('wires', $row['col']);
   }
 
-  $smarty->display('account_main.tpl');
+  view_execute('account_main.tpl');

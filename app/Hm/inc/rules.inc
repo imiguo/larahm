@@ -9,5 +9,5 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('site_name', app('data')->settings['site_name']);
-  $smarty->display('rules.tpl');
+view_assign('site_name', app('data')->settings['site_name']);
+  view_execute('rules.tpl');

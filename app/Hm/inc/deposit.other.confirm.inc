@@ -18,7 +18,7 @@ $ok = 1;
   $accounting = get_user_balance($userinfo['id']);
   if ((app('data')->settings[use_add_funds] and $h_id == -1)) {
       if ($amount < 0.01) {
-          $smarty->assign('zero_amount', 1);
+          view_assign('zero_amount', 1);
           $ok = 0;
       }
 
@@ -28,10 +28,10 @@ $ok = 1;
       $sth = db_query($q);
       $type = mysql_fetch_array($sth);
       if (!$type) {
-          $smarty->assign('wrong_plan', 1);
+          view_assign('wrong_plan', 1);
       } else {
           $plan_name = $type['name'];
-          $smarty->assign('plan_name', $plan_name);
+          view_assign('plan_name', $plan_name);
       }
 
       $use_compound = 0;
@@ -55,31 +55,31 @@ $ok = 1;
                       array_push($compound_percents, ['percent' => sprintf('%d', $cp)]);
                   }
 
-                  $smarty->assign('compound_percents', $compound_percents);
+                  view_assign('compound_percents', $compound_percents);
               } else {
-                  $smarty->assign('compound_min_percents', $type['compound_min_percent']);
-                  $smarty->assign('compound_max_percents', $type['compound_max_percent']);
+                  view_assign('compound_min_percents', $type['compound_min_percent']);
+                  view_assign('compound_max_percents', $type['compound_max_percent']);
               }
           }
       }
 
-      $smarty->assign('use_compound', $use_compound);
+      view_assign('use_compound', $use_compound);
       $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row) {
           if ($row['col'] == 0) {
-              $smarty->assign('wrong_plan', 1);
+              view_assign('wrong_plan', 1);
               $ok = 0;
           }
 
           if ($amount < $row['min']) {
-              $smarty->assign('less_than_min', 1);
-              $smarty->assign('min_amount', number_format($row['min'], 2));
+              view_assign('less_than_min', 1);
+              view_assign('min_amount', number_format($row['min'], 2));
               $ok = 0;
           }
       } else {
-          $smarty->assign('wrong_plan', 1);
+          view_assign('wrong_plan', 1);
           $ok = 0;
       }
 
@@ -96,8 +96,8 @@ $ok = 1;
       }
 
       if (($max_deposit < $amount and 0 < $max_deposit)) {
-          $smarty->assign('max_deposit_less', 1);
-          $smarty->assign('max_deposit_format', number_format($max_deposit, 2));
+          view_assign('max_deposit_less', 1);
+          view_assign('max_deposit_format', number_format($max_deposit, 2));
           $ok = 0;
       }
   }
@@ -174,19 +174,19 @@ $ok = 1;
   $processing['description'] = preg_replace('/#username#/', $userinfo['username'], $processing['description']);
   $processing['description'] = preg_replace('/#id#/', $userinfo['id'], $processing['description']);
   $processing['description'] = preg_replace('/#name#/', $userinfo['name'], $processing['description']);
-  $smarty->assign('description', $processing['description']);
+  view_assign('description', $processing['description']);
   $infofields = unserialize($processing['infofields']);
   $fields = [];
   foreach ($infofields as $id => $name) {
       array_push($fields, ['id' => $id, 'name' => $name]);
   }
 
-  $smarty->assign('fields', $fields);
-  $smarty->assign('ok', $ok);
-  $smarty->assign('h_id', $h_id);
-  $smarty->assign('amount', number_format($amount, 2));
-  $smarty->assign('famount', $amount);
-  $smarty->assign('compounding', $compound);
-  $smarty->assign('type', app('data')->frm['type']);
-  $smarty->assign('cname', app('data')->exchange_systems[$ps]['name']);
-  $smarty->display('deposit.other.confirm.tpl');
+  view_assign('fields', $fields);
+  view_assign('ok', $ok);
+  view_assign('h_id', $h_id);
+  view_assign('amount', number_format($amount, 2));
+  view_assign('famount', $amount);
+  view_assign('compounding', $compound);
+  view_assign('type', app('data')->frm['type']);
+  view_assign('cname', app('data')->exchange_systems[$ps]['name']);
+  view_execute('deposit.other.confirm.tpl');

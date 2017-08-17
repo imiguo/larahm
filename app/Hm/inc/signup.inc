@@ -14,12 +14,12 @@ use App\Exceptions\EmptyException;
 use Illuminate\Support\Facades\Cookie;
 
 if (app('data')->frm['say'] == 'confirm') {
-      $smarty->display('after_registration_confirm.tpl');
+      view_execute('after_registration_confirm.tpl');
       throw new EmptyException();
   }
 
   if (app('data')->frm['say'] == 'done') {
-      $smarty->display('after_registration.tpl');
+      view_execute('after_registration.tpl');
       throw new EmptyException();
   }
 
@@ -289,7 +289,7 @@ if (app('data')->frm['say'] == 'confirm') {
   $q = 'select * from hm2_users where username = \''.$ref.'\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('referer', $row);
+      view_assign('referer', $row);
   }
 
   if (((((app('data')->frm['a'] != 'show_validation_image' and !$userinfo['logged']) and extension_loaded('gd')) and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars'])) {
@@ -305,12 +305,12 @@ if (app('data')->frm['say'] == 'confirm') {
       }
 
       session(['validation_number' => $validation_number]);
-      $smarty->assign('userinfo', $userinfo);
+      view_assign('userinfo', $userinfo);
   }
 
-  $smarty->assign('token', $token);
-  $smarty->assign('errors', $errors);
-  $smarty->assign('frm', app('data')->frm);
-  $smarty->assign('countries', $countries);
-  $smarty->assign('deny_registration', app('data')->settings['deny_registration']);
-  $smarty->display('signup.tpl');
+  view_assign('token', $token);
+  view_assign('errors', $errors);
+  view_assign('frm', app('data')->frm);
+  view_assign('countries', $countries);
+  view_assign('deny_registration', app('data')->settings['deny_registration']);
+  view_execute('signup.tpl');

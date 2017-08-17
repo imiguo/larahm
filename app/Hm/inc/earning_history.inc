@@ -33,7 +33,7 @@ $id = $userinfo['id'];
       array_push($options, $row);
   }
 
-  $smarty->assign('options', $options);
+  view_assign('options', $options);
   $typewhere = '';
   if ($type_found) {
       if ($type == 'exchange') {
@@ -122,9 +122,9 @@ $id = $userinfo['id'];
       $perioddebit = $row['debit'];
       $periodcredit = $row['credit'];
       $periodbalance = $row['balance'];
-      $smarty->assign('perioddebit', number_format(abs($perioddebit), 2));
-      $smarty->assign('periodcredit', number_format(abs($periodcredit), 2));
-      $smarty->assign('periodbalance', number_format($periodbalance, 2));
+      view_assign('perioddebit', number_format(abs($perioddebit), 2));
+      view_assign('periodcredit', number_format(abs($periodcredit), 2));
+      view_assign('periodbalance', number_format($periodbalance, 2));
       $q = 'select
             sum(actual_amount * (actual_amount < 0)) as debit,
             sum(actual_amount * (actual_amount > 0)) as credit,
@@ -137,9 +137,9 @@ $id = $userinfo['id'];
       $perioddebit = $row['debit'];
       $periodcredit = $row['credit'];
       $periodbalance = $row['balance'];
-      $smarty->assign('alldebit', number_format(abs($perioddebit), 2));
-      $smarty->assign('allcredit', number_format(abs($periodcredit), 2));
-      $smarty->assign('allbalance', number_format($periodbalance, 2));
+      view_assign('alldebit', number_format(abs($perioddebit), 2));
+      view_assign('allcredit', number_format(abs($periodcredit), 2));
+      view_assign('allbalance', number_format($periodbalance, 2));
   }
 
   $pages = [];
@@ -150,43 +150,43 @@ $id = $userinfo['id'];
       array_push($pages, $apage);
   }
 
-  $smarty->assign('pages', $pages);
-  $smarty->assign('colpages', $colpages);
-  $smarty->assign('current_page', $page);
+  view_assign('pages', $pages);
+  view_assign('colpages', $colpages);
+  view_assign('current_page', $page);
   if (1 < $page) {
-      $smarty->assign('prev_page', $page - 1);
+      view_assign('prev_page', $page - 1);
   }
 
   if ($page < $colpages) {
-      $smarty->assign('next_page', $page + 1);
+      view_assign('next_page', $page + 1);
   }
 
   $q = 'select sum(actual_amount) as sum from hm2_history where '.$datewhere.' '.$ecwhere.' and user_id = '.$id.' '.$typewhere;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $periodsum = $row['sum'];
-  $smarty->assign('periodsum', number_format($periodsum, 2));
+  view_assign('periodsum', number_format($periodsum, 2));
   $q = 'select sum(actual_amount) as sum from hm2_history where user_id = '.$id.' '.$typewhere.' '.$ecwhere;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $allsum = $row['sum'];
-  $smarty->assign('allsum', number_format($allsum, 2));
+  view_assign('allsum', number_format($allsum, 2));
   $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  $smarty->assign('month', $month);
+  view_assign('month', $month);
   $days = [];
   for ($i = 1; $i <= 31; ++$i) {
       array_push($days, $i);
   }
 
-  $smarty->assign('day', $days);
+  view_assign('day', $days);
   $year = [];
   for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       array_push($year, $i);
   }
 
-  $smarty->assign('year', $year);
-  $smarty->assign('trans', $trans);
-  $smarty->assign('qtrans', sizeof($trans));
+  view_assign('year', $year);
+  view_assign('trans', $trans);
+  view_assign('qtrans', sizeof($trans));
   $ecs = [];
   foreach (app('data')->exchange_systems as $id => $data) {
       if ($data[status] == 1) {
@@ -197,8 +197,8 @@ $id = $userinfo['id'];
   }
 
   if (1 < sizeof($ecs)) {
-      $smarty->assign('ecs', $ecs);
+      view_assign('ecs', $ecs);
   }
 
-  $smarty->assign('frm', app('data')->frm);
-  $smarty->display('earning_history.tpl');
+  view_assign('frm', app('data')->frm);
+  view_execute('earning_history.tpl');

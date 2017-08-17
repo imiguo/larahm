@@ -55,5 +55,5 @@ $found_records = -1;
       }
   }
 
-  $smarty->assign('found_records', $found_records);
-  $smarty->display('forgot_password.tpl');
+  view_assign('found_records', $found_records);
+  view_execute('forgot_password.tpl');

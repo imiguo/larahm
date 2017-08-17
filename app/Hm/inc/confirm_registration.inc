@@ -47,5 +47,5 @@ $success = 0;
       }
   }
 
-  $smarty->assign('success', $success);
-  $smarty->display('confirm_registration.tpl');
+  view_assign('success', $success);
+  view_execute('confirm_registration.tpl');

@@ -15,8 +15,8 @@ $ab = get_user_balance($userinfo['id']);
       $ab_formated[$kk] = number_format($vv, 2);
   }
 
-  $smarty->assign('ab_formated', $ab_formated);
-  $smarty->assign('frm', app('data')->frm);
+  view_assign('ab_formated', $ab_formated);
+  view_assign('frm', app('data')->frm);
   $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
@@ -29,5 +29,5 @@ $ab = get_user_balance($userinfo['id']);
       array_push($ps, array_merge(['id' => $id], $data));
   }
 
-  $smarty->assign('ps', $ps);
-  $smarty->display('add_funds.tpl');
+  view_assign('ps', $ps);
+  view_execute('add_funds.tpl');

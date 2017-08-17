@@ -13,8 +13,8 @@ use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
 if (app('data')->frm['complete']) {
-    $smarty->assign('fatal', 'withdraw_complete');
-    $smarty->display('withdraw_principal.tpl');
+    view_assign('fatal', 'withdraw_complete');
+    view_execute('withdraw_principal.tpl');
     throw new EmptyException();
 }
 
@@ -32,8 +32,8 @@ if (app('data')->frm['complete']) {
   $sth = db_query($q);
   $deposit = mysql_fetch_array($sth);
   if (!$deposit) {
-      $smarty->assign('fatal', 'deposit_not_found');
-      $smarty->display('withdraw_principal.tpl');
+      view_assign('fatal', 'deposit_not_found');
+      view_execute('withdraw_principal.tpl');
       throw new EmptyException();
   }
 
@@ -41,20 +41,20 @@ if (app('data')->frm['complete']) {
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   if (!$type['withdraw_principal']) {
-      $smarty->assign('fatal', 'withdraw_forbidden');
-      $smarty->display('withdraw_principal.tpl');
+      view_assign('fatal', 'withdraw_forbidden');
+      view_execute('withdraw_principal.tpl');
       throw new EmptyException();
   }
 
   if ($deposit['deposit_duration'] < $type['withdraw_principal_duration']) {
-      $smarty->assign('fatal', 'too_early_withdraw');
-      $smarty->display('withdraw_principal.tpl');
+      view_assign('fatal', 'too_early_withdraw');
+      view_execute('withdraw_principal.tpl');
       throw new EmptyException();
   }
 
   if (($type['withdraw_principal_duration_max'] <= $deposit['deposit_duration'] and $type['withdraw_principal_duration_max'] != 0)) {
-      $smarty->assign('fatal', 'too_late_withdraw');
-      $smarty->display('withdraw_principal.tpl');
+      view_assign('fatal', 'too_late_withdraw');
+      view_execute('withdraw_principal.tpl');
       throw new EmptyException();
   }
 
@@ -62,18 +62,18 @@ if (app('data')->frm['complete']) {
   if (app('data')->frm['action'] == 'withdraw_preview') {
       $withdraw_amount = sprintf('%.02f', app('data')->frm['amount']);
       if ($deposit['actual_amount'] < $withdraw_amount) {
-          $smarty->assign('deposit', $deposit);
-          $smarty->assign('type', $type);
-          $smarty->assign('say', 'too_big_amount');
-          $smarty->display('withdraw_principal.tpl');
+          view_assign('deposit', $deposit);
+          view_assign('type', $type);
+          view_assign('say', 'too_big_amount');
+          view_execute('withdraw_principal.tpl');
           throw new EmptyException();
       }
 
       if ($withdraw_amount <= 0) {
-          $smarty->assign('deposit', $deposit);
-          $smarty->assign('type', $type);
-          $smarty->assign('say', 'too_small_amount');
-          $smarty->display('withdraw_principal.tpl');
+          view_assign('deposit', $deposit);
+          view_assign('type', $type);
+          view_assign('say', 'too_small_amount');
+          view_execute('withdraw_principal.tpl');
           throw new EmptyException();
       }
 
@@ -87,31 +87,31 @@ if (app('data')->frm['complete']) {
           $to_balance = 0;
       }
 
-      $smarty->assign('deposit', $deposit);
-      $smarty->assign('type', $type);
-      $smarty->assign('preview', 1);
-      $smarty->assign('amount', $withdraw_amount);
-      $smarty->assign('fee', $fee);
-      $smarty->assign('to_balance', $to_balance);
-      $smarty->display('withdraw_principal.tpl');
+      view_assign('deposit', $deposit);
+      view_assign('type', $type);
+      view_assign('preview', 1);
+      view_assign('amount', $withdraw_amount);
+      view_assign('fee', $fee);
+      view_assign('to_balance', $to_balance);
+      view_execute('withdraw_principal.tpl');
       throw new EmptyException();
   }
 
   if (app('data')->frm['action'] == 'withdraw') {
       $withdraw_amount = sprintf('%.02f', app('data')->frm['amount']);
       if ($deposit['actual_amount'] < $withdraw_amount) {
-          $smarty->assign('deposit', $deposit);
-          $smarty->assign('type', $type);
-          $smarty->assign('say', 'too_big_amount');
-          $smarty->display('withdraw_principal.tpl');
+          view_assign('deposit', $deposit);
+          view_assign('type', $type);
+          view_assign('say', 'too_big_amount');
+          view_execute('withdraw_principal.tpl');
           throw new EmptyException();
       }
 
       if ($withdraw_amount <= 0) {
-          $smarty->assign('deposit', $deposit);
-          $smarty->assign('type', $type);
-          $smarty->assign('say', 'too_small_amount');
-          $smarty->display('withdraw_principal.tpl');
+          view_assign('deposit', $deposit);
+          view_assign('type', $type);
+          view_assign('say', 'too_small_amount');
+          view_execute('withdraw_principal.tpl');
           throw new EmptyException();
       }
 
@@ -145,6 +145,6 @@ if (app('data')->frm['complete']) {
       throw new RedirectException('/?a=withdraw_principal&complete=1&deposit='.$deposit['id']);
   }
 
-  $smarty->assign('deposit', $deposit);
-  $smarty->assign('type', $type);
-  $smarty->display('withdraw_principal.tpl');
+  view_assign('deposit', $deposit);
+  view_assign('type', $type);
+  view_execute('withdraw_principal.tpl');

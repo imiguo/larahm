@@ -77,6 +77,6 @@ use App\Exceptions\RedirectException;
       throw new RedirectException('/?a=support&say=send');
   }
 
-  $smarty->assign('token', $token);
-  $smarty->assign('say', app('data')->frm['say']);
-  $smarty->display('support.tpl');
+  view_assign('token', $token);
+  view_assign('say', app('data')->frm['say']);
+  view_execute('support.tpl');

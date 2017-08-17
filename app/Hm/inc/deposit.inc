@@ -15,8 +15,8 @@ while (list($kk, $vv) = each($ab)) {
     $ab_formated[$kk] = number_format($vv, 2);
 }
 
-$smarty->assign('ab_formated', $ab_formated);
-$smarty->assign('frm', app('data')->frm);
+view_assign('ab_formated', $ab_formated);
+view_assign('frm', app('data')->frm);
 $q = 'select type_id from hm2_deposits where user_id = '.$userinfo['id'];
 $sth = db_query($q);
 $already_deposits = [];
@@ -38,7 +38,7 @@ while ($row = mysql_fetch_array($sth)) {
 
     ++$i;
     if (($row['use_compound'] == 1 and (($i == 1 and app('data')->frm['h_id'] == '') or app('data')->frm['h_id'] == $row['id']))) {
-        $smarty->assign('default_check_compound', 1);
+        view_assign('default_check_compound', 1);
     }
 
     $compounding_available += $row['use_compound'];
@@ -75,7 +75,7 @@ reset(app('data')->exchange_systems);
 foreach (app('data')->exchange_systems as $id => $data) {
     array_push($ps, array_merge(['id' => $id], $data));
 }
-$smarty->assign('ps', $ps);
+view_assign('ps', $ps);
 $hold = [];
 if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
     $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
@@ -140,9 +140,9 @@ while ($row = mysql_fetch_array($sth)) {
     array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[am], 2)]);
 }
 
-$smarty->assign('hold', $hold);
-$smarty->assign('plans', $plans);
-$smarty->assign('qplans', sizeof($plans));
-$smarty->assign('min_deposit', sprintf('%0.2f', $min_deposit));
-$smarty->assign('compounding_available', $compounding_available);
-$smarty->display('deposit.tpl');
+view_assign('hold', $hold);
+view_assign('plans', $plans);
+view_assign('qplans', sizeof($plans));
+view_assign('min_deposit', sprintf('%0.2f', $min_deposit));
+view_assign('compounding_available', $compounding_available);
+view_execute('deposit.tpl');

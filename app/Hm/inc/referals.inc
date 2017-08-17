@@ -9,23 +9,23 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('site_name', app('data')->settings['site_name']);
+view_assign('site_name', app('data')->settings['site_name']);
   $q = 'select count(*) as col from hm2_users where status = \'on\' and ref='.$userinfo['id'];
   $sth = db_query($q);
-  $smarty->assign('total_ref', 0);
+  view_assign('total_ref', 0);
   while ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('total_ref', $row['col']);
+      view_assign('total_ref', $row['col']);
   }
 
   $q = 'select count(distinct user_id) as col from hm2_users, hm2_deposits where ref = '.$userinfo['id'].' and hm2_deposits.user_id = hm2_users.id';
   $sth = db_query($q);
-  $smarty->assign('active_ref', 0);
+  view_assign('active_ref', 0);
   while ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('active_ref', $row['col']);
+      view_assign('active_ref', $row['col']);
   }
 
   $ab = get_user_balance($userinfo['id']);
-  $smarty->assign('commissions', number_format($ab['commissions'], 2));
+  view_assign('commissions', number_format($ab['commissions'], 2));
   app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
   app('data')->frm['month_to'] = sprintf('%d', app('data')->frm['month_to']);
   app('data')->frm['year_to'] = sprintf('%d', app('data')->frm['year_to']);
@@ -43,29 +43,29 @@ $smarty->assign('site_name', app('data')->settings['site_name']);
 
   $datewhere = '\''.app('data')->frm['year_from'].'-'.app('data')->frm['month_from'].'-'.app('data')->frm['day_from'].'\' + interval 0 day < date + interval '.app('data')->settings['time_dif'].' hour and '.'\''.app('data')->frm['year_to'].'-'.app('data')->frm['month_to'].'-'.app('data')->frm['day_to'].'\' + interval 1 day > date + interval '.app('data')->settings['time_dif'].' hour and';
   $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  $smarty->assign('month', $month);
+  view_assign('month', $month);
   $days = [];
   for ($i = 1; $i <= 31; ++$i) {
       array_push($days, $i);
   }
 
-  $smarty->assign('day', $days);
+  view_assign('day', $days);
   $year = [];
   for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       array_push($year, $i);
   }
 
-  $smarty->assign('year', $year);
-  $smarty->assign('frm', app('data')->frm);
+  view_assign('year', $year);
+  view_assign('frm', app('data')->frm);
   $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as date from hm2_referal_stats where '.$datewhere.' user_id = ').$userinfo['id'];
   $sth = db_query($q);
   $refstat = [];
   while ($row = mysql_fetch_array($sth)) {
       array_push($refstat, $row);
-      $smarty->assign('show_refstat', 1);
+      view_assign('show_refstat', 1);
   }
 
-  $smarty->assign('refstat', $refstat);
+  view_assign('refstat', $refstat);
   $q_other_active = 0;
   $q_other = 0;
   $q = 'select * from hm2_users where ref = '.$userinfo['id'].' order by id desc';
@@ -112,15 +112,15 @@ $smarty->assign('site_name', app('data')->settings['site_name']);
 
       $row['ref_stats'] = $ref_stats;
       array_push($referals, $row);
-      $smarty->assign('show_referals', 1);
+      view_assign('show_referals', 1);
   }
 
-  $smarty->assign('referals', $referals);
-  $smarty->assign('cnt_other_active', $q_other_active);
-  $smarty->assign('cnt_other', $q_other);
+  view_assign('referals', $referals);
+  view_assign('cnt_other_active', $q_other_active);
+  view_assign('cnt_other', $q_other);
   $q = 'select * from hm2_users where id = '.$userinfo['ref'];
   $sth = db_query($q);
   $row1 = mysql_fetch_array($sth);
   $upline = $row1;
-  $smarty->assign('upline', $upline);
-  $smarty->display('referals.tpl');
+  view_assign('upline', $upline);
+  view_execute('referals.tpl');

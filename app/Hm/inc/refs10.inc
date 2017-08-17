@@ -44,6 +44,6 @@ $q = 'select
   $q = 'select date_format(\''.app('data')->settings[refs10_start_date].'\' + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y\') as d';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
-  $smarty->assign('start_date', $row[d]);
-  $smarty->assign('stats', $stats);
-  $smarty->display('refs10.tpl');
+  view_assign('start_date', $row[d]);
+  view_assign('stats', $stats);
+  view_execute('refs10.tpl');

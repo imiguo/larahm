@@ -13,20 +13,20 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
   $h_id = sprintf('%d', app('data')->frm['h_id']);
   if ((app('data')->settings[use_add_funds] and $h_id == -1)) {
       if (0.01 <= $amount) {
-          $smarty->assign('h_id', -1);
-          $smarty->assign('amount', $amount);
-          $smarty->assign('amount_format', number_format($amount, 2));
-          $smarty->display('deposit.goldmoney.confirm.tpl');
+          view_assign('h_id', -1);
+          view_assign('amount', $amount);
+          view_assign('amount_format', number_format($amount, 2));
+          view_execute('deposit.goldmoney.confirm.tpl');
       }
   } else {
       $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
       $sth = db_query($q);
       $type = mysql_fetch_array($sth);
       if (!$type) {
-          $smarty->assign('false_data', 1);
+          view_assign('false_data', 1);
       } else {
           $plan_name = $type['name'];
-          $smarty->assign('plan_name', $plan_name);
+          view_assign('plan_name', $plan_name);
       }
 
       $use_compound = 0;
@@ -50,28 +50,28 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
                       array_push($compound_percents, ['percent' => sprintf('%d', $cp)]);
                   }
 
-                  $smarty->assign('compound_percents', $compound_percents);
+                  view_assign('compound_percents', $compound_percents);
               } else {
-                  $smarty->assign('compound_min_percents', $type['compound_min_percent']);
-                  $smarty->assign('compound_max_percents', $type['compound_max_percent']);
+                  view_assign('compound_min_percents', $type['compound_min_percent']);
+                  view_assign('compound_max_percents', $type['compound_max_percent']);
               }
           }
       }
 
-      $smarty->assign('use_compound', $use_compound);
+      view_assign('use_compound', $use_compound);
       $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row) {
           if ($row['col'] == 0) {
-              $smarty->assign('false_data', 1);
+              view_assign('false_data', 1);
           }
 
           if ($amount < $row['min']) {
               $amount = $row['min'];
           }
       } else {
-          $smarty->assign('false_data', 1);
+          view_assign('false_data', 1);
       }
 
       $q = 'select count(*) as col from hm2_plans where parent = '.$h_id.' and max_deposit = 0';
@@ -85,21 +85,21 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
               $row = mysql_fetch_array($sth);
               if ($row) {
                   if ($row['col'] == 0) {
-                      $smarty->assign('false_data', 1);
+                      view_assign('false_data', 1);
                   }
 
                   if ($row['max'] < $amount) {
                       $amount = $row['max'];
                   }
               } else {
-                  $smarty->assign('false_data', 1);
+                  view_assign('false_data', 1);
               }
           }
 
-          $smarty->assign('h_id', $h_id);
-          $smarty->assign('amount', $amount);
-          $smarty->assign('amount_format', number_format($amount, 2));
-          $smarty->assign('compounding', sprintf('%d', app('data')->frm['compound']));
-          $smarty->display('deposit.goldmoney.confirm.tpl');
+          view_assign('h_id', $h_id);
+          view_assign('amount', $amount);
+          view_assign('amount_format', number_format($amount, 2));
+          view_assign('compounding', sprintf('%d', app('data')->frm['compound']));
+          view_execute('deposit.goldmoney.confirm.tpl');
       }
   }

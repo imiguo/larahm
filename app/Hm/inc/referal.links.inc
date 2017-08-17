@@ -9,11 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('site_name', app('data')->settings['site_name']);
+view_assign('site_name', app('data')->settings['site_name']);
   if (app('data')->settings[use_names_in_referral_links] == 1) {
       $userinfo[name] = preg_replace('/\\s+/', '_', $userinfo[name]);
       $userinfo[username] = $userinfo[name];
   }
 
-  $smarty->assign('user', $userinfo);
-  $smarty->display('referal.links.tpl');
+  view_assign('user', $userinfo);
+  view_execute('referal.links.tpl');

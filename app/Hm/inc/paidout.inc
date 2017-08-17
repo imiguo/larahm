@@ -19,15 +19,15 @@ app('data')->frm['month'] = intval(app('data')->frm['month']);
       app('data')->frm['year'] = date('Y', time() + app('data')->settings['time_dif'] * 60 * 60);
   }
 
-  $smarty->assign('frm', app('data')->frm);
+  view_assign('frm', app('data')->frm);
   $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  $smarty->assign('month', $month);
+  view_assign('month', $month);
   $year = [];
   for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       array_push($year, $i);
   }
 
-  $smarty->assign('year', $year);
+  view_assign('year', $year);
   $datewhere = ' \''.app('data')->frm['year'].'\' = year(date + interval '.app('data')->settings['time_dif'].' hour) and '.'\''.app('data')->frm['month'].'\' = month(date + interval '.app('data')->settings['time_dif'].' hour) ';
   $type = 'withdrawal';
   $q = '
@@ -74,8 +74,8 @@ app('data')->frm['month'] = intval(app('data')->frm['month']);
       array_push($stats, $row);
   }
 
-  $smarty->assign('stats', $stats);
-  $smarty->assign('total_withdraw', number_format($total_withdraw, 2));
+  view_assign('stats', $stats);
+  view_assign('total_withdraw', number_format($total_withdraw, 2));
   $pages = [];
   for ($i = 1; $i <= $colpages; ++$i) {
       $apage = [];
@@ -84,15 +84,15 @@ app('data')->frm['month'] = intval(app('data')->frm['month']);
       array_push($pages, $apage);
   }
 
-  $smarty->assign('pages', $pages);
-  $smarty->assign('colpages', $colpages);
-  $smarty->assign('current_page', $page);
+  view_assign('pages', $pages);
+  view_assign('colpages', $colpages);
+  view_assign('current_page', $page);
   if (1 < $page) {
-      $smarty->assign('prev_page', $page - 1);
+      view_assign('prev_page', $page - 1);
   }
 
   if ($page < $colpages) {
-      $smarty->assign('next_page', $page + 1);
+      view_assign('next_page', $page + 1);
   }
 
-  $smarty->display('paidout.tpl');
+  view_execute('paidout.tpl');

@@ -22,8 +22,8 @@ $id = intval(app('data')->frm['type']);
 
   $trow = mysql_fetch_array($sth);
   if (!$trow) {
-      $smarty->assign('error', 'type_not_found');
-      $smarty->display('calendar_simple.tpl');
+      view_assign('error', 'type_not_found');
+      view_execute('calendar_simple.tpl');
       throw new EmptyException();
   }
 
@@ -38,7 +38,7 @@ $id = intval(app('data')->frm['type']);
       array_push($plans, $row);
   }
 
-  $smarty->assign('plans', $plans);
+  view_assign('plans', $plans);
   if (($trow['period'] == 'd' and $trow['work_week'])) {
       $trow['period'] = 'w-d';
   }
@@ -46,9 +46,9 @@ $id = intval(app('data')->frm['type']);
   $periods = ['w-d' => 'Work Days', 'd' => 'Days', 'w' => 'Weeks', 'b-w' => 'Bi Weeks', 'm' => 'Months', '2m' => 'Bi-Months', '3m' => '3 Months', '6m' => '6 Months', 'y' => 'Years'];
   $trow['period_name'] = $periods[$trow['period']];
   $trow['min_deposit'] = $plans[0][min_deposit];
-  $smarty->assign('type', $trow);
+  view_assign('type', $trow);
   if ($trow['period'] == 'end') {
-      $smarty->display('calendar_simple.tpl');
+      view_execute('calendar_simple.tpl');
   } else {
-      $smarty->display('calendar.tpl');
+      view_execute('calendar.tpl');
   }

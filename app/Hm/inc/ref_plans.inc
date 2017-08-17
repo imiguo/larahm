@@ -12,7 +12,7 @@
 $q = 'select max(percent) as percent from hm2_referal';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('percent', $row['percent']);
+      view_assign('percent', $row['percent']);
   }
 
   $ref_plans = [];
@@ -22,7 +22,7 @@ $q = 'select max(percent) as percent from hm2_referal';
       array_push($ref_plans, $row);
   }
 
-  $smarty->assign('ref_plans', $ref_plans);
+  view_assign('ref_plans', $ref_plans);
   $ref_levels = [];
   for ($l = 2; $l < 11; ++$l) {
       if ((0 < app('data')->settings['ref'.$l.'_cms'] and app('data')->settings['ref'.$l.'_cms'] < 100)) {
@@ -31,5 +31,5 @@ $q = 'select max(percent) as percent from hm2_referal';
       }
   }
 
-  $smarty->assign('ref_levels', $ref_levels);
-  $smarty->display('ref_plans.tpl');
+  view_assign('ref_levels', $ref_levels);
+  view_execute('ref_plans.tpl');

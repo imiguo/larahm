@@ -29,5 +29,5 @@ $q = 'select
       array_push($stats, $row);
   }
 
-  $smarty->assign('top', $stats);
-  $smarty->display('top10.tpl');
+  view_assign('top', $stats);
+  view_execute('top10.tpl');

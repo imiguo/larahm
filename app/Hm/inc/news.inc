@@ -46,7 +46,7 @@
       array_push($news, $row);
   }
 
-  $smarty->assign('news', $news);
+  view_assign('news', $news);
   $pages = [];
   for ($i = 1; $i <= $colpages; ++$i) {
       $apage = [];
@@ -55,15 +55,15 @@
       array_push($pages, $apage);
   }
 
-  $smarty->assign('pages', $pages);
-  $smarty->assign('colpages', $colpages);
-  $smarty->assign('current_page', $page);
+  view_assign('pages', $pages);
+  view_assign('colpages', $colpages);
+  view_assign('current_page', $page);
   if (1 < $page) {
-      $smarty->assign('prev_page', $page - 1);
+      view_assign('prev_page', $page - 1);
   }
 
   if ($page < $colpages) {
-      $smarty->assign('next_page', $page + 1);
+      view_assign('next_page', $page + 1);
   }
 
-  $smarty->display('news.tpl');
+  view_execute('news.tpl');

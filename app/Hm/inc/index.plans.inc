@@ -51,4 +51,4 @@ $already_deposits = [];
       array_push($plans, $row);
   }
 
-  $smarty->assign('index_plans', $plans);
+  view_assign('index_plans', $plans);

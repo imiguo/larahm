@@ -99,3 +99,31 @@ if (! function_exists('hanlder_app')) {
         return $httpReturn ?? $html;
     }
 }
+
+if (! function_exists('view_assign')) {
+    function view_assign($key, $value)
+    {
+        app('view_data')->put($key, $value);
+    }
+}
+
+if (! function_exists('view_execute')) {
+    function view_execute($view)
+    {
+        $view_data = [
+            'tag' => crc32(config('hm.theme')),
+            'csrf_token' => csrf_token(),
+            'app_name' => env('APP_NAME'),
+            'app_full_name' => env('APP_FULL_NAME'),
+            'app_site' => env('APP_SITE'),
+            'app_url' => env('APP_URL'),
+        ];
+        $view_data = array_merge($view_data, app('view_data')->all());
+        if (env('use_blade')) {
+            view($view)->with($view_data)->render();
+        } else {
+            app('smarty')->assign($view_data);
+            app('smarty')->display($view);
+        }
+    }
+}

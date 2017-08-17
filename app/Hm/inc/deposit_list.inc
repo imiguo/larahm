@@ -118,6 +118,6 @@ $q = 'select * from hm2_types where status = \'on\'';
       array_push($plans, $row);
   }
 
-  $smarty->assign('plans', $plans);
-  $smarty->assign('total', number_format($total, 2));
-  $smarty->display('deposit_list.tpl');
+  view_assign('plans', $plans);
+  view_assign('total', number_format($total, 2));
+  view_execute('deposit_list.tpl');

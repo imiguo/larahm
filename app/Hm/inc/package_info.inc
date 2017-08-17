@@ -14,12 +14,12 @@ $id = sprintf('%d', app('data')->frm['id']);
   $sth = db_query($q);
   $flag = 0;
   while ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('package', $row);
+      view_assign('package', $row);
       $flag = 1;
   }
 
   if ($flag == 0) {
-      $smarty->assign('no_such_plan', 1);
+      view_assign('no_such_plan', 1);
   }
 
-  $smarty->display('package_info.tpl');
+  view_execute('package_info.tpl');

@@ -13,8 +13,8 @@ use App\Exceptions\EmptyException;
 use App\Exceptions\RedirectException;
 
 if (app('data')->frm['action'] == 'confirm') {
-    $smarty->assign('say', app('data')->frm['say']);
-    $smarty->display('edit_account_confirmation.tpl');
+    view_assign('say', app('data')->frm['say']);
+    view_execute('edit_account_confirmation.tpl');
     throw new EmptyException();
 }
 
@@ -237,9 +237,9 @@ $q = 'select date_format(\''.$userinfo['date_register'].'\' + interval '.app('da
 $sth = db_query($q);
 $row = mysql_fetch_array($sth);
 $userinfo['date_register'] = $row['date_registered'];
-$smarty->assign('userinfo', $userinfo);
-$smarty->assign('errors', $errors);
-$smarty->assign('frm', app('data')->frm);
-$smarty->assign('settings', app('data')->settings);
-$smarty->assign('countries', $countries);
-$smarty->display('edit_account.tpl');
+view_assign('userinfo', $userinfo);
+view_assign('errors', $errors);
+view_assign('frm', app('data')->frm);
+view_assign('settings', app('data')->settings);
+view_assign('countries', $countries);
+view_execute('edit_account.tpl');

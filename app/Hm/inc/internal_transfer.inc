@@ -13,14 +13,14 @@ use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
 if (app('data')->frm['complete']) {
-    $smarty->assign('fatal', 'completed');
-    $smarty->display('internal_transfer.tpl');
+    view_assign('fatal', 'completed');
+    view_execute('internal_transfer.tpl');
     throw new EmptyException();
 }
 
   if (!app('data')->settings['internal_transfer_enabled']) {
-      $smarty->assign('fatal', 'forbidden');
-      $smarty->display('internal_transfer.tpl');
+      view_assign('fatal', 'forbidden');
+      view_execute('internal_transfer.tpl');
       throw new EmptyException();
   }
 
@@ -29,7 +29,7 @@ if (app('data')->frm['complete']) {
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row['cnt'] < 1) {
-          $smarty->assign('say', 'no_deposits');
+          view_assign('say', 'no_deposits');
       }
   }
 
@@ -42,7 +42,7 @@ if (app('data')->frm['complete']) {
       $ab_formated[$kk] = number_format($vv, 2);
   }
 
-  $smarty->assign('ab_formated', $ab_formated);
+  view_assign('ab_formated', $ab_formated);
   $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
@@ -57,7 +57,7 @@ if (app('data')->frm['complete']) {
       array_push($ps, array_merge(['id' => $id], $data));
   }
 
-  $smarty->assign('ps', $ps);
+  view_assign('ps', $ps);
   if (app('data')->settings['hold_only_first_days'] == 1) {
       $q = 'select
               sum(hm2_history.actual_amount) as am,
@@ -103,13 +103,13 @@ if (app('data')->frm['complete']) {
       array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[am], 2)]);
   }
 
-  $smarty->assign('hold', $hold);
+  view_assign('hold', $hold);
   if (app('data')->frm['action'] == 'preview_transaction') {
       $amount = sprintf('%.02f', app('data')->frm['amount']);
       $ec = intval(app('data')->frm['ec']);
       if ($amount <= 0) {
-          $smarty->assign('say', 'too_small_amount');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'too_small_amount');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
@@ -135,14 +135,14 @@ if (app('data')->frm['complete']) {
       }
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] < $amount) {
-          $smarty->assign('say', 'too_big_amount');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'too_big_amount');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
-          $smarty->assign('say', 'on_hold');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'on_hold');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
@@ -151,26 +151,26 @@ if (app('data')->frm['complete']) {
       $sth = db_query($q);
       $user = mysql_fetch_array($sth);
       if (!$user) {
-          $smarty->assign('say', 'user_not_found');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'user_not_found');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      $smarty->assign('user', $user);
-      $smarty->assign('amount', $amount);
-      $smarty->assign('ec', $ec);
-      $smarty->assign('ec_name', app('data')->exchange_systems[$ec]['name']);
-      $smarty->assign('comment', app('data')->frm['comment']);
-      $smarty->assign('preview', 1);
-      $smarty->display('internal_transfer.tpl');
+      view_assign('user', $user);
+      view_assign('amount', $amount);
+      view_assign('ec', $ec);
+      view_assign('ec_name', app('data')->exchange_systems[$ec]['name']);
+      view_assign('comment', app('data')->frm['comment']);
+      view_assign('preview', 1);
+      view_execute('internal_transfer.tpl');
       throw new EmptyException();
   }
 
   if (app('data')->frm['action'] == 'make_transaction') {
       if (app('data')->settings['use_transaction_code']) {
           if (app('data')->frm['transaction_code'] != $userinfo['transaction_code']) {
-              $smarty->assign('fatal', 'invalid_transaction_code');
-              $smarty->display('internal_transfer.tpl');
+              view_assign('fatal', 'invalid_transaction_code');
+              view_execute('internal_transfer.tpl');
               throw new EmptyException();
           }
       }
@@ -178,8 +178,8 @@ if (app('data')->frm['complete']) {
       $amount = sprintf('%.02f', app('data')->frm['amount']);
       $ec = intval(app('data')->frm['ec']);
       if ($amount <= 0) {
-          $smarty->assign('say', 'too_small_amount');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'too_small_amount');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
@@ -205,14 +205,14 @@ if (app('data')->frm['complete']) {
       }
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
-          $smarty->assign('say', 'on_hold');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'on_hold');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] < $amount) {
-          $smarty->assign('say', 'too_big_amount');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'too_big_amount');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
@@ -221,8 +221,8 @@ if (app('data')->frm['complete']) {
       $sth = db_query($q);
       $user = mysql_fetch_array($sth);
       if (!$user) {
-          $smarty->assign('say', 'user_not_found');
-          $smarty->display('internal_transfer.tpl');
+          view_assign('say', 'user_not_found');
+          view_execute('internal_transfer.tpl');
           throw new EmptyException();
       }
 
@@ -249,4 +249,4 @@ if (app('data')->frm['complete']) {
       throw new RedirectException('/?a=internal_transfer&complete=1');
   }
 
-  $smarty->display('internal_transfer.tpl');
+  view_execute('internal_transfer.tpl');

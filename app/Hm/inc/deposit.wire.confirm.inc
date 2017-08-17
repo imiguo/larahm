@@ -18,10 +18,10 @@ $ok = 1;
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   if (!$type) {
-      $smarty->assign('wrong_plan', 1);
+      view_assign('wrong_plan', 1);
   } else {
       $plan_name = $type['name'];
-      $smarty->assign('plan_name', $plan_name);
+      view_assign('plan_name', $plan_name);
   }
 
   $use_compound = 0;
@@ -45,15 +45,15 @@ $ok = 1;
                   array_push($compound_percents, ['percent' => sprintf('%d', $cp)]);
               }
 
-              $smarty->assign('compound_percents', $compound_percents);
+              view_assign('compound_percents', $compound_percents);
           } else {
-              $smarty->assign('compound_min_percents', $type['compound_min_percent']);
-              $smarty->assign('compound_max_percents', $type['compound_max_percent']);
+              view_assign('compound_min_percents', $type['compound_min_percent']);
+              view_assign('compound_max_percents', $type['compound_max_percent']);
           }
       }
   }
 
-  $smarty->assign('use_compound', $use_compound);
+  view_assign('use_compound', $use_compound);
   $q = 'select `value` from hm2_settings where name=\'wire_text\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
@@ -65,17 +65,17 @@ $ok = 1;
   $row = mysql_fetch_array($sth);
   if ($row) {
       if ($row['col'] == 0) {
-          $smarty->assign('wrong_plan', 1);
+          view_assign('wrong_plan', 1);
           $ok = 0;
       }
 
       if ($amount < $row['min']) {
-          $smarty->assign('less_than_min', 1);
-          $smarty->assign('min_amount', number_format($row['min'], 2));
+          view_assign('less_than_min', 1);
+          view_assign('min_amount', number_format($row['min'], 2));
           $ok = 0;
       }
   } else {
-      $smarty->assign('wrong_plan', 1);
+      view_assign('wrong_plan', 1);
       $ok = 0;
   }
 
@@ -93,8 +93,8 @@ $ok = 1;
   }
 
   if (($max_deposit < $amount and 0 < $max_deposit)) {
-      $smarty->assign('max_deposit_less', 1);
-      $smarty->assign('max_deposit_format', number_format($max_deposit, 2));
+      view_assign('max_deposit_less', 1);
+      view_assign('max_deposit_format', number_format($max_deposit, 2));
       $ok = 0;
   }
 
@@ -161,10 +161,10 @@ $ok = 1;
   }
 
   $compound = sprintf('%d', app('data')->frm['compound']);
-  $smarty->assign('ok', $ok);
-  $smarty->assign('h_id', $h_id);
-  $smarty->assign('amount', number_format($amount, 2));
-  $smarty->assign('famount', $amount);
-  $smarty->assign('wire_txt', $wire_txt);
-  $smarty->assign('compounding', $compound);
-  $smarty->display('deposit.wire.confirm.tpl');
+  view_assign('ok', $ok);
+  view_assign('h_id', $h_id);
+  view_assign('amount', number_format($amount, 2));
+  view_assign('famount', $amount);
+  view_assign('wire_txt', $wire_txt);
+  view_assign('compounding', $compound);
+  view_execute('deposit.wire.confirm.tpl');

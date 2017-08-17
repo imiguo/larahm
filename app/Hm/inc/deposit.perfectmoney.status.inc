@@ -9,5 +9,5 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('process', app('data')->frm['process']);
-$smarty->display('deposit.perfectmoney.status.tpl');
+view_assign('process', app('data')->frm['process']);
+view_execute('deposit.perfectmoney.status.tpl');

@@ -13,8 +13,8 @@ use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
 if (app('data')->frm['complete']) {
-    $smarty->assign('fatal', 'update_completed');
-    $smarty->display('change_compound.tpl');
+    view_assign('fatal', 'update_completed');
+    view_execute('change_compound.tpl');
     throw new EmptyException();
 }
 
@@ -32,8 +32,8 @@ if (app('data')->frm['complete']) {
   $sth = db_query($q);
   $deposit = mysql_fetch_array($sth);
   if (!$deposit) {
-      $smarty->assign('fatal', 'deposit_not_found');
-      $smarty->display('change_compound.tpl');
+      view_assign('fatal', 'deposit_not_found');
+      view_execute('change_compound.tpl');
       throw new EmptyException();
   }
 
@@ -41,8 +41,8 @@ if (app('data')->frm['complete']) {
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   if (!$type['use_compound']) {
-      $smarty->assign('fatal', 'compound_forbidden');
-      $smarty->display('change_compound.tpl');
+      view_assign('fatal', 'compound_forbidden');
+      view_execute('change_compound.tpl');
       throw new EmptyException();
   }
 
@@ -64,10 +64,10 @@ if (app('data')->frm['complete']) {
           array_push($compound_percents, ['percent' => sprintf('%d', $cp)]);
       }
 
-      $smarty->assign('compound_percents', $compound_percents);
+      view_assign('compound_percents', $compound_percents);
   } else {
-      $smarty->assign('compound_min_percents', $type['compound_min_percent']);
-      $smarty->assign('compound_max_percents', $type['compound_max_percent']);
+      view_assign('compound_min_percents', $type['compound_min_percent']);
+      view_assign('compound_max_percents', $type['compound_max_percent']);
   }
 
   if (app('data')->frm['action'] == 'change') {
@@ -106,6 +106,6 @@ if (app('data')->frm['complete']) {
 
   $deposit['deposit'] = number_format($deposit['actual_amount'], 2);
   $deposit['compound'] = sprintf('%.02f', $deposit['compound']);
-  $smarty->assign('deposit', $deposit);
-  $smarty->assign('type', $type);
-  $smarty->display('change_compound.tpl');
+  view_assign('deposit', $deposit);
+  view_assign('type', $type);
+  view_execute('change_compound.tpl');

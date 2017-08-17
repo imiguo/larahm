@@ -13,7 +13,7 @@ include app_path('Hm').'/inc/index.plans.inc';
   $q = 'select max(percent) as percent from hm2_referal';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
-      $smarty->assign('percent', $row['percent']);
+      view_assign('percent', $row['percent']);
   }
 
   $ref_plans = [];
@@ -23,7 +23,7 @@ include app_path('Hm').'/inc/index.plans.inc';
       array_push($ref_plans, $row);
   }
 
-  $smarty->assign('ref_plans', $ref_plans);
+  view_assign('ref_plans', $ref_plans);
   $ref_levels = [];
   for ($l = 2; $l < 11; ++$l) {
       if ((0 < app('data')->settings['ref'.$l.'_cms'] and app('data')->settings['ref'.$l.'_cms'] < 100)) {
@@ -32,5 +32,5 @@ include app_path('Hm').'/inc/index.plans.inc';
       }
   }
 
-  $smarty->assign('ref_levels', $ref_levels);
-  $smarty->display('invest_page.tpl');
+  view_assign('ref_levels', $ref_levels);
+  view_execute('invest_page.tpl');
