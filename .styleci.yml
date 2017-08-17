@@ -7,7 +7,6 @@ enabled:
   - phpdoc_align
   - phpdoc_order
   - phpdoc_separation
-  - phpdoc_annotation_without_dot
 
 finder:
   exclude:
