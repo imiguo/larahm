@@ -60,7 +60,7 @@ if (app('data')->frm['a'] == 'pay_withdraw') {
 $hash = strtoupper(md5(app('data')->frm['PAYMENT_ID'].':'.app('data')->frm['PAYEE_ACCOUNT'].':'.app('data')->frm['PAYMENT_AMOUNT'].':'.app('data')->frm['PAYMENT_UNITS'].':'.app('data')->frm['PAYMENT_METAL_ID'].':'.app('data')->frm['PAYMENT_BATCH_NUM'].':'.app('data')->frm['PAYER_ACCOUNT'].':'.$mymd5.':'.app('data')->frm['ACTUAL_PAYMENT_OUNCES'].':'.app('data')->frm['USD_PER_OUNCE'].':'.app('data')->frm['FEEWEIGHT'].':'.app('data')->frm['TIMESTAMPGMT']));
 if (($hash == strtoupper(app('data')->frm['V2_HASH']) and app('data')->exchange_systems[0]['status'] == 1)) {
     $ip = app('data')->env['REMOTE_ADDR'];
-    if (!preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
+    if (! preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
         throw new EmptyException();
     }
 

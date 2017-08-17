@@ -53,7 +53,7 @@ if ($action == 'pay_withdraw') {
         send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 
-    throw new RedirectException("/?a=pay_withdraw&say=yes");
+    throw new RedirectException('/?a=pay_withdraw&say=yes');
 }
 
 if (function_exists('curl_init')) {

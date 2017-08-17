@@ -24,7 +24,7 @@ $gpg_version = 0;
 $gpg_command = escapeshellcmd(app('data')->settings['gpg_path']).' --version';
 $fp = popen(''.$gpg_command, 'r');
 if ($fp) {
-    while (!feof($fp)) {
+    while (! feof($fp)) {
         $buf = fgets($fp, 4096);
         $pos = strstr($buf, 'gpg (GnuPG)');
         if (0 < strlen($pos)) {

@@ -13,11 +13,13 @@
 
 Route::match(['get', 'post'], '/', function () {
     $app_file = app_path('Hm').'/http/index.php';
+
     return hanlder_app($app_file);
 });
 
 Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), function () {
     $app_file = app_path('Hm').'/http/admin.php';
+
     return hanlder_app($app_file);
 });
 
@@ -28,8 +30,8 @@ Route::match(['get', 'post'], '/payments/{payment}', function ($payment) {
     ];
     if (in_array($payment, $payments)) {
         $app_file = app_path('Hm').'/http/payments/'.$payment.'.php';
+
         return hanlder_app($app_file);
-    } else {
-        abort(404);
     }
+    abort(404);
 });

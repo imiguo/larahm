@@ -65,7 +65,7 @@ echo '<form method=post name=nform>
   while ($row = mysql_fetch_array($sth)) {
       $infofields = unserialize($row['fields']);
       $fields = '';
-      if (!app('data')->exchange_systems[$row['ec']]) {
+      if (! app('data')->exchange_systems[$row['ec']]) {
           $row['ec'] = 'deleted';
           foreach ($infofields as $id => $name) {
               $fields .= $name.'<br>';

@@ -79,7 +79,7 @@ function test_egold() {';
   return false;';
   }
 
-  if (!function_exists('curl_init')) {
+  if (! function_exists('curl_init')) {
       echo '  alert("Sorry, curl extension is not installed on server";
   return false;';
   }
@@ -110,7 +110,7 @@ function test_intgold() {';
   return false;';
   }
 
-  if (!function_exists('curl_init')) {
+  if (! function_exists('curl_init')) {
       echo '  alert("Sorry, curl extension is not installed on server";
   return false;';
   }
@@ -146,7 +146,7 @@ function test_eeecurrency() {';
   return false;';
   }
 
-  if (!function_exists('curl_init')) {
+  if (! function_exists('curl_init')) {
       echo '  alert("Sorry, curl extension is not installed on server";
   return false;';
   }
@@ -182,7 +182,7 @@ function test_pecunix() {';
   return false;';
   }
 
-  if (!function_exists('curl_init')) {
+  if (! function_exists('curl_init')) {
       echo '  alert("Sorry, curl extension is not installed on server";
   return false;';
   }
@@ -221,7 +221,7 @@ function test_pecunix() {';
 
 <b>Auto-payment settings:</b><br><br>
   ';
-  if (!function_exists('curl_init')) {
+  if (! function_exists('curl_init')) {
       echo '  ';
       echo start_info_table('100%');
       echo '  <b>Auto-payment is not available</b><br>

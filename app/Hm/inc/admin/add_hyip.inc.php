@@ -10,7 +10,7 @@
  */
 
 $q = 'select * from hm2_types where status = \'on\'';
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   $packages = [];

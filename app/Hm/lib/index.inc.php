@@ -9,13 +9,12 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;
 
 function bind_ref()
 {
-
     Cookie::queue('referer', app('data')->frm['ref'], 43200);
     if (Cookie::get('referer') == '') {
         $ref = quote(app('data')->frm['ref']);
@@ -45,7 +44,6 @@ function bind_ref()
 
 function custom2_pay_withdraw_eeecurrency()
 {
-
     $batch = app('data')->frm['TRANSACTION_ID'];
     list($id, $str) = explode('-', app('data')->frm['CUSTOM1']);
     $id = sprintf('%d', $id);
@@ -86,7 +84,6 @@ function custom2_pay_withdraw_eeecurrency()
 
 function custom2_pay_withdraw()
 {
-
     $batch = app('data')->frm['TRANSACTION_ID'];
     list($id, $str) = explode('-', app('data')->frm['CUSTOM1']);
     $id = sprintf('%d', $id);
@@ -127,7 +124,6 @@ function custom2_pay_withdraw()
 
 function user3_pay_withdraw_payment()
 {
-
     $batch = app('data')->frm['transaction_id'];
     list($id, $str) = explode('-', app('data')->frm['user1']);
     $id = sprintf('%d', $id);
@@ -259,7 +255,6 @@ function show_info_box($stats)
 
 function do_login(&$userinfo)
 {
-
     $username = quote(app('data')->frm['username']);
     $password = quote(app('data')->frm['password']);
     $password = md5($password);

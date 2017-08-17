@@ -11,7 +11,7 @@
 
 function is_SSL()
 {
-    if (!isset($_SERVER['HTTPS'])) {
+    if (! isset($_SERVER['HTTPS'])) {
         return false;
     }
     if ($_SERVER['HTTPS'] === 1) {  //Apache
@@ -34,7 +34,7 @@ function send_mail()
     $sth = db_query("select time from hm2_sendmails where `to` = '$to' and `status` = 1 order by `time` desc limit 1");
     $row = mysql_fetch_assoc($sth);
     $status = 0;
-    if (!isset($row['time']) || (time() - $row['time'] > 60)) {
+    if (! isset($row['time']) || (time() - $row['time'] > 60)) {
         call_user_func_array('mail', func_get_args());
         $status = 1;
     }
@@ -121,7 +121,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
             if (($type['compound_min_deposit'] <= $amount and $amount <= $type['compound_max_deposit'])) {
                 if ($type['compound_percents_type'] == 1) {
                     $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
-                    if (!in_array($compound, $cps)) {
+                    if (! in_array($compound, $cps)) {
                         $compound = $cps[0];
                     }
                 } else {
@@ -342,7 +342,6 @@ function referral_commission($user_id, $amount, $ec)
 
 function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $error_txt)
 {
-
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to Perfect-Money account 0.\'';
         db_query($q);
@@ -381,18 +380,16 @@ function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $erro
 
     if (preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $a, $parts, PREG_SET_ORDER)) {
         return [1, '', $parts[1]];
-    } else {
-        $e = quote($error_txt.' '.$a);
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-        db_query($q);
-
-        return [0, $error_txt.(' '.$a), ''];
     }
+    $e = quote($error_txt.' '.$a);
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $error_txt.(' '.$a), ''];
 }
 
 function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
 {
-
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to E-Gold account 0.\'';
         db_query($q);
@@ -432,23 +429,21 @@ function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
     $parts = [];
     if (preg_match('/<input type=hidden name=PAYMENT_BATCH_NUM VALUE="(\\d+)">/ims', $a, $parts)) {
         return [1, '', $parts[1]];
-    } else {
-        if (preg_match('/<input type=hidden name=ERROR VALUE="(.*?)">/ims', $a, $parts)) {
-            $txt = preg_replace('/&lt;/i', '<', $parts[1]);
-            $txt = preg_replace('/&gt;/i', '>', $txt);
-            $e = quote($error_txt.' '.$txt);
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-            db_query($q);
-
-            return [0, $error_txt.(' '.$txt), ''];
-        } else {
-            $e = quote($error_txt.' Unknown error');
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-            db_query($q);
-
-            return [0, $error_txt.' Unknown error', ''];
-        }
     }
+    if (preg_match('/<input type=hidden name=ERROR VALUE="(.*?)">/ims', $a, $parts)) {
+        $txt = preg_replace('/&lt;/i', '<', $parts[1]);
+        $txt = preg_replace('/&gt;/i', '>', $txt);
+        $e = quote($error_txt.' '.$txt);
+        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        db_query($q);
+
+        return [0, $error_txt.(' '.$txt), ''];
+    }
+    $e = quote($error_txt.' Unknown error');
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $error_txt.' Unknown error', ''];
 }
 
 function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt)
@@ -489,27 +484,24 @@ function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt
     $parts = [];
     if (preg_match('/<INPUT TYPE="Hidden" NAME="PayingTransactionID" VALUE="(.*?)">/ims', $a, $parts)) {
         return [1, '', $parts[1]];
-    } else {
-        if (preg_match('/<INPUT TYPE="Hidden" NAME="Error" VALUE="(.*?)">/ims', $a, $parts)) {
-            $txt = $parts[1];
-            $e = quote($error_txt.' '.$txt);
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-            db_query($q);
-
-            return [0, $error_txt.(' '.$txt), ''];
-        } else {
-            $e = quote($error_txt.' Unknown error');
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-            db_query($q);
-
-            return [0, $error_txt.' Unknown error', ''];
-        }
     }
+    if (preg_match('/<INPUT TYPE="Hidden" NAME="Error" VALUE="(.*?)">/ims', $a, $parts)) {
+        $txt = $parts[1];
+        $e = quote($error_txt.' '.$txt);
+        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        db_query($q);
+
+        return [0, $error_txt.(' '.$txt), ''];
+    }
+    $e = quote($error_txt.' Unknown error');
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $error_txt.' Unknown error', ''];
 }
 
 function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt)
 {
-
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to IntGold account 0.\'';
         db_query($q);
@@ -548,18 +540,16 @@ function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt
     $parts = [];
     if (preg_match('/Success\\s*TRANSACTION_ID:(.*?)$/ims', $a, $parts)) {
         return [1, '', $parts[1]];
-    } else {
-        $e = quote($error_txt.' '.$a);
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-        db_query($q);
-
-        return [0, $error_txt.(' '.$a), ''];
     }
+    $e = quote($error_txt.' '.$a);
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $error_txt.(' '.$a), ''];
 }
 
 function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error_txt)
 {
-
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to eeeCureency account 0.\'';
         db_query($q);
@@ -597,18 +587,16 @@ function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error
     $parts = [];
     if (preg_match('/Success\\s*TRANSACTION_ID:(.*?)$/ims', $a, $parts)) {
         return [1, '', $parts[1]];
-    } else {
-        $e = quote($error_txt.' '.$a);
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-        db_query($q);
-
-        return [0, $error_txt.(' '.$a), ''];
     }
+    $e = quote($error_txt.' '.$a);
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $error_txt.(' '.$a), ''];
 }
 
 function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt)
 {
-
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to Pecunix account 0.\'';
         db_query($q);
@@ -665,26 +653,23 @@ function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt
     $out = parsexml_pecunix($a);
     if ($out['status'] == 'ok') {
         return [1, '', $out['batch']];
-    } else {
-        if ($out['status'] == 'error') {
-            $e = quote($error_txt.' '.$out['text'].' '.$out['additional']);
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-            db_query($q);
-
-            return [0, $e, ''];
-        } else {
-            $e = quote($error_txt.' Parse error: '.$a);
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-            db_query($q);
-
-            return [0, $e, ''];
-        }
     }
+    if ($out['status'] == 'error') {
+        $e = quote($error_txt.' '.$out['text'].' '.$out['additional']);
+        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        db_query($q);
+
+        return [0, $e, ''];
+    }
+    $e = quote($error_txt.' Parse error: '.$a);
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $e, ''];
 }
 
 function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
 {
-
     if ($account == '') {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to e-Bullion account 0.\'';
         db_query($q);
@@ -716,7 +701,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
     $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --recipient A20077\\@e-bullion.com --local-user '.app('data')->settings['def_payee_account_ebullion'].('\\@e-bullion.com --output '.$outfile.' --sign --encrypt '.$infile.' 2>&1');
     $buf = '';
     $fp = popen($gpg_command, 'r');
-    while (!feof($fp)) {
+    while (! feof($fp)) {
         $buf = fgets($fp, 4096);
     }
 
@@ -751,7 +736,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
     $buf = '';
     $keyID = '';
     $fp = popen($gpg_command, 'r');
-    while (!feof($fp)) {
+    while (! feof($fp)) {
         $buf = fgets($fp, 4096);
         $pos = strstr($buf, 'key ID');
         if (0 < strlen($pos)) {
@@ -777,28 +762,25 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
         $data = parsexml($xmlcert);
         if ($data['status'] == 'ok') {
             return [1, '', $data['batch']];
-        } else {
-            if ($data['status'] == 'error') {
-                $e = quote($error_txt.' '.$data['text'].' '.$data['additional']);
-                $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-                db_query($q);
-
-                return [0, $error_txt.$data['text'].' '.$data['additional']];
-            } else {
-                $e = quote($error_txt.' Unknown error');
-                $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
-                db_query($q);
-
-                return [0, $error_txt.' Unknown error', ''];
-            }
         }
-    } else {
-        $e = quote($error_txt.' Can not decrypt verification response! ');
+        if ($data['status'] == 'error') {
+            $e = quote($error_txt.' '.$data['text'].' '.$data['additional']);
+            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+            db_query($q);
+
+            return [0, $error_txt.$data['text'].' '.$data['additional']];
+        }
+        $e = quote($error_txt.' Unknown error');
         $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
         db_query($q);
 
-        return [0, $error_txt.' Can not decrypt verification response!', ''];
+        return [0, $error_txt.' Unknown error', ''];
     }
+    $e = quote($error_txt.' Can not decrypt verification response! ');
+    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    db_query($q);
+
+    return [0, $error_txt.' Can not decrypt verification response!', ''];
 
     unlink($tmpfile);
     unlink($xmlfile);
@@ -840,7 +822,7 @@ function parsexml($xmlcert)
             $endat = strlen($balancelist) - strlen($endtemp);
         }
 
-        while (!$done) {
+        while (! $done) {
             $Balance = trim(substr($balancelist, $startat + 9, $endat - 9));
             $balancelist = trim(substr($balancelist, $endat + 10));
             $out['amount'] = getelement($Balance, 'amount');
@@ -853,10 +835,9 @@ function parsexml($xmlcert)
             if ($endtemp = stristr($balancelist, '</balance>') === false) {
                 $done = true;
                 continue;
-            } else {
-                $endat = strlen($balancelist) - strlen($endtemp);
-                continue;
             }
+            $endat = strlen($balancelist) - strlen($endtemp);
+            continue;
         }
     }
 
@@ -876,7 +857,7 @@ function parsexml($xmlcert)
             $endat = strlen($verifylist) - strlen($endtemp);
         }
 
-        while (!$done) {
+        while (! $done) {
             $Verify = trim(substr($verifylist, $startat + 13, $endat - 13));
             $verifylist = trim(substr($verifylist, $endat + 14));
             $out['batch'] = getelement($Verify, 'id');
@@ -897,10 +878,9 @@ function parsexml($xmlcert)
             if ($endtemp = stristr($verifylist, '</transaction>') === false) {
                 $done = true;
                 continue;
-            } else {
-                $endat = strlen($verifylist) - strlen($endtemp);
-                continue;
             }
+            $endat = strlen($verifylist) - strlen($endtemp);
+            continue;
         }
     }
 
@@ -920,7 +900,7 @@ function parsexml($xmlcert)
             $endat = strlen($failedlist) - strlen($endtemp);
         }
 
-        while (!$done) {
+        while (! $done) {
             $Failed = trim(substr($failedlist, $startat + 13, $endat - 13));
             $failedlist = trim(substr($failedlist, $endat + 14));
             $out['text'] = getelement($Failed, 'error');
@@ -933,10 +913,9 @@ function parsexml($xmlcert)
             if ($endtemp = stristr($failedlist, '</failed>') === false) {
                 $done = true;
                 continue;
-            } else {
-                $endat = strlen($failedlist) - strlen($endtemp);
-                continue;
             }
+            $endat = strlen($failedlist) - strlen($endtemp);
+            continue;
         }
     }
 
@@ -956,7 +935,7 @@ function parsexml($xmlcert)
             $endat = strlen($errorlist) - strlen($endtemp);
         }
 
-        while (!$done) {
+        while (! $done) {
             $ErrorResponse = trim(substr($errorlist, $startat + 15, $endat - 15));
             $errdone = false;
             if ($starterr = stristr($ErrorResponse, '<error>') === false) {
@@ -971,7 +950,7 @@ function parsexml($xmlcert)
                 $enderrat = strlen($ErrorResponse) - strlen($enderr);
             }
 
-            while (!$errdone) {
+            while (! $errdone) {
                 $Error = trim(substr($ErrorResponse, $starterrat + 7, $enderrat - 7));
                 $ErrorResponse = trim(substr($ErrorResponse, $enderrat + 8));
                 $out['text'] = getelement($Error, 'text');
@@ -985,10 +964,9 @@ function parsexml($xmlcert)
                 if ($enderr = stristr($ErrorResponse, '</error>') === false) {
                     $errdone = true;
                     continue;
-                } else {
-                    $enderrat = strlen($ErrorResponse) - strlen($enderr);
-                    continue;
                 }
+                $enderrat = strlen($ErrorResponse) - strlen($enderr);
+                continue;
             }
 
             $errorlist = trim(substr($errorlist, $endat + 16));
@@ -1001,10 +979,9 @@ function parsexml($xmlcert)
             if ($endtemp = stristr($errorlist, '</errorresponse>') === false) {
                 $done = true;
                 continue;
-            } else {
-                $endat = strlen($errorlist) - strlen($endtemp);
-                continue;
             }
+            $endat = strlen($errorlist) - strlen($endtemp);
+            continue;
         }
     }
 
@@ -1098,11 +1075,11 @@ function send_template_mail($email_id, $to, $from, $info)
     $q = 'select * from hm2_emails where id = \''.$email_id.'\'';
     $sth = db_query($q);
     $row = mysql_fetch_array($sth);
-    if (!$row) {
+    if (! $row) {
         return;
     }
 
-    if (!$row['status']) {
+    if (! $row['status']) {
         return;
     }
 
@@ -1194,7 +1171,6 @@ function pay_direct_return_deposit($deposit_id, $amount)
 
 function pay_direct_earning($deposit_id, $amount, $date)
 {
-
     if (app('data')->settings['demomode'] == 1) {
         return;
     }
@@ -1203,7 +1179,7 @@ function pay_direct_earning($deposit_id, $amount, $date)
         $q = 'select * from hm2_deposits where id = '.$deposit_id;
         $sth = db_query($q);
         $dep = mysql_fetch_array($sth);
-        if (!in_array($dep[ec], [0, 1, 2, 5])) {
+        if (! in_array($dep[ec], [0, 1, 2, 5])) {
             return;
         }
 
@@ -1386,7 +1362,7 @@ function count_earning($u_id)
             $lines = 0;
             while ($row = mysql_fetch_array($sth)) {
                 ++$lines;
-                if (!isset($types[$row['type_id']])) {
+                if (! isset($types[$row['type_id']])) {
                     continue;
                 }
 
@@ -1524,7 +1500,7 @@ function count_earning($u_id)
                             if (($row['compound_min_deposit'] <= $row['actual_amount'] and $row['actual_amount'] <= $row['compound_max_deposit'])) {
                                 if ($row['compound_percents_type'] == 1) {
                                     $cps = preg_split('/\\s*,\\s*/', $row['compound_percents']);
-                                    if (!in_array($row['compound'], $cps)) {
+                                    if (! in_array($row['compound'], $cps)) {
                                         $row['compound'] = $cps[0];
                                     }
                                 } else {

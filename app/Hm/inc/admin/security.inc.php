@@ -11,9 +11,9 @@
 
 use App\Exceptions\EmptyException;
 
-  if (app('data')->frm['say'] == 'invalid_passphrase') {
-      echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
-  }
+if (app('data')->frm['say'] == 'invalid_passphrase') {
+    echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
+}
 
   if (app('data')->frm['say'] == 'done') {
       echo '<b style="color:green">Changes have been successfully updated.</b><br>
@@ -57,15 +57,15 @@ E-mail:<br>
 <hr>
   <br><br><br>';
   $dirs = [];
-  if (!file_exists('./inc/.htaccess')) {
+  if (! file_exists('./inc/.htaccess')) {
       array_push($dirs, './inc');
   }
 
-  if (!file_exists('./tmpl/.htaccess')) {
+  if (! file_exists('./tmpl/.htaccess')) {
       array_push($dirs, './tmpl');
   }
 
-  if (!file_exists(storage_path('tmpl_c').'/.htaccess')) {
+  if (! file_exists(storage_path('tmpl_c').'/.htaccess')) {
       array_push($dirs, storage_path('tmpl_c'));
   }
 

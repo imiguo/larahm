@@ -80,7 +80,7 @@ You cannot add/edit news!';
               $edit_row = $row;
           }
 
-          if (!$row['small_text']) {
+          if (! $row['small_text']) {
               $row['full_text'] = strip_tags($row['full_text']);
               $row['small_text'] = preg_replace('/^(.{100,120})\\s.*/', '$1...', $row['full_text']);
           }
@@ -126,14 +126,13 @@ You cannot add/edit news!';
                   echo $i;
                   echo '</b> ';
                   continue;
-              } else {
-                  echo ' <a href="?a=news&page=';
-                  echo $i;
-                  echo '">';
-                  echo $i;
-                  echo '</a> ';
-                  continue;
               }
+              echo ' <a href="?a=news&page=';
+              echo $i;
+              echo '">';
+              echo $i;
+              echo '</a> ';
+              continue;
           }
 
           if ($page < $colpages) {
@@ -204,7 +203,7 @@ If you omit Full Text than the system will show Small Text on all the news page.
 </tr>
 <tr>
  <td><input type=submit value="';
-  echo !$edit_row ? 'Add' : 'Edit';
+  echo ! $edit_row ? 'Add' : 'Edit';
   echo '" class=sbmt></td>
 </tr></table>
 <input type="hidden" name="_token" value="'.csrf_token().'"></form>

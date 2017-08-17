@@ -3,42 +3,42 @@
 use App\Exceptions\HmException;
 use Illuminate\Filesystem\Filesystem;
 
-if (!function_exists('mysql_query')) {
+if (! function_exists('mysql_query')) {
     function mysql_query($query)
     {
         return app('mysql')->query($query);
     }
 }
 
-if (!function_exists('mysql_fetch_array')) {
+if (! function_exists('mysql_fetch_array')) {
     function mysql_fetch_array($result)
     {
         return $result->fetch_array();
     }
 }
 
-if (!function_exists('mysql_fetch_assoc')) {
+if (! function_exists('mysql_fetch_assoc')) {
     function mysql_fetch_assoc($result)
     {
         return $result->fetch_assoc();
     }
 }
 
-if (!function_exists('mysql_insert_id')) {
+if (! function_exists('mysql_insert_id')) {
     function mysql_insert_id()
     {
         return app('mysql')->insert_id;
     }
 }
 
-if (!function_exists('mysql_real_escape_string')) {
+if (! function_exists('mysql_real_escape_string')) {
     function mysql_real_escape_string($escapestr)
     {
         return app('mysql')->real_escape_string($escapestr);
     }
 }
 
-if (!function_exists('theme_list')) {
+if (! function_exists('theme_list')) {
     function theme_list()
     {
         $themes = [];
@@ -50,14 +50,14 @@ if (!function_exists('theme_list')) {
     }
 }
 
-if (!function_exists('old_theme')) {
+if (! function_exists('old_theme')) {
     function old_theme()
     {
         return cache('last_theme');
     }
 }
 
-if (!function_exists('theme')) {
+if (! function_exists('theme')) {
     function theme()
     {
         $theme = config('hm.theme');
@@ -80,7 +80,7 @@ if (!function_exists('theme')) {
     }
 }
 
-if (!function_exists('tmpl_path')) {
+if (! function_exists('tmpl_path')) {
     function tmpl_path()
     {
         return dirname(base_path()).'/templates/'.config('hm.theme').'/tmpl';
@@ -97,6 +97,7 @@ if (! function_exists('hanlder_app')) {
             $httpReturn = $e->resolveResponse();
         }
         $html = ob_get_clean();
+
         return $httpReturn ?? $html;
     }
 }
@@ -149,6 +150,7 @@ if (! function_exists('blade_string')) {
         if (! view()->exists("_{$name}")) {
             $filesystem->put(storage_path('blades')."/_{$name}.blade.php", $string);
         }
+
         return view("_{$name}", $data)->render();
     }
 }
@@ -156,9 +158,8 @@ if (! function_exists('blade_string')) {
 if (! function_exists('smarty_blade_block')) {
     function smarty_blade_block($params, $content, $smarty, &$repeat, $template)
     {
-        if (!$repeat && $content) {
+        if (! $repeat && $content) {
             return blade_string($content, $params);
         }
     }
 }
-

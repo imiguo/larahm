@@ -3,9 +3,7 @@
 namespace App\Exceptions;
 
 /**
- * Class RedirectException
- *
- * @package \App\Exceptions
+ * Class RedirectException.
  */
 class RedirectException extends HmException
 {

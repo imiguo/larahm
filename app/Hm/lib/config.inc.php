@@ -15,7 +15,7 @@ ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 
 require 'function.inc.php';
 
-if (!extension_loaded('gd')) {
+if (! extension_loaded('gd')) {
     $prefix = (PHP_SHLIB_SUFFIX == 'dll' ? 'php_' : '');
     dl($prefix.'gd.'.PHP_SHLIB_SUFFIX);
 }
@@ -27,7 +27,7 @@ app('data')->env['HTTP_HOST'] = preg_replace('/^www\./', '', app('data')->env['H
 
 $referer = isset(app('data')->env['HTTP_REFERER']) ? app('data')->env['HTTP_REFERER'] : null;
 $host = app('data')->env['HTTP_HOST'];
-if (!strpos($referer, '//'.$host)) {
+if (! strpos($referer, '//'.$host)) {
     Cookie::queue('came_from', $referer, 43200);
 }
 
@@ -57,10 +57,9 @@ foreach (app('data')->exchange_systems as $id => $data) {
     if (isset(app('data')->settings['def_payee_account_'.$data['sfx']]) and app('data')->settings['def_payee_account_'.$data['sfx']] != '' and app('data')->settings['def_payee_account_'.$data['sfx']] != '0') {
         app('data')->exchange_systems[$id]['status'] = 1;
         continue;
-    } else {
-        app('data')->exchange_systems[$id]['status'] = 0;
-        continue;
     }
+    app('data')->exchange_systems[$id]['status'] = 0;
+    continue;
 }
 app('data')->settings['site_url'] = (is_SSL() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
 

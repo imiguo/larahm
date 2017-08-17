@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\RedirectException;
 
 $admin_url = env('ADMIN_URL');
 
@@ -335,7 +335,7 @@ if (app('data')->frm['a'] == 'mass') {
 
     if (app('data')->frm['action2'] == 'masscsv') {
         $ids = app('data')->frm['pend'];
-        if (!$ids) {
+        if (! $ids) {
             echo 'Nothing selected.';
             throw new EmptyException();
         }
@@ -856,7 +856,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
         $q = 'select * from hm2_types where id = '.$hyip_id.' and status = \'on\'';
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
-        if (!$type) {
+        if (! $type) {
             throw new RedirectException($admin_url.'?a=send_bonuce&say=wrongplan');
         }
     }
@@ -951,15 +951,12 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
 
             if ($flag == 1) {
                 throw new RedirectException($admin_url.'?a=send_bonuce&say=send&total='.$total);
-            } else {
-                throw new RedirectException($admin_url.'?a=send_bonuce&say=notsend');
             }
-
+            throw new RedirectException($admin_url.'?a=send_bonuce&say=notsend');
             session(['code' => '']);
             throw new EmptyException();
-        } else {
-            throw new RedirectException($admin_url.'?a=send_bonuce&say=invalid_code');
         }
+        throw new RedirectException($admin_url.'?a=send_bonuce&say=invalid_code');
     }
 
     $code = '';
@@ -1024,9 +1021,8 @@ if ((app('data')->frm['a'] == 'send_penality' and app('data')->frm['action'] == 
 
     if ($flag == 1) {
         throw new RedirectException($admin_url.'?a=send_penality&say=send&total='.$total);
-    } else {
-        throw new RedirectException($admin_url.'?a=send_penality&say=notsend');
     }
+    throw new RedirectException($admin_url.'?a=send_penality&say=notsend');
 }
 
 /*
@@ -1129,7 +1125,7 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         app('data')->settings['graph_bg_color'] = app('data')->frm['graph_bg_color'];
         app('data')->settings['use_number_validation_number'] = sprintf('%d', app('data')->frm['use_number_validation_number']);
         app('data')->settings['advanced_graph_validation'] = (app('data')->frm['advanced_graph_validation'] ? 1 : 0);
-        if (!function_exists('imagettfbbox')) {
+        if (! function_exists('imagettfbbox')) {
             app('data')->settings['advanced_graph_validation'] = 0;
         }
 
@@ -1160,7 +1156,7 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         $atip_pl = $_FILES['atip_pl'];
         if ((0 < $atip_pl['size'] and $atip_pl['error'] == 0)) {
             $fp = fopen($atip_pl['tmp_name'], 'r');
-            while (!feof($fp)) {
+            while (! feof($fp)) {
                 $buf = fgets($fp, 4096);
                 if (preg_match('/my\\s+\\(\\$account\\)\\s+\\=\\s+\'([^\']+)\'/', $buf, $matches)) {
                     app('data')->frm['def_payee_account_ebullion'] = $matches[1];
@@ -1179,7 +1175,7 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         $status_php = $_FILES['status_php'];
         if ((0 < $status_php['size'] and $status_php['error'] == 0)) {
             $fp = fopen($status_php['tmp_name'], 'r');
-            while (!feof($fp)) {
+            while (! feof($fp)) {
                 $buf = fgets($fp, 4096);
                 if (preg_match('/\\$eb_keyID\\s+\\=\\s+\'([^\']+)\'/', $buf, $matches)) {
                     app('data')->frm['ebullion_keyID'] = $matches[1];
@@ -1297,7 +1293,7 @@ if ((app('data')->frm['a'] == 'releasedeposits' and app('data')->frm['action'] =
             if (($type['compound_min_deposit'] <= $amount and $amount <= $type['compound_max_deposit'])) {
                 if ($type['compound_percents_type'] == 1) {
                     $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
-                    if (!in_array($compound, $cps)) {
+                    if (! in_array($compound, $cps)) {
                         $compound = $cps[0];
                     }
                 } else {
@@ -1365,7 +1361,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
         $q = 'select * from hm2_types where id = '.$hyip_id.' and status = \'on\'';
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
-        if (!$type) {
+        if (! $type) {
             throw new RedirectException($admin_url.'?a=send_bonuce&say=wrongplan');
         }
     }
@@ -1385,7 +1381,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
               type = \'bonus\',
               date = now(),
               description = \''.$description.'\'';
-            if (!(db_query($q))) {
+            if (! (db_query($q))) {
             }
 
             if ($deposit) {
@@ -1443,10 +1439,9 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
             }
 
             throw new RedirectException($admin_url.'?a=addbonuse&say=done&id='.$id);
-        } else {
-            $id = sprintf('%d', app('data')->frm['id']);
-            throw new RedirectException($admin_url.'?a=addbonuse&id='.$id.'&say=invalid_code');
         }
+        $id = sprintf('%d', app('data')->frm['id']);
+        throw new RedirectException($admin_url.'?a=addbonuse&id='.$id.'&say=invalid_code');
     }
 
     $code = '';
@@ -1479,7 +1474,7 @@ if ((app('data')->frm['a'] == 'addpenality' and app('data')->frm['action'] == 'a
 	type = \'penality\',
 	date = now(),
 	description = \''.$description.'\'';
-    if (!(db_query($q))) {
+    if (! (db_query($q))) {
     }
 
     if (app('data')->frm['inform'] == 1) {
@@ -1728,7 +1723,7 @@ if (app('data')->frm['action'] == 'add_hyip') {
     $cps = preg_split('/\\s*,\\s*/', app('data')->frm['compound_percents']);
     $cps1 = [];
     foreach ($cps as $cp) {
-        if (((!in_array($cp, $cps1) and 0 <= $cp) and $cp <= 100)) {
+        if (((! in_array($cp, $cps1) and 0 <= $cp) and $cp <= 100)) {
             array_push($cps1, sprintf('%d', $cp));
             continue;
         }
@@ -1763,7 +1758,7 @@ if (app('data')->frm['action'] == 'add_hyip') {
 	hold = '.$hold.',
 	delay = '.$delay.'
   ');
-    if (!(db_query($q))) {
+    if (! (db_query($q))) {
     }
 
     $parent = mysql_insert_id();
@@ -1780,7 +1775,7 @@ if (app('data')->frm['action'] == 'add_hyip') {
 		min_deposit = '.$min_amount.',
 		max_deposit = '.$max_amount.',
 		percent = '.$percent;
-            if (!(db_query($q))) {
+            if (! (db_query($q))) {
             }
 
             continue;
@@ -1834,7 +1829,7 @@ if (app('data')->frm['action'] == 'edit_hyip') {
     $cps = preg_split('/\\s*,\\s*/', app('data')->frm['compound_percents']);
     $cps1 = [];
     foreach ($cps as $cp) {
-        if (((!in_array($cp, $cps1) and 0 <= $cp) and $cp <= 100)) {
+        if (((! in_array($cp, $cps1) and 0 <= $cp) and $cp <= 100)) {
             array_push($cps1, sprintf('%d', $cp));
             continue;
         }
@@ -1874,12 +1869,12 @@ if (app('data')->frm['action'] == 'edit_hyip') {
 
 	 where id='.$id.'
   ');
-    if (!(db_query($q))) {
+    if (! (db_query($q))) {
     }
 
     $parent = $id;
     $q = 'delete from hm2_plans where parent = '.$id;
-    if (!(db_query($q))) {
+    if (! (db_query($q))) {
     }
 
     $rate_amount_active = app('data')->frm['rate_amount_active'];
@@ -1895,7 +1890,7 @@ if (app('data')->frm['action'] == 'edit_hyip') {
 		min_deposit = '.$min_amount.',
 		max_deposit = '.$max_amount.',
 		percent = '.$percent;
-            if (!(db_query($q))) {
+            if (! (db_query($q))) {
             }
 
             continue;
@@ -1979,7 +1974,7 @@ if ((app('data')->frm['a'] == 'thistory' and app('data')->frm['action2'] == 'dow
  * @action add_processing
  */
 if ((app('data')->frm['a'] == 'add_processing' and app('data')->frm[action] == 'add_processing')) {
-    if (!app('data')->settings['demomode']) {
+    if (! app('data')->settings['demomode']) {
         $status = (app('data')->frm['status'] ? 1 : 0);
         $name = quote(app('data')->frm['name']);
         $description = quote(app('data')->frm['description']);
@@ -2024,7 +2019,7 @@ if ((app('data')->frm['a'] == 'add_processing' and app('data')->frm[action] == '
  * @action edit_processing
  */
 if ((app('data')->frm['a'] == 'edit_processing' and app('data')->frm[action] == 'edit_processing')) {
-    if (!app('data')->settings['demomode']) {
+    if (! app('data')->settings['demomode']) {
         $pid = intval(app('data')->frm['pid']);
         $status = (app('data')->frm['status'] ? 1 : 0);
         $name = quote(app('data')->frm['name']);
@@ -2061,7 +2056,7 @@ if ((app('data')->frm['a'] == 'edit_processing' and app('data')->frm[action] == 
  * @action update_processings
  */
 if (app('data')->frm['a'] == 'update_processings') {
-    if (!app('data')->settings['demomode']) {
+    if (! app('data')->settings['demomode']) {
         $q = 'update hm2_processings set status = 0';
         db_query($q);
         $status = app('data')->frm['status'];
@@ -2080,7 +2075,7 @@ if (app('data')->frm['a'] == 'update_processings') {
  * @action delete_processing
  */
 if (app('data')->frm['a'] == 'delete_processing') {
-    if (!app('data')->settings['demomode']) {
+    if (! app('data')->settings['demomode']) {
         $pid = intval(app('data')->frm['pid']);
         $q = 'delete from hm2_processings where id = '.$pid;
         db_query($q);

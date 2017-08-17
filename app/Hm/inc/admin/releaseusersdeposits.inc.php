@@ -94,7 +94,7 @@ $user_id = sprintf('%d', app('data')->frm['u_id']);
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       $row['total_profit'] = number_format(abs($row1['sm']), 2);
-      if ((!$row['deposits'] and $row['closed'] != 0)) {
+      if ((! $row['deposits'] and $row['closed'] != 0)) {
           continue;
       }
 

@@ -13,16 +13,16 @@ use App\Exceptions\EmptyException;
 
 $id = sprintf('%d', app('data')->frm['id']);
   $q = 'select * from hm2_types where id= '.$id;
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   $row = mysql_fetch_array($sth);
-  if (!$row) {
+  if (! $row) {
       throw new EmptyException();
   }
 
   $q = 'select * from hm2_plans where parent = '.$id.' order by id';
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   $rates = [];
@@ -31,7 +31,7 @@ $id = sprintf('%d', app('data')->frm['id']);
   }
 
   $q = 'select * from hm2_types where status = \'on\' and id <> '.$id;
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   $packages = [];

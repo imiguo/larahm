@@ -5,9 +5,7 @@ namespace App\Exceptions;
 use Exception;
 
 /**
- * Class HmException
- *
- * @package \App\Exceptions
+ * Class HmException.
  */
 class HmException extends Exception
 {
