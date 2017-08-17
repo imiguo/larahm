@@ -84,7 +84,7 @@ $q = 'select * from hm2_types order by id';
           echo '>[edit]</a> <a href=?a=deleterate&id=';
           echo $line['id'];
           echo ' onclick="return confirm(\'';
-          echo ($line['id'] < 3 and $settings['demomode'] == 1) ? 'Demo version restriction!\\nYou cannot delete this package!\\n\\n' : '';
+          echo ($line['id'] < 3 and app('data')->settings['demomode'] == 1) ? 'Demo version restriction!\\nYou cannot delete this package!\\n\\n' : '';
           echo 'Are you sure delete this package? All users deposits in this package will be lost!\');">[delete]</a></td>
 </tr>
 <tr>

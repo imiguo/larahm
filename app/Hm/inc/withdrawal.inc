@@ -11,12 +11,12 @@
 
 use App\Exceptions\RedirectException;
 
-if ($frm['action'] == 'preview') {
+if (app('data')->frm['action'] == 'preview') {
     $ab = get_user_balance($userinfo['id']);
-    $amount = sprintf('%0.2f', $frm['amount']);
-    $description = quote($frm['comment']);
-    $ec = sprintf('%d', $frm['ec']);
-    if (0 < $settings['forbid_withdraw_before_deposit']) {
+    $amount = sprintf('%0.2f', app('data')->frm['amount']);
+    $description = quote(app('data')->frm['comment']);
+    $ec = sprintf('%d', app('data')->frm['ec']);
+    if (0 < app('data')->settings['forbid_withdraw_before_deposit']) {
         $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$userinfo['id'];
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
@@ -30,7 +30,7 @@ if ($frm['action'] == 'preview') {
     }
 
     $on_hold = 0;
-    if ($settings['allow_withdraw_when_deposit_ends'] == 1) {
+    if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
         $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
         $sth = db_query($q);
         $deps = [];
@@ -49,7 +49,7 @@ if ($frm['action'] == 'preview') {
         }
     }
 
-    if ($settings['hold_only_first_days'] == 1) {
+    if (app('data')->settings['hold_only_first_days'] == 1) {
         $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
     } else {
         $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
@@ -85,11 +85,11 @@ if ($frm['action'] == 'preview') {
 
     }
 
-    if ($amount < $settings['min_withdrawal_amount']) {
+    if ($amount < app('data')->settings['min_withdrawal_amount']) {
         throw new RedirectException('/?a=withdraw&say=less_min');
     }
 
-    if (0 < $settings[max_daily_withdraw]) {
+    if (0 < app('data')->settings[max_daily_withdraw]) {
         $q = 'select sum(actual_amount) as am from hm2_history where type in (\'withdraw\', \'withdraw_pending\') and user_id = '.$userinfo[id];
         $sth = db_query($q);
         $dw = 0;
@@ -97,14 +97,14 @@ if ($frm['action'] == 'preview') {
             $dw = 0 - $row[am];
         }
 
-        if ($settings[max_daily_withdraw] < $dw + $amount) {
+        if (app('data')->settings[max_daily_withdraw] < $dw + $amount) {
             throw new RedirectException('/?a=withdraw&say=daily_limit');
         }
     }
 
-    $fee = floor($amount * $settings['withdrawal_fee']) / 100;
-    if ($fee < $settings['withdrawal_fee_min']) {
-        $fee = $settings['withdrawal_fee_min'];
+    $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+    if ($fee < app('data')->settings['withdrawal_fee_min']) {
+        $fee = app('data')->settings['withdrawal_fee_min'];
     }
 
     $to_withdraw = $amount - $fee;
@@ -114,39 +114,39 @@ if ($frm['action'] == 'preview') {
 
     $to_withdraw = number_format(floor($to_withdraw * 100) / 100, 2);
     $account = '';
-    if (($ec == 0 and $settings['def_payee_account'])) {
+    if (($ec == 0 and app('data')->settings['def_payee_account'])) {
         $account = $userinfo['egold_account'];
     }
 
-    if (($ec == 1 and $settings['def_payee_account_evocash'])) {
+    if (($ec == 1 and app('data')->settings['def_payee_account_evocash'])) {
         $account = $userinfo['evocash_account'];
     }
 
-    if (($ec == 2 and $settings['def_payee_account_intgold'])) {
+    if (($ec == 2 and app('data')->settings['def_payee_account_intgold'])) {
         $account = $userinfo['intgold_account'];
     }
 
-    if (($ec == 4 and $settings['def_payee_account_stormpay'])) {
+    if (($ec == 4 and app('data')->settings['def_payee_account_stormpay'])) {
         $account = $userinfo['stormpay_account'];
     }
 
-    if (($ec == 5 and $settings['def_payee_account_ebullion'])) {
+    if (($ec == 5 and app('data')->settings['def_payee_account_ebullion'])) {
         $account = $userinfo['ebullion_account'];
     }
 
-    if (($ec == 6 and $settings['def_payee_account_paypal'])) {
+    if (($ec == 6 and app('data')->settings['def_payee_account_paypal'])) {
         $account = $userinfo['paypal_account'];
     }
 
-    if (($ec == 7 and $settings['def_payee_account_goldmoney'])) {
+    if (($ec == 7 and app('data')->settings['def_payee_account_goldmoney'])) {
         $account = $userinfo['goldmoney_account'];
     }
 
-    if (($ec == 8 and $settings['def_payee_account_eeecurrency'])) {
+    if (($ec == 8 and app('data')->settings['def_payee_account_eeecurrency'])) {
         $account = $userinfo['eeecurrency_account'];
     }
 
-    if (($ec == 9 and $settings['def_payee_account_pecunix'])) {
+    if (($ec == 9 and app('data')->settings['def_payee_account_pecunix'])) {
         $account = $userinfo['pecunix_account'];
     }
 
@@ -154,26 +154,26 @@ if ($frm['action'] == 'preview') {
     $smarty->assign('amount', $amount);
     $smarty->assign('fee', $fee);
     $smarty->assign('to_withdraw', $to_withdraw);
-    $smarty->assign('currency', $exchange_systems[$ec]['name']);
+    $smarty->assign('currency', app('data')->exchange_systems[$ec]['name']);
     $smarty->assign('ec', $ec);
     $smarty->assign('account', $account);
-    $smarty->assign('comment', $frm['comment']);
+    $smarty->assign('comment', app('data')->frm['comment']);
     $smarty->display('withdrawal.tpl');
 } else {
-    if ($frm['action'] == 'withdraw') {
-        if (($settings['use_transaction_code'] == 1 and $frm['transaction_code'] != $userinfo['transaction_code'])) {
+    if (app('data')->frm['action'] == 'withdraw') {
+        if ((app('data')->settings['use_transaction_code'] == 1 and app('data')->frm['transaction_code'] != $userinfo['transaction_code'])) {
             throw new RedirectException('/?a=withdraw&say=invalid_transaction_code');
         }
 
         $ab = get_user_balance($userinfo['id']);
-        $amount = sprintf('%0.2f', $frm['amount']);
-        $description = quote($frm['comment']);
-        $ec = sprintf('%d', $frm['ec']);
+        $amount = sprintf('%0.2f', app('data')->frm['amount']);
+        $description = quote(app('data')->frm['comment']);
+        $ec = sprintf('%d', app('data')->frm['ec']);
         if ($amount <= 0) {
             throw new RedirectException('/?a=withdraw&say=zero');
         }
 
-        if (0 < $settings['forbid_withdraw_before_deposit']) {
+        if (0 < app('data')->settings['forbid_withdraw_before_deposit']) {
             $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$userinfo['id'];
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
@@ -183,7 +183,7 @@ if ($frm['action'] == 'preview') {
         }
 
         $on_hold = 0;
-        if ($settings['allow_withdraw_when_deposit_ends'] == 1) {
+        if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
             $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
             $sth = db_query($q);
             $deps = [];
@@ -202,7 +202,7 @@ if ($frm['action'] == 'preview') {
             }
         }
 
-        if ($settings['hold_only_first_days'] == 1) {
+        if (app('data')->settings['hold_only_first_days'] == 1) {
             $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
         } else {
             $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
@@ -238,7 +238,7 @@ if ($frm['action'] == 'preview') {
 
         }
 
-        if (0 < $settings[max_daily_withdraw]) {
+        if (0 < app('data')->settings[max_daily_withdraw]) {
             $q = 'select sum(actual_amount) as am from hm2_history where type in (\'withdraw\', \'withdraw_pending\') and user_id = '.$userinfo[id];
             $sth = db_query($q);
             $dw = 0;
@@ -246,13 +246,13 @@ if ($frm['action'] == 'preview') {
                 $dw = 0 - $row[am];
             }
 
-            if ($settings[max_daily_withdraw] < $dw + $amount) {
+            if (app('data')->settings[max_daily_withdraw] < $dw + $amount) {
                 throw new RedirectException('/?a=withdraw&say=daily_limit');
             }
         }
 
         if ($amount <= $ab['total']) {
-            if ($amount < $settings['min_withdrawal_amount']) {
+            if ($amount < app('data')->settings['min_withdrawal_amount']) {
                 throw new RedirectException('/?a=withdraw&say=less_min');
             }
 
@@ -269,19 +269,19 @@ if ($frm['action'] == 'preview') {
             $info = [];
             $info['username'] = $userinfo['username'];
             $info['name'] = $userinfo['name'];
-            $info['ip'] = $frm_env['REMOTE_ADDR'];
+            $info['ip'] = app('data')->env['REMOTE_ADDR'];
             $info['amount'] = $amount;
-            send_template_mail('withdraw_request_user_notification', $userinfo['email'], $settings['system_email'], $info);
-            send_template_mail('withdraw_request_admin_notification', $settings['system_email'], $settings['system_email'], $info);
-            if (($settings['use_auto_payment'] == 1 and ((((($ec == 0 or $ec == 1) or $ec == 2) or $ec == 5) or $ec == 8) or $ec == 9))) {
-                if (($settings['min_auto_withdraw'] <= $amount and $amount <= $settings['max_auto_withdraw'])) {
+            send_template_mail('withdraw_request_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+            send_template_mail('withdraw_request_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
+            if ((app('data')->settings['use_auto_payment'] == 1 and ((((($ec == 0 or $ec == 1) or $ec == 2) or $ec == 5) or $ec == 8) or $ec == 9))) {
+                if ((app('data')->settings['min_auto_withdraw'] <= $amount and $amount <= app('data')->settings['max_auto_withdraw'])) {
                     $q = 'select sum(amount) as sum from hm2_history where type=\'withdrawal\' and date + interval 24 hour > now() and user_id = '.$userinfo['id'];
                     $sth = db_query($q);
                     if ($row = mysql_fetch_array($sth)) {
-                        if ((abs($row['sum']) + $amount <= $settings['max_auto_withdraw_user'] and $userinfo['auto_withdraw'] == 1)) {
-                            $fee = floor($amount * $settings['withdrawal_fee']) / 100;
-                            if ($fee < $settings['withdrawal_fee_min']) {
-                                $fee = $settings['withdrawal_fee_min'];
+                        if ((abs($row['sum']) + $amount <= app('data')->settings['max_auto_withdraw_user'] and $userinfo['auto_withdraw'] == 1)) {
+                            $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+                            if ($fee < app('data')->settings['withdrawal_fee_min']) {
+                                $fee = app('data')->settings['withdrawal_fee_min'];
                             }
 
                             $to_withdraw = $amount - $fee;
@@ -290,7 +290,7 @@ if ($frm['action'] == 'preview') {
                             }
 
                             $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
-                            $success_txt = 'Withdraw to '.$userinfo['username'].' from '.$settings['site_name'];
+                            $success_txt = 'Withdraw to '.$userinfo['username'].' from '.app('data')->settings['site_name'];
                             if ($ec == 0) {
                                 $error_txt = 'Error, tried sent '.$to_withdraw.' to e-gold account # '.$userinfo['egold_account'].'. Error:';
                                 list($res, $text, $batch) = send_money_to_egold('', $to_withdraw, $userinfo['egold_account'], $success_txt, $error_txt);
@@ -341,9 +341,9 @@ if ($frm['action'] == 'preview') {
                                 db_query($q);
                                 $info['batch'] = $batch;
                                 $info['account'] = $d_account[$ec];
-                                $info['currency'] = $exchange_systems[$ec]['name'];
-                                send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
-                                send_template_mail('withdraw_admin_notification', $settings['system_email'], $settings['system_email'], $info);
+                                $info['currency'] = app('data')->exchange_systems[$ec]['name'];
+                                send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+                                send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
                                 throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
                             }
                         }
@@ -372,9 +372,9 @@ if ($frm['action'] == 'preview') {
         }
 
         $smarty->assign('ab_formated', $ab_formated);
-        $smarty->assign('say', $frm['say']);
-        $smarty->assign('batch', $frm['batch']);
-        $format = ($settings['show_full_sum'] ? 5 : 2);
+        $smarty->assign('say', app('data')->frm['say']);
+        $smarty->assign('batch', app('data')->frm['batch']);
+        $format = (app('data')->settings['show_full_sum'] ? 5 : 2);
         $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
@@ -382,7 +382,7 @@ if ($frm['action'] == 'preview') {
                 $row['sm'] = floor($row['sm'] * 100) / 100;
             }
 
-            $exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], $format);
+            app('data')->exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], $format);
             if (100 < $row['ec']) {
                 $smarty->assign('other_processings', 1);
                 continue;
@@ -390,13 +390,13 @@ if ($frm['action'] == 'preview') {
         }
 
         $ps = [];
-        reset($exchange_systems);
-        foreach ($exchange_systems as $id => $data) {
+        reset(app('data')->exchange_systems);
+        foreach (app('data')->exchange_systems as $id => $data) {
             array_push($ps, array_merge(['id' => $id, 'account' => $accounts[$id]], $data));
         }
 
         $hold = [];
-        if ($settings['allow_withdraw_when_deposit_ends'] == 1) {
+        if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
             $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'].' and status=\'on\'';
             $sth = db_query($q);
             $deps = [];
@@ -415,7 +415,7 @@ if ($frm['action'] == 'preview') {
             }
         }
 
-        if ($settings['hold_only_first_days'] == 1) {
+        if (app('data')->settings['hold_only_first_days'] == 1) {
             $q = 'select
               sum(hm2_history.actual_amount) as am,
 	      hm2_history.ec

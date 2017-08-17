@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-  $id = sprintf('%d', $frm['id']);
+  $id = sprintf('%d', app('data')->frm['id']);
   $q = 'select * from hm2_users where id = '.$id.' and id <> 1';
   if (!($sth = db_query($q))) {
   }
@@ -19,15 +19,15 @@
   echo '<b>Edit Member Account:</b><br>
 <br>
 ';
-  if ($frm['say'] == 'saved') {
+  if (app('data')->frm['say'] == 'saved') {
       echo 'User information saved<br><br>';
   }
 
-  if ($frm['say'] == 'incorrect_password') {
+  if (app('data')->frm['say'] == 'incorrect_password') {
       echo 'Please check your password<br><br>';
   }
 
-  if ($frm['say'] == 'incorrect_transaction_code') {
+  if (app('data')->frm['say'] == 'incorrect_transaction_code') {
       echo 'Please check your transaction code<br><br>';
   }
 
@@ -45,7 +45,7 @@
   echo quote($row['name']);
   echo '\' class=inpts size=30></td>
 </tr>';
-  if ($settings['use_user_location']) {
+  if (app('data')->settings['use_user_location']) {
       include app_path('Hm').'/inc/countries.inc';
       echo '<tr>
  <td>Address:</td>
@@ -104,7 +104,7 @@
  <td>Retype password:</td>
  <td><input type=password name=password2 value="" class=inpts size=30></td>
 </tr>';
-  if ($settings['use_transaction_code']) {
+  if (app('data')->settings['use_transaction_code']) {
       echo '<tr>
  <td>Transaction Code:</td>
  <td><input type=password name=transaction_code value="" class=inpts size=30></td>
@@ -185,7 +185,7 @@
   echo '>
             Auto-withdrawal enabled
             ';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '            &nbsp; &nbsp; ';
       echo '<s';
       echo 'pan style="color: #D20202;">Checkbox is available
@@ -200,7 +200,7 @@
   echo '>
             Tranfer earnings directly to the user\'s e-gold account
             ';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '            &nbsp; &nbsp; ';
       echo '<s';
       echo 'pan style="color: #D20202;">Checkbox is available

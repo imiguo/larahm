@@ -12,19 +12,19 @@
 use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
-if ($frm['complete']) {
+if (app('data')->frm['complete']) {
     $smarty->assign('fatal', 'completed');
     $smarty->display('internal_transfer.tpl');
     throw new EmptyException();
 }
 
-  if (!$settings['internal_transfer_enabled']) {
+  if (!app('data')->settings['internal_transfer_enabled']) {
       $smarty->assign('fatal', 'forbidden');
       $smarty->display('internal_transfer.tpl');
       throw new EmptyException();
   }
 
-  if (0 < $settings['forbid_withdraw_before_deposit']) {
+  if (0 < app('data')->settings['forbid_withdraw_before_deposit']) {
       $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$userinfo['id'];
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
@@ -47,18 +47,18 @@ if ($frm['complete']) {
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $sm = floor($row['sm'] * 100) / 100;
-      $exchange_systems[$row['ec']]['balance'] = number_format($sm, 2);
-      $exchange_systems[$row['ec']]['actual_balance'] = $row['sm'];
+      app('data')->exchange_systems[$row['ec']]['balance'] = number_format($sm, 2);
+      app('data')->exchange_systems[$row['ec']]['actual_balance'] = $row['sm'];
   }
 
   $ps = [];
-  reset($exchange_systems);
-  foreach ($exchange_systems as $id => $data) {
+  reset(app('data')->exchange_systems);
+  foreach (app('data')->exchange_systems as $id => $data) {
       array_push($ps, array_merge(['id' => $id], $data));
   }
 
   $smarty->assign('ps', $ps);
-  if ($settings['hold_only_first_days'] == 1) {
+  if (app('data')->settings['hold_only_first_days'] == 1) {
       $q = 'select
               sum(hm2_history.actual_amount) as am,
 	      hm2_history.ec
@@ -104,16 +104,16 @@ if ($frm['complete']) {
   }
 
   $smarty->assign('hold', $hold);
-  if ($frm['action'] == 'preview_transaction') {
-      $amount = sprintf('%.02f', $frm['amount']);
-      $ec = intval($frm['ec']);
+  if (app('data')->frm['action'] == 'preview_transaction') {
+      $amount = sprintf('%.02f', app('data')->frm['amount']);
+      $ec = intval(app('data')->frm['ec']);
       if ($amount <= 0) {
           $smarty->assign('say', 'too_small_amount');
           $smarty->display('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      if ($settings['hold_only_first_days'] == 1) {
+      if (app('data')->settings['hold_only_first_days'] == 1) {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
       } else {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
@@ -134,19 +134,19 @@ if ($frm['complete']) {
           }
       }
 
-      if ($exchange_systems[$ec]['actual_balance'] < $amount) {
+      if (app('data')->exchange_systems[$ec]['actual_balance'] < $amount) {
           $smarty->assign('say', 'too_big_amount');
           $smarty->display('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      if ($exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
+      if (app('data')->exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
           $smarty->assign('say', 'on_hold');
           $smarty->display('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      $recipient = quote($frm['account']);
+      $recipient = quote(app('data')->frm['account']);
       $q = 'select * from hm2_users where username = \''.$recipient.'\' and status = \'on\'';
       $sth = db_query($q);
       $user = mysql_fetch_array($sth);
@@ -159,31 +159,31 @@ if ($frm['complete']) {
       $smarty->assign('user', $user);
       $smarty->assign('amount', $amount);
       $smarty->assign('ec', $ec);
-      $smarty->assign('ec_name', $exchange_systems[$ec]['name']);
-      $smarty->assign('comment', $frm['comment']);
+      $smarty->assign('ec_name', app('data')->exchange_systems[$ec]['name']);
+      $smarty->assign('comment', app('data')->frm['comment']);
       $smarty->assign('preview', 1);
       $smarty->display('internal_transfer.tpl');
       throw new EmptyException();
   }
 
-  if ($frm['action'] == 'make_transaction') {
-      if ($settings['use_transaction_code']) {
-          if ($frm['transaction_code'] != $userinfo['transaction_code']) {
+  if (app('data')->frm['action'] == 'make_transaction') {
+      if (app('data')->settings['use_transaction_code']) {
+          if (app('data')->frm['transaction_code'] != $userinfo['transaction_code']) {
               $smarty->assign('fatal', 'invalid_transaction_code');
               $smarty->display('internal_transfer.tpl');
               throw new EmptyException();
           }
       }
 
-      $amount = sprintf('%.02f', $frm['amount']);
-      $ec = intval($frm['ec']);
+      $amount = sprintf('%.02f', app('data')->frm['amount']);
+      $ec = intval(app('data')->frm['ec']);
       if ($amount <= 0) {
           $smarty->assign('say', 'too_small_amount');
           $smarty->display('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      if ($settings['hold_only_first_days'] == 1) {
+      if (app('data')->settings['hold_only_first_days'] == 1) {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
       } else {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
@@ -204,19 +204,19 @@ if ($frm['complete']) {
           }
       }
 
-      if ($exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
+      if (app('data')->exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
           $smarty->assign('say', 'on_hold');
           $smarty->display('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      if ($exchange_systems[$ec]['actual_balance'] < $amount) {
+      if (app('data')->exchange_systems[$ec]['actual_balance'] < $amount) {
           $smarty->assign('say', 'too_big_amount');
           $smarty->display('internal_transfer.tpl');
           throw new EmptyException();
       }
 
-      $recipient = quote($frm['account']);
+      $recipient = quote(app('data')->frm['account']);
       $q = 'select * from hm2_users where username = \''.$recipient.'\' and status = \'on\'';
       $sth = db_query($q);
       $user = mysql_fetch_array($sth);
@@ -231,7 +231,7 @@ if ($frm['complete']) {
             amount = -'.$amount.',
             actual_amount = -'.$amount.',
             type = \'internal_transaction_spend\',
-            description = \'Internal transaction to `').$user['username'].'` account.'.($frm['comment'] ? ' Comments: '.$frm['comment'] : '').(''.'\',
+            description = \'Internal transaction to `').$user['username'].'` account.'.(app('data')->frm['comment'] ? ' Comments: '.app('data')->frm['comment'] : '').(''.'\',
             date = now(),
             ec = '.$ec.'
          ');
@@ -241,7 +241,7 @@ if ($frm['complete']) {
             amount = '.$amount.',
             actual_amount = '.$amount.',
             type = \'internal_transaction_receive\',
-            description = \'Internal transaction from `').$userinfo['username'].'` account.'.($frm['comment'] ? ' Comments: '.$frm['comment'] : '').(''.'\',
+            description = \'Internal transaction from `').$userinfo['username'].'` account.'.(app('data')->frm['comment'] ? ' Comments: '.app('data')->frm['comment'] : '').(''.'\',
             date = now(),
             ec = '.$ec.'
          ');

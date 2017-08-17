@@ -20,24 +20,24 @@ $q = 'select count(*) as col from hm2_users where id > 1';
   $pas_c = $all_c - $act_c;
   echo '
 <b>Send a penalty:</b><br><br>';
-  if ($frm['say'] == 'wrongamount') {
+  if (app('data')->frm['say'] == 'wrongamount') {
       echo 'The penalty has not been sent. You had entered the wrong amount!<br>
 <br>';
   }
 
-  if ($frm['say'] == 'someerror') {
+  if (app('data')->frm['say'] == 'someerror') {
       echo 'The penalty has not been sent. Unknown error!<br>
 <br>';
   }
 
-  if ($frm['say'] == 'notsend') {
+  if (app('data')->frm['say'] == 'notsend') {
       echo 'The penalty has not been sent. No users found!<br>
 <br>';
   }
 
-  if ($frm['say'] == 'send') {
+  if (app('data')->frm['say'] == 'send') {
       echo 'The penalty has been sent. Total: $';
-      echo number_format($frm['total'], 2);
+      echo number_format(app('data')->frm['total'], 2);
       echo '<br>
 <br>';
   }
@@ -83,7 +83,7 @@ function checkform() {
 	';
   echo '<s';
   echo 'elect name=ec class=inpts>';
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data['status'] != 1) {
           continue;
       }

@@ -13,10 +13,10 @@ use App\Exceptions\EmptyException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', json_encode($frm).PHP_EOL, FILE_APPEND);
-file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', 'IP:'.$frm_env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
+file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
+file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
 
-if ($frm['a'] == 'checkpayment') {
+if (app('data')->frm['a'] == 'checkpayment') {
     // Rejecting queries from IP addresses not belonging to Payeer
     if (!in_array($_SERVER['REMOTE_ADDR'], ['185.71.65.92', '185.71.65.189',
         '149.202.17.210', ])) {

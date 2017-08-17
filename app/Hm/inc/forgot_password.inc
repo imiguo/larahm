@@ -10,15 +10,15 @@
  */
 
 $found_records = -1;
-  if ($frm['action'] == 'forgot_password') {
+  if (app('data')->frm['action'] == 'forgot_password') {
       $found_records = 0;
-      $email = quote($frm['email']);
+      $email = quote(app('data')->frm['email']);
       $q = 'select * from hm2_users where username=\''.$email.'\' or email=\''.$email.'\' and (status=\'on\' or status=\'suspended\')';
       if (!($sth = db_query($q))) {
       }
 
       while ($row = mysql_fetch_array($sth)) {
-          if (($settings['demomode'] == 1 and $row['id'] <= 3)) {
+          if ((app('data')->settings['demomode'] == 1 and $row['id'] <= 3)) {
           } else {
               if ($row['activation_code'] != '') {
                   $info = [];
@@ -26,8 +26,8 @@ $found_records = -1;
                   $info['username'] = $row['username'];
                   $info['name'] = $row['name'];
                   $info['ip'] = '[not logged]';
-                  $info['max_tries'] = $settings['brute_force_max_tries'];
-                  send_template_mail('brute_force_activation', $row['email'], $settings['system_email'], $info);
+                  $info['max_tries'] = app('data')->settings['brute_force_max_tries'];
+                  send_template_mail('brute_force_activation', $row['email'], app('data')->settings['system_email'], $info);
               }
 
               $password = gen_confirm_code(8, 0);
@@ -36,7 +36,7 @@ $found_records = -1;
               if (!($sth1 = db_query($q))) {
               }
 
-              if ($settings['store_uncrypted_password'] == 1) {
+              if (app('data')->settings['store_uncrypted_password'] == 1) {
                   $pswd = quote($password);
                   $q = 'update hm2_users set pswd = \''.$pswd.'\' where id = '.$row['id'];
                   if (!($sth1 = db_query($q))) {
@@ -47,8 +47,8 @@ $found_records = -1;
               $info['username'] = $row['username'];
               $info['password'] = $password;
               $info['name'] = $row['name'];
-              $info['ip'] = $frm_env['REMOTE_ADDR'];
-              send_template_mail('forgot_password', $row['email'], $settings['system_email'], $info);
+              $info['ip'] = app('data')->env['REMOTE_ADDR'];
+              send_template_mail('forgot_password', $row['email'], app('data')->settings['system_email'], $info);
           }
 
           $found_records = 1;

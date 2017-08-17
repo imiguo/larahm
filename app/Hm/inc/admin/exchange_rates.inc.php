@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-if ($settings['demomode']) {
+if (app('data')->settings['demomode']) {
     echo start_info_table('100%');
     echo '<b>Demo version restriction!</b><br>
 You cannot change the exchange rates!';
@@ -36,20 +36,20 @@ You cannot change the exchange rates!';
 <tr>
   <td bgcolor=#FFFFFF nowrap align=center>From / To</td>';
 
-  foreach ($exchange_systems as $id => $value) {
+  foreach (app('data')->exchange_systems as $id => $value) {
       echo '  <td bgcolor=#FFFFFF align=center><img src=images/';
       echo $id;
       echo '.gif height=17></td>';
   }
 
   echo '</tr>';
-  foreach ($exchange_systems as $id_from => $value) {
+  foreach (app('data')->exchange_systems as $id_from => $value) {
       echo '<tr>
   <td align=center bgcolor=#FFFFFF><img src=images/';
       echo $id_from;
       echo '.gif height=17></td>
   ';
-      foreach ($exchange_systems as $id_to => $value) {
+      foreach (app('data')->exchange_systems as $id_to => $value) {
           echo '    <td align=center bgcolor=#FFFFFF>';
           if ($id_from != $id_to) {
               echo '<input type="text" name="exch[';

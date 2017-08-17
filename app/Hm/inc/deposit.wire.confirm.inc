@@ -12,8 +12,8 @@
 use App\Exceptions\RedirectException;
 
 $ok = 1;
-  $amount = sprintf('%0.2f', $frm['amount']);
-  $h_id = sprintf('%d', $frm['h_id']);
+  $amount = sprintf('%0.2f', app('data')->frm['amount']);
+  $h_id = sprintf('%d', app('data')->frm['h_id']);
   $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
@@ -98,8 +98,8 @@ $ok = 1;
       $ok = 0;
   }
 
-  if (($ok == 1 and $frm['action'] == 'confirm')) {
-      $compound = sprintf('%.02f', $frm['compound']);
+  if (($ok == 1 and app('data')->frm['action'] == 'confirm')) {
+      $compound = sprintf('%.02f', app('data')->frm['compound']);
       if ($use_compound) {
           if ($type['compound_percents_type'] == 1) {
               $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
@@ -119,21 +119,21 @@ $ok = 1;
 
       $q = 'insert into hm2_wires set
 	user_id = \''.$userinfo['id'].'\',
-	pname = \''.quote($frm['pname']).'\',
-	paddress = \''.quote($frm['paddress']).'\',
-	pzip = \''.quote($frm['pcity']).'\',
-	pcity = \''.quote($frm['pcity']).'\',
-	pstate = \''.quote($frm['pstate']).'\',
-	pcountry = \''.quote($frm['pcountry']).'\',
-	bname = \''.quote($frm['bname']).'\',
-	baddress = \''.quote($frm['baddress']).'\',
-	bzip = \''.quote($frm['bzip']).'\',
-	bcity = \''.quote($frm['bcity']).'\',
-	bstate = \''.quote($frm['bstate']).'\',
-	bcountry = \''.quote($frm['bcountry']).'\',
-	baccount = \''.quote($frm['baccount']).'\',
-	biban = \''.quote($frm['biban']).'\',
-	bswift = \''.quote($frm['bswift']).(''.'\',
+	pname = \''.quote(app('data')->frm['pname']).'\',
+	paddress = \''.quote(app('data')->frm['paddress']).'\',
+	pzip = \''.quote(app('data')->frm['pcity']).'\',
+	pcity = \''.quote(app('data')->frm['pcity']).'\',
+	pstate = \''.quote(app('data')->frm['pstate']).'\',
+	pcountry = \''.quote(app('data')->frm['pcountry']).'\',
+	bname = \''.quote(app('data')->frm['bname']).'\',
+	baddress = \''.quote(app('data')->frm['baddress']).'\',
+	bzip = \''.quote(app('data')->frm['bzip']).'\',
+	bcity = \''.quote(app('data')->frm['bcity']).'\',
+	bstate = \''.quote(app('data')->frm['bstate']).'\',
+	bcountry = \''.quote(app('data')->frm['bcountry']).'\',
+	baccount = \''.quote(app('data')->frm['baccount']).'\',
+	biban = \''.quote(app('data')->frm['biban']).'\',
+	bswift = \''.quote(app('data')->frm['bswift']).(''.'\',
 	amount = '.$amount.',
 	type_id = '.$h_id.',
 	wire_date = now(),
@@ -145,22 +145,22 @@ $ok = 1;
       $info['name'] = $userinfo['name'];
       $info['amount'] = $amount;
       $info['currency'] = 'Bank Wire';
-      $info['bank_name'] = $frm['bname'];
-      $info['bank_account'] = $frm['baccount'];
+      $info['bank_name'] = app('data')->frm['bname'];
+      $info['bank_account'] = app('data')->frm['baccount'];
       $info['plan'] = $plan_name;
-      $q = 'select date_format(now() + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date';
+      $q = 'select date_format(now() + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date';
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $info['date'] = $row['date'];
       $q = 'select email from hm2_users where id = 1';
       $sth = db_query($q);
       $admin_row = mysql_fetch_array($sth);
-      send_template_mail('wire_admin_notification', $admin_row['email'], $settings['opt_in_email'], $info);
-      send_template_mail('wire_user_notification', $userinfo['email'], $settings['opt_in_email'], $info);
+      send_template_mail('wire_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
+      send_template_mail('wire_user_notification', $userinfo['email'], app('data')->settings['opt_in_email'], $info);
       throw new RedirectException('/?a=deposit&say=deposit_wire_saved');
   }
 
-  $compound = sprintf('%d', $frm['compound']);
+  $compound = sprintf('%d', app('data')->frm['compound']);
   $smarty->assign('ok', $ok);
   $smarty->assign('h_id', $h_id);
   $smarty->assign('amount', number_format($amount, 2));

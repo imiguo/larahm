@@ -10,7 +10,7 @@
  */
 
 $id = $userinfo['id'];
-  $type = $frm['type'];
+  $type = app('data')->frm['type'];
   $type_found = 0;
   $options = [];
   $q = 'select type from hm2_history where user_id = '.$id.' group by type order by type';
@@ -25,7 +25,7 @@ $id = $userinfo['id'];
       }
 
       $row['type_name'] = $transtype[$row['type']];
-      $row['selected'] = ($row['type'] == $frm['type'] ? 1 : 0);
+      $row['selected'] = ($row['type'] == app('data')->frm['type'] ? 1 : 0);
       if ($type == $row['type']) {
           $type_found = 1;
       }
@@ -44,29 +44,29 @@ $id = $userinfo['id'];
       }
   }
 
-  $frm['day_to'] = sprintf('%d', $frm['day_to']);
-  $frm['month_to'] = sprintf('%d', $frm['month_to']);
-  $frm['year_to'] = sprintf('%d', $frm['year_to']);
-  $frm['day_from'] = sprintf('%d', $frm['day_from']);
-  $frm['month_from'] = sprintf('%d', $frm['month_from']);
-  $frm['year_from'] = sprintf('%d', $frm['year_from']);
-  if ($frm['day_to'] == 0) {
-      $frm['day_to'] = date('j', time() + $settings['time_dif'] * 60 * 60);
-      $frm['month_to'] = date('n', time() + $settings['time_dif'] * 60 * 60);
-      $frm['year_to'] = date('Y', time() + $settings['time_dif'] * 60 * 60);
-      $frm['day_from'] = 1;
-      $frm['month_from'] = $frm['month_to'];
-      $frm['year_from'] = $frm['year_to'];
+  app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
+  app('data')->frm['month_to'] = sprintf('%d', app('data')->frm['month_to']);
+  app('data')->frm['year_to'] = sprintf('%d', app('data')->frm['year_to']);
+  app('data')->frm['day_from'] = sprintf('%d', app('data')->frm['day_from']);
+  app('data')->frm['month_from'] = sprintf('%d', app('data')->frm['month_from']);
+  app('data')->frm['year_from'] = sprintf('%d', app('data')->frm['year_from']);
+  if (app('data')->frm['day_to'] == 0) {
+      app('data')->frm['day_to'] = date('j', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['month_to'] = date('n', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['year_to'] = date('Y', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['day_from'] = 1;
+      app('data')->frm['month_from'] = app('data')->frm['month_to'];
+      app('data')->frm['year_from'] = app('data')->frm['year_to'];
   }
 
-  $datewhere = '\''.$frm['year_from'].'-'.$frm['month_from'].'-'.$frm['day_from'].'\' + interval 0 day < date + interval '.$settings['time_dif'].' hour and '.'\''.$frm['year_to'].'-'.$frm['month_to'].'-'.$frm['day_to'].'\' + interval 1 day > date + interval '.$settings['time_dif'].' hour ';
+  $datewhere = '\''.app('data')->frm['year_from'].'-'.app('data')->frm['month_from'].'-'.app('data')->frm['day_from'].'\' + interval 0 day < date + interval '.app('data')->settings['time_dif'].' hour and '.'\''.app('data')->frm['year_to'].'-'.app('data')->frm['month_to'].'-'.app('data')->frm['day_to'].'\' + interval 1 day > date + interval '.app('data')->settings['time_dif'].' hour ';
   $ecwhere = '';
-  if ($frm[ec] == '') {
-      $frm[ec] = -1;
+  if (app('data')->frm[ec] == '') {
+      app('data')->frm[ec] = -1;
   }
 
-  $ec = sprintf('%d', $frm[ec]);
-  if (-1 < $frm[ec]) {
+  $ec = sprintf('%d', app('data')->frm[ec]);
+  if (-1 < app('data')->frm[ec]) {
       $ecwhere = ' and ec = '.$ec;
   }
 
@@ -74,7 +74,7 @@ $id = $userinfo['id'];
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['count'];
-  $page = $frm['page'];
+  $page = app('data')->frm['page'];
   $onpage = 20;
   $colpages = ceil($count_all / $onpage);
   if ($page <= 1) {
@@ -86,9 +86,9 @@ $id = $userinfo['id'];
   }
 
   $from = ($page - 1) * $onpage;
-  $order = ($settings['use_history_balance_mode'] ? 'asc' : 'desc');
-  $dformat = ($settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
-  $q = 'select *, date_format(date + interval '.$settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$typewhere.' '.$ecwhere.' and user_id = '.$id.' order by date '.$order.', id '.$order.' limit '.$from.', '.$onpage);
+  $order = (app('data')->settings['use_history_balance_mode'] ? 'asc' : 'desc');
+  $dformat = (app('data')->settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
+  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$typewhere.' '.$ecwhere.' and user_id = '.$id.' order by date '.$order.', id '.$order.' limit '.$from.', '.$onpage);
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
@@ -100,7 +100,7 @@ $id = $userinfo['id'];
       ++$i;
   }
 
-  if ($settings['use_history_balance_mode']) {
+  if (app('data')->settings['use_history_balance_mode']) {
       for ($i = 0; $i < sizeof($trans); ++$i) {
           $start_id = $trans[$i]['id'];
           $q = 'select sum(actual_amount) as balance from hm2_history where id < '.$start_id.' and user_id = '.$userinfo['id'];
@@ -180,7 +180,7 @@ $id = $userinfo['id'];
 
   $smarty->assign('day', $days);
   $year = [];
-  for ($i = $settings['site_start_year']; $i <= date('Y', time() + $settings['time_dif'] * 60 * 60); ++$i) {
+  for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       array_push($year, $i);
   }
 
@@ -188,7 +188,7 @@ $id = $userinfo['id'];
   $smarty->assign('trans', $trans);
   $smarty->assign('qtrans', sizeof($trans));
   $ecs = [];
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data[status] == 1) {
           $data[id] = $id;
           array_push($ecs, $data);
@@ -200,5 +200,5 @@ $id = $userinfo['id'];
       $smarty->assign('ecs', $ecs);
   }
 
-  $smarty->assign('frm', $frm);
+  $smarty->assign('frm', app('data')->frm);
   $smarty->display('earning_history.tpl');

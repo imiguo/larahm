@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$u_id = sprintf('%d', $frm['u_id']);
+$u_id = sprintf('%d', app('data')->frm['u_id']);
   $q = 'select * from hm2_users where id = '.$u_id;
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {

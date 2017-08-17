@@ -11,11 +11,11 @@
 
 use App\Exceptions\EmptyException;
 
-  if ($frm['say'] == 'invalid_passphrase') {
+  if (app('data')->frm['say'] == 'invalid_passphrase') {
       echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
   }
 
-  if ($frm['say'] == 'done') {
+  if (app('data')->frm['say'] == 'done') {
       echo '<b style="color:green">Changes have been successfully updated.</b><br>
 <br>';
   }

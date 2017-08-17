@@ -13,10 +13,10 @@ use App\Exceptions\EmptyException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-$mymd5 = $settings['md5altphrase_evocash'];
-if ($frm['a'] == 'pay_withdraw') {
-    $batch = $frm['receivingtransactionid'];
-    list($id, $str) = explode('-', $frm['withdraw']);
+$mymd5 = app('data')->settings['md5altphrase_evocash'];
+if (app('data')->frm['a'] == 'pay_withdraw') {
+    $batch = app('data')->frm['receivingtransactionid'];
+    list($id, $str) = explode('-', app('data')->frm['withdraw']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -45,27 +45,27 @@ if ($frm['a'] == 'pay_withdraw') {
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['receivingaccountid'];
-        $info['batch'] = $frm['payingtransactionid'].'/'.$frm['receivingtransactionid'];
-        $info['paying_batch'] = $frm['payingtransactionid'];
-        $info['receiving_batch'] = $frm['receivingtransactionid'];
-        $info['currency'] = $exchange_systems[1]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['account'] = app('data')->frm['receivingaccountid'];
+        $info['batch'] = app('data')->frm['payingtransactionid'].'/'.app('data')->frm['receivingtransactionid'];
+        $info['paying_batch'] = app('data')->frm['payingtransactionid'];
+        $info['receiving_batch'] = app('data')->frm['receivingtransactionid'];
+        $info['currency'] = app('data')->exchange_systems[1]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 
     echo 1;
     throw new EmptyException();
 }
 
-$hash = strtoupper(md5($frm['payingaccountid'].':'.$frm['receivingaccountid'].':'.$frm['payingtransactionid'].':'.$frm['receivingtransactionid'].':'.$frm['amount'].':'.strtoupper(md5($settings['md5altphrase_evocash'])).':'.$frm['timestampgmt']));
-if (($hash == strtoupper($frm['merchanthashcheck']) and $exchange_systems[1]['status'] == 1)) {
-    $user_id = sprintf('%d', $frm['userid']);
-    $h_id = sprintf('%d', $frm['hyipid']);
-    $compound = sprintf('%d', $frm['compound']);
-    $amount = $frm['amount'];
-    $batch = $frm['receivingtransactionid'];
-    $account = $frm['payingaccountid'];
-    if ($frm['a'] == 'checkpayment') {
+$hash = strtoupper(md5(app('data')->frm['payingaccountid'].':'.app('data')->frm['receivingaccountid'].':'.app('data')->frm['payingtransactionid'].':'.app('data')->frm['receivingtransactionid'].':'.app('data')->frm['amount'].':'.strtoupper(md5(app('data')->settings['md5altphrase_evocash'])).':'.app('data')->frm['timestampgmt']));
+if (($hash == strtoupper(app('data')->frm['merchanthashcheck']) and app('data')->exchange_systems[1]['status'] == 1)) {
+    $user_id = sprintf('%d', app('data')->frm['userid']);
+    $h_id = sprintf('%d', app('data')->frm['hyipid']);
+    $compound = sprintf('%d', app('data')->frm['compound']);
+    $amount = app('data')->frm['amount'];
+    $batch = app('data')->frm['receivingtransactionid'];
+    $account = app('data')->frm['payingaccountid'];
+    if (app('data')->frm['a'] == 'checkpayment') {
         add_deposit(1, $user_id, $amount, $batch, $account, $h_id, $compound);
     }
 }

@@ -71,8 +71,6 @@ function db_query($q)
 
 function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
 {
-    global $settings;
-    global $exchange_systems;
     $compound = intval($compound);
     $h_id = intval($h_id);
     $user_id = intval($user_id);
@@ -89,9 +87,9 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         return 0;
     }
 
-    $desc = 'Add funds to account from '.$exchange_systems[$ec]['name'].('. Batch id = '.$batch);
+    $desc = 'Add funds to account from '.app('data')->exchange_systems[$ec]['name'].('. Batch id = '.$batch);
     if ($ec == 4) {
-        $desc = 'Add funds to account from '.$exchange_systems[$ec]['name'].(' '.$amount.' - StormPay Fee. Batch id = '.$batch);
+        $desc = 'Add funds to account from '.app('data')->exchange_systems[$ec]['name'].(' '.$amount.' - StormPay Fee. Batch id = '.$batch);
         $amount = $amount - $amount * 6.9 / 100 - 0.69;
     }
 
@@ -176,10 +174,10 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
                 deposit_id = '.$deposit_id.'
           	');
         db_query($q);
-        if ($settings['banner_extension'] == 1) {
+        if (app('data')->settings['banner_extension'] == 1) {
             $imps = 0;
-            if (0 < $settings['imps_cost']) {
-                $imps = $amount * 1000 / $settings['imps_cost'];
+            if (0 < app('data')->settings['imps_cost']) {
+                $imps = $amount * 1000 / app('data')->settings['imps_cost'];
             }
 
             if (0 < $imps) {
@@ -201,7 +199,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $info['name'] = $user['name'];
     $info['amount'] = number_format($amount, 2);
     $info['account'] = $account;
-    $info['currency'] = $exchange_systems[$ec]['name'];
+    $info['currency'] = app('data')->exchange_systems[$ec]['name'];
     $info['batch'] = $batch;
     $info['compound'] = $compound;
     $info['plan'] = $name;
@@ -214,8 +212,8 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     }
 
     if ($user['is_test'] != 1) {
-        send_template_mail('deposit_admin_notification', $admin_email, $settings['system_email'], $info);
-        send_template_mail('deposit_user_notification', $user[email], $settings['system_email'], $info);
+        send_template_mail('deposit_admin_notification', $admin_email, app('data')->settings['system_email'], $info);
+        send_template_mail('deposit_user_notification', $user[email], app('data')->settings['system_email'], $info);
     }
 
     return 1;
@@ -223,10 +221,8 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
 
 function referral_commission($user_id, $amount, $ec)
 {
-    global $settings;
-    global $exchange_systems;
     $ref_sum = 0;
-    if ($settings['use_referal_program'] == 1) {
+    if (app('data')->settings['use_referal_program'] == 1) {
         $q = 'select * from hm2_users where id = '.$user_id;
         $rsth = db_query($q);
         $uinfo = mysql_fetch_array($rsth);
@@ -237,7 +233,7 @@ function referral_commission($user_id, $amount, $ec)
             return 0;
         }
 
-        if ($settings['pay_active_referal']) {
+        if (app('data')->settings['pay_active_referal']) {
             $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$ref;
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
@@ -246,13 +242,13 @@ function referral_commission($user_id, $amount, $ec)
             }
         }
 
-        if ($settings['use_solid_referral_commission'] == 1) {
-            if (0 < $settings['solid_referral_commission_amount']) {
+        if (app('data')->settings['use_solid_referral_commission'] == 1) {
+            if (0 < app('data')->settings['solid_referral_commission_amount']) {
                 $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$user_id;
                 $sth = db_query($q);
                 $row = mysql_fetch_array($sth);
                 if ($row['cnt'] == 1) {
-                    $sum = $settings['solid_referral_commission_amount'];
+                    $sum = app('data')->settings['solid_referral_commission_amount'];
                     $ref_sum += $sum;
                     $q = 'insert into hm2_history set
     		user_id = '.$ref.',
@@ -269,13 +265,13 @@ function referral_commission($user_id, $amount, $ec)
                     $refinfo['amount'] = number_format($sum, 2);
                     $refinfo['ref_username'] = $uinfo['username'];
                     $refinfo['ref_name'] = $uinfo['name'];
-                    $refinfo['currency'] = $exchange_systems[$ec]['name'];
-                    send_template_mail('referral_commision_notification', $refinfo['email'], $settings['system_email'],
+                    $refinfo['currency'] = app('data')->exchange_systems[$ec]['name'];
+                    send_template_mail('referral_commision_notification', $refinfo['email'], app('data')->settings['system_email'],
                         $refinfo);
                 }
             }
         } else {
-            if ($settings['use_active_referal'] == 1) {
+            if (app('data')->settings['use_active_referal'] == 1) {
                 $q = 'select count(distinct user_id) as col from hm2_users, hm2_deposits where ref = '.$ref.' and hm2_deposits.user_id = hm2_users.id';
             } else {
                 $q = 'select count(*) as col from hm2_users where ref = '.$ref;
@@ -304,16 +300,16 @@ function referral_commission($user_id, $amount, $ec)
                     $refinfo['amount'] = number_format($sum, 2);
                     $refinfo['ref_username'] = $uinfo['username'];
                     $refinfo['ref_name'] = $uinfo['name'];
-                    $refinfo['currency'] = $exchange_systems[$ec]['name'];
-                    send_template_mail('referral_commision_notification', $refinfo['email'], $settings['system_email'],
+                    $refinfo['currency'] = app('data')->exchange_systems[$ec]['name'];
+                    send_template_mail('referral_commision_notification', $refinfo['email'], app('data')->settings['system_email'],
                         $refinfo);
                 }
             }
         }
 
-        if ($settings['use_solid_referral_commission'] != 1) {
+        if (app('data')->settings['use_solid_referral_commission'] != 1) {
             for ($i = 2; $i < 11; ++$i) {
-                if (($ref == 0 or $settings['ref'.$i.'_cms'] == 0)) {
+                if (($ref == 0 or app('data')->settings['ref'.$i.'_cms'] == 0)) {
                     break;
                 }
 
@@ -323,7 +319,7 @@ function referral_commission($user_id, $amount, $ec)
                 while ($row = mysql_fetch_array($sth)) {
                     $ref = $row['ref'];
                     if (0 < $ref) {
-                        $sum = $amount * $settings['ref'.$i.'_cms'] / 100;
+                        $sum = $amount * app('data')->settings['ref'.$i.'_cms'] / 100;
                         $ref_sum += $sum;
                         $q = 'insert into hm2_history set
                   user_id = '.$row['ref'].(',
@@ -346,7 +342,6 @@ function referral_commission($user_id, $amount, $ec)
 
 function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
 
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to Perfect-Money account 0.\'';
@@ -368,9 +363,9 @@ function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $erro
     $ch = curl_init();
     $memo = rawurlencode($memo);
     $params = [
-        'AccountID'     => $settings['perfectmoney_from_account_id'],
+        'AccountID'     => app('data')->settings['perfectmoney_from_account_id'],
         'PassPhrase'    => $perfectmoney_password,
-        'Payer_Account' => $settings['perfectmoney_from_account'],
+        'Payer_Account' => app('data')->settings['perfectmoney_from_account'],
         'Payee_Account' => $account,
         'Amount'        => $amount,
         'PAY_IN'        => '1',
@@ -397,7 +392,6 @@ function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $erro
 
 function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
 
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to E-Gold account 0.\'';
@@ -419,7 +413,7 @@ function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
     $ch = curl_init();
     $memo = rawurlencode($memo);
     $params = [
-        'AccountID'          => $settings['egold_from_account'],
+        'AccountID'          => app('data')->settings['egold_from_account'],
         'PassPhrase'         => $egold_password,
         'Payee_Account'      => $account,
         'Amount'             => $amount,
@@ -459,7 +453,6 @@ function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
 
 function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
     $amount = sprintf('%0.2f', floor($amount * 100) / 100);
 
     if ($account == 0) {
@@ -488,7 +481,7 @@ function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt
     $ch = curl_init();
     $memo = rawurlencode($memo);
     curl_setopt($ch, CURLOPT_URL,
-        'https://www.evocash.com/evoswift/instantpayment.cfm?payingaccountid='.$settings['evocash_from_account'].'&username='.$settings['evocash_username'].('&password='.$evocash_password.'&transaction_code=').$evocash_code.('&amount='.$amount.'&reference=&memo='.$memo.'&receivingaccountid='.$account));
+        'https://www.evocash.com/evoswift/instantpayment.cfm?payingaccountid='.app('data')->settings['evocash_from_account'].'&username='.app('data')->settings['evocash_username'].('&password='.$evocash_password.'&transaction_code=').$evocash_code.('&amount='.$amount.'&reference=&memo='.$memo.'&receivingaccountid='.$account));
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $a = curl_exec($ch);
@@ -516,7 +509,6 @@ function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt
 
 function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
 
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to IntGold account 0.\'';
@@ -548,7 +540,7 @@ function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)');
     curl_setopt($ch, CURLOPT_POSTFIELDS,
-        'ACCOUNTID='.$settings['intgold_from_account'].'&PASSWORD='.$intgold_password.'&SECPASSWORD='.$intgold_code.'&RECEIVER='.$account.('&AMOUNT='.$amount.'&NOTE='.$memo));
+        'ACCOUNTID='.app('data')->settings['intgold_from_account'].'&PASSWORD='.$intgold_password.'&SECPASSWORD='.$intgold_code.'&RECEIVER='.$account.('&AMOUNT='.$amount.'&NOTE='.$memo));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $a = curl_exec($ch);
@@ -567,7 +559,6 @@ function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt
 
 function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
 
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to eeeCureency account 0.\'';
@@ -599,7 +590,7 @@ function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)');
     curl_setopt($ch, CURLOPT_POSTFIELDS,
-        'ACCOUNTID='.$settings['eeecurrency_from_account'].'&PASSWORD='.$eeecurrency_password.'&SECPASSWORD='.$eeecurrency_code.'&RECEIVER='.$account.('&AMOUNT='.$amount.'&NOTE='.$memo));
+        'ACCOUNTID='.app('data')->settings['eeecurrency_from_account'].'&PASSWORD='.$eeecurrency_password.'&SECPASSWORD='.$eeecurrency_code.'&RECEIVER='.$account.('&AMOUNT='.$amount.'&NOTE='.$memo));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $a = curl_exec($ch);
     curl_close($ch);
@@ -617,7 +608,6 @@ function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error
 
 function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
 
     if ($account == 0) {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to Pecunix account 0.\'';
@@ -649,7 +639,7 @@ function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt
     <TransferRequest>
       <Transfer>
         <TransferId> </TransferId>
-        <Payer> '.$settings['pecunix_from_account'].' </Payer>
+        <Payer> '.app('data')->settings['pecunix_from_account'].' </Payer>
         <Payee> '.$account.' </Payee>
         <CurrencyId> GAU </CurrencyId>
         <Equivalent>
@@ -694,7 +684,6 @@ function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt
 
 function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
 {
-    global $settings;
 
     if ($account == '') {
         $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to e-Bullion account 0.\'';
@@ -705,7 +694,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
 
     $payment = '<atip.batch.v1><payment.list>';
     $payment = $payment.'<payment>';
-    $payment = $payment.'<payer>'.$settings['def_payee_account_ebullion'].'</payer>';
+    $payment = $payment.'<payer>'.app('data')->settings['def_payee_account_ebullion'].'</payer>';
     $payment = $payment.'<payee>'.$account.'</payee>';
     $payment = $payment.'<amount>'.$amount.'</amount>';
     $payment = $payment.'<metal>1</metal>';
@@ -720,11 +709,11 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
     fwrite($fd, $payment);
     fclose($fd);
     $atippath = storage_path('tmpl_c');
-    $gpg_path = escapeshellcmd($settings['gpg_path']);
-    $passphrase = decode_pass_for_mysql($settings['md5altphrase_ebullion']);
-    $atip_status_url = $settings['site_url'];
+    $gpg_path = escapeshellcmd(app('data')->settings['gpg_path']);
+    $passphrase = decode_pass_for_mysql(app('data')->settings['md5altphrase_ebullion']);
+    $atip_status_url = app('data')->settings['site_url'];
     $gpg_options = ' --yes --no-tty --no-secmem-warning --no-options --no-default-keyring --batch --homedir '.$atippath.' --keyring=pubring.gpg --secret-keyring=secring.gpg --armor --throw-keyid --always-trust --passphrase-fd 0';
-    $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --recipient A20077\\@e-bullion.com --local-user '.$settings['def_payee_account_ebullion'].('\\@e-bullion.com --output '.$outfile.' --sign --encrypt '.$infile.' 2>&1');
+    $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --recipient A20077\\@e-bullion.com --local-user '.app('data')->settings['def_payee_account_ebullion'].('\\@e-bullion.com --output '.$outfile.' --sign --encrypt '.$infile.' 2>&1');
     $buf = '';
     $fp = popen($gpg_command, 'r');
     while (!feof($fp)) {
@@ -737,7 +726,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
     fclose($fd);
     unlink($infile);
     unlink($outfile);
-    $qs = 'ATIP_ACCOUNT='.$settings['def_payee_account_ebullion'].'&ATIP_BATCH_MSG='.rawurlencode($atip_batch_msg).'&ATIP_STATUS_URL='.rawurlencode($atip_status_url);
+    $qs = 'ATIP_ACCOUNT='.app('data')->settings['def_payee_account_ebullion'].'&ATIP_BATCH_MSG='.rawurlencode($atip_batch_msg).'&ATIP_STATUS_URL='.rawurlencode($atip_status_url);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://atip.e-bullion.com/batch.php?'.$qs);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -772,7 +761,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
     }
 
     pclose($fp);
-    if ($keyID == $settings['ebullion_keyID']) {
+    if ($keyID == app('data')->settings['ebullion_keyID']) {
         if (is_file($xmlfile)) {
             $fx = fopen($xmlfile, 'r');
             $xmlcert = fread($fx, filesize($xmlfile));
@@ -1106,7 +1095,6 @@ function decode_pass_for_mysql($string)
 
 function send_template_mail($email_id, $to, $from, $info)
 {
-    global $settings;
     $q = 'select * from hm2_emails where id = \''.$email_id.'\'';
     $sth = db_query($q);
     $row = mysql_fetch_array($sth);
@@ -1129,11 +1117,11 @@ function send_template_mail($email_id, $to, $from, $info)
         $subject = preg_replace('/#'.$k.'#/', $v, $subject);
     }
 
-    $text = preg_replace('/#site_name#/', $settings['site_name'], $text);
-    $subject = preg_replace('/#site_name#/', $settings['site_name'], $subject);
-    $text = preg_replace('/#site_url#/', $settings['site_url'], $text);
-    $subject = preg_replace('/#site_url#/', $settings['site_url'], $subject);
-    if ($settings[site_name] == 'free') {
+    $text = preg_replace('/#site_name#/', app('data')->settings['site_name'], $text);
+    $subject = preg_replace('/#site_name#/', app('data')->settings['site_name'], $subject);
+    $text = preg_replace('/#site_url#/', app('data')->settings['site_url'], $text);
+    $subject = preg_replace('/#site_url#/', app('data')->settings['site_url'], $subject);
+    if (app('data')->settings[site_name] == 'free') {
         $fh = fopen('mails.txt', 'a');
         fwrite($fh, 'TO: '.$to.'
 From: '.$from.'
@@ -1173,8 +1161,7 @@ function end_info_table()
  */
 function pay_direct_return_deposit($deposit_id, $amount)
 {
-    global $settings;
-    if ($settings['use_auto_payment'] == 1) {
+    if (app('data')->settings['use_auto_payment'] == 1) {
         $q = 'select * from hm2_deposits where id = '.$deposit_id;
         $sth = db_query($q);
         $dep = mysql_fetch_array($sth);
@@ -1189,7 +1176,7 @@ function pay_direct_return_deposit($deposit_id, $amount)
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         $amount = abs($amount);
-        $success_txt = 'Return principal from deposit $'.$amount.'. Auto-withdrawal to '.$user['username'].' from '.$settings['site_name'];
+        $success_txt = 'Return principal from deposit $'.$amount.'. Auto-withdrawal to '.$user['username'].' from '.app('data')->settings['site_name'];
         $error_txt = 'Auto-withdrawal error, tried to return '.$amount.' to e-gold account # '.$user['egold_account'].'. Error:';
         list($res, $text, $batch) = send_money_to_egold('', $amount, $user['egold_account'], $success_txt, $error_txt);
         if ($res == 1) {
@@ -1207,14 +1194,12 @@ function pay_direct_return_deposit($deposit_id, $amount)
 
 function pay_direct_earning($deposit_id, $amount, $date)
 {
-    global $settings;
-    global $exchange_systems;
 
-    if ($settings['demomode'] == 1) {
+    if (app('data')->settings['demomode'] == 1) {
         return;
     }
 
-    if ($settings['use_auto_payment'] == 1) {
+    if (app('data')->settings['use_auto_payment'] == 1) {
         $q = 'select * from hm2_deposits where id = '.$deposit_id;
         $sth = db_query($q);
         $dep = mysql_fetch_array($sth);
@@ -1230,9 +1215,9 @@ function pay_direct_earning($deposit_id, $amount, $date)
         }
 
         $amount = abs($amount);
-        $fee = floor($amount * $settings['withdrawal_fee']) / 100;
-        if ($fee < $settings['withdrawal_fee_min']) {
-            $fee = $settings['withdrawal_fee_min'];
+        $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+        if ($fee < app('data')->settings['withdrawal_fee_min']) {
+            $fee = app('data')->settings['withdrawal_fee_min'];
         }
 
         $to_withdraw = $amount - $fee;
@@ -1241,7 +1226,7 @@ function pay_direct_earning($deposit_id, $amount, $date)
         }
 
         $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
-        $success_txt = 'Earning from deposit $'.$dep['actual_amount'].'. Auto withdraw to '.$user['username'].' from '.$settings['site_name'];
+        $success_txt = 'Earning from deposit $'.$dep['actual_amount'].'. Auto withdraw to '.$user['username'].' from '.app('data')->settings['site_name'];
         if ($dep[ec] == 0) {
             $error_txt = 'Auto-withdrawal error, tried to send '.$to_withdraw.' earning to e-gold account # '.$user['egold_account'].'. Error:';
             list($res, $text, $batch) = send_money_to_egold('', $to_withdraw, $user['egold_account'], $success_txt,
@@ -1312,17 +1297,16 @@ function pay_direct_earning($deposit_id, $amount, $date)
             $info['amount'] = $amount;
             $info['batch'] = $batch;
             $info['account'] = $d_account[$dep[ec]];
-            $info['currency'] = $exchange_systems[$dep['ec']]['name'];
-            send_template_mail('withdraw_user_notification', $user['email'], $settings['system_email'], $info);
+            $info['currency'] = app('data')->exchange_systems[$dep['ec']]['name'];
+            send_template_mail('withdraw_user_notification', $user['email'], app('data')->settings['system_email'], $info);
         }
     }
 }
 
 function count_earning($u_id)
 {
-    global $settings;
     $types = [];
-    if (($settings['use_crontab'] == 1 and $u_id != -2)) {
+    if ((app('data')->settings['use_crontab'] == 1 and $u_id != -2)) {
         return;
     }
 

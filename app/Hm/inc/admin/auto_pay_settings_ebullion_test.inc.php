@@ -33,7 +33,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       echo curl_error($ch);
       $balance = '<atip.batch.v1><balancerequest.list>';
       $balance .= '<balancerequest>';
-      $balance .= '<accountid>'.$settings['def_payee_account_ebullion'].'</accountid>';
+      $balance .= '<accountid>'.app('data')->settings['def_payee_account_ebullion'].'</accountid>';
       $balance .= '<metal>1</metal>';
       $balance .= '<unit>1</unit>';
       $balance .= '<ref>REQ123</ref>';
@@ -45,11 +45,11 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       fwrite($fd, $balance);
       fclose($fd);
       $atippath = storage_path('tmpl_c');
-      $gpg_path = escapeshellcmd($settings['gpg_path']);
-      $passphrase = decode_pass_for_mysql($settings['md5altphrase_ebullion']);
-      $atip_status_url = $settings['site_url'];
+      $gpg_path = escapeshellcmd(app('data')->settings['gpg_path']);
+      $passphrase = decode_pass_for_mysql(app('data')->settings['md5altphrase_ebullion']);
+      $atip_status_url = app('data')->settings['site_url'];
       $gpg_options = ' --yes --no-tty --no-secmem-warning --no-options --no-default-keyring --batch --homedir '.$atippath.' --keyring=pubring.gpg --secret-keyring=secring.gpg --armor --throw-keyid --always-trust --passphrase-fd 0';
-      $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --recipient A20077\\@e-bullion.com --local-user '.$settings['def_payee_account_ebullion'].(''.'\\@e-bullion.com --output '.$outfile.' --sign --encrypt '.$infile.' 2>&1');
+      $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --recipient A20077\\@e-bullion.com --local-user '.app('data')->settings['def_payee_account_ebullion'].(''.'\\@e-bullion.com --output '.$outfile.' --sign --encrypt '.$infile.' 2>&1');
       $buf = '';
       $fp = popen(''.$gpg_command, 'r');
       while (!feof($fp)) {
@@ -65,7 +65,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       }
       unlink($infile);
       unlink($outfile);
-      $qs = 'ATIP_ACCOUNT='.$settings['def_payee_account_ebullion'].'&ATIP_BATCH_MSG='.rawurlencode($atip_batch_msg).'&ATIP_STATUS_URL='.rawurlencode($atip_status_url);
+      $qs = 'ATIP_ACCOUNT='.app('data')->settings['def_payee_account_ebullion'].'&ATIP_BATCH_MSG='.rawurlencode($atip_batch_msg).'&ATIP_STATUS_URL='.rawurlencode($atip_status_url);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, 'https://www2.e-bullion.com/atip/batch.php?'.$qs);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -98,7 +98,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
           }
       }
       pclose($fp);
-      if ($keyID == $settings['ebullion_keyID']) {
+      if ($keyID == app('data')->settings['ebullion_keyID']) {
           if (is_file(''.$xmlfile)) {
               $fx = fopen(''.$xmlfile, 'r');
               $xmlcert = fread($fx, filesize(''.$xmlfile));

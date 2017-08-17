@@ -12,7 +12,7 @@
 $q = 'select 
                u.username,
                h.actual_amount as balance,
-               date_format(h.deposit_date + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd
+               date_format(h.deposit_date + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd
          from 
                hm2_deposits as h left outer join hm2_users as u
                  on u.id = h.user_id

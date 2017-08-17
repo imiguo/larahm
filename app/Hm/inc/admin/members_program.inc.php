@@ -15,13 +15,13 @@ echo '<html>
 </head>
 <body>';
   $qonpage = 50;
-  $qstatus = quote($frm['status']);
+  $qstatus = quote(app('data')->frm['status']);
   if ($qstatus == '') {
       $qstatus = 'on';
   }
 
-  if ($frm['q'] != '') {
-      $qsearch = quote($frm['q']);
+  if (app('data')->frm['q'] != '') {
+      $qsearch = quote(app('data')->frm['q']);
       $searchpart = ' and (username like \'%'.$qsearch.'%\' or email like \'%'.$qsearch.'%\' or name like \'%'.$qsearch.'%\') ';
   }
 
@@ -29,7 +29,7 @@ echo '<html>
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $total = $row[0];
-  $page = sprintf('%d', $frm['p']);
+  $page = sprintf('%d', app('data')->frm['p']);
   if ($page == 0) {
       $page = 1;
   }
@@ -132,7 +132,7 @@ echo '<html>
               echo ' <a href="?a=members&status=';
               echo $qstatus;
               echo '&q=';
-              echo $frm['q'];
+              echo app('data')->frm['q'];
               echo '&p=';
               echo $i;
               echo '">';

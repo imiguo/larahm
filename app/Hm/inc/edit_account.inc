@@ -12,67 +12,67 @@
 use App\Exceptions\EmptyException;
 use App\Exceptions\RedirectException;
 
-if ($frm['action'] == 'confirm') {
-    $smarty->assign('say', $frm['say']);
+if (app('data')->frm['action'] == 'confirm') {
+    $smarty->assign('say', app('data')->frm['say']);
     $smarty->display('edit_account_confirmation.tpl');
     throw new EmptyException();
 }
 
-if ($frm['action'] == 'edit_account') {
+if (app('data')->frm['action'] == 'edit_account') {
     $errors = [];
-    if ($frm['action2'] != 'confirm') {
-        if ($frm['fullname'] == '') {
+    if (app('data')->frm['action2'] != 'confirm') {
+        if (app('data')->frm['fullname'] == '') {
             array_push($errors, 'full_name');
         }
 
-        if ($frm['password'] != '') {
-            if (0 < $settings['min_user_password_length']) {
-                if (strlen($frm['password']) < $settings['min_user_password_length']) {
+        if (app('data')->frm['password'] != '') {
+            if (0 < app('data')->settings['min_user_password_length']) {
+                if (strlen(app('data')->frm['password']) < app('data')->settings['min_user_password_length']) {
                     array_push($errors, 'password_too_small');
                 }
             }
 
-            if ($frm['password'] != $frm['password2']) {
+            if (app('data')->frm['password'] != app('data')->frm['password2']) {
                 array_push($errors, 'password_confirm');
             }
         }
 
-        if (($settings['usercanchangeemail'] and $frm['email'] == '')) {
+        if ((app('data')->settings['usercanchangeemail'] and app('data')->frm['email'] == '')) {
             array_push($errors, 'email');
         }
 
-        if ($settings['use_user_location']) {
-            if ($frm['address'] == '') {
+        if (app('data')->settings['use_user_location']) {
+            if (app('data')->frm['address'] == '') {
                 array_push($errors, 'address');
             }
 
-            if ($frm['city'] == '') {
+            if (app('data')->frm['city'] == '') {
                 array_push($errors, 'city');
             }
 
-            if ($frm['state'] == '') {
+            if (app('data')->frm['state'] == '') {
                 array_push($errors, 'state');
             }
 
-            if ($frm['zip'] == '') {
+            if (app('data')->frm['zip'] == '') {
                 array_push($errors, 'zip');
             }
 
-            if ($frm['zip'] == '') {
+            if (app('data')->frm['zip'] == '') {
                 array_push($errors, 'country');
             }
         }
 
-        if ($settings['use_transaction_code']) {
-            if ($frm['transaction_code'] != '') {
-                if ($frm['transaction_code_current'] == $userinfo['transaction_code']) {
-                    if (0 < $settings['min_user_password_length']) {
-                        if (strlen($frm['transaction_code']) < $settings['min_user_password_length']) {
+        if (app('data')->settings['use_transaction_code']) {
+            if (app('data')->frm['transaction_code'] != '') {
+                if (app('data')->frm['transaction_code_current'] == $userinfo['transaction_code']) {
+                    if (0 < app('data')->settings['min_user_password_length']) {
+                        if (strlen(app('data')->frm['transaction_code']) < app('data')->settings['min_user_password_length']) {
                             array_push($errors, 'transaction_code_too_small');
                         }
                     }
 
-                    if ($frm['transaction_code'] != $frm['transaction_code2']) {
+                    if (app('data')->frm['transaction_code'] != app('data')->frm['transaction_code2']) {
                         array_push($errors, 'transaction_code_confirm');
                     }
                 } else {
@@ -80,18 +80,18 @@ if ($frm['action'] == 'edit_account') {
                 }
             }
 
-            if ((($frm['transaction_code'] != '' and $frm['password'] != '') and $frm['transaction_code'] == $frm['password'])) {
+            if (((app('data')->frm['transaction_code'] != '' and app('data')->frm['password'] != '') and app('data')->frm['transaction_code'] == app('data')->frm['password'])) {
                 array_push($errors, 'transaction_code_vs_password');
             }
         }
     }
 
     if (sizeof($errors) == 0) {
-        if ($settings['account_update_confirmation'] == 1) {
-            if ($frm['action2'] == 'confirm') {
-                if (session('account_update_confirmation_code') == $frm['account_update_confirmation_code']) {
+        if (app('data')->settings['account_update_confirmation'] == 1) {
+            if (app('data')->frm['action2'] == 'confirm') {
+                if (session('account_update_confirmation_code') == app('data')->frm['account_update_confirmation_code']) {
                     if (is_array(session('fields'))) {
-                        $frm = array_merge($frm, session('fields'));
+                        app('data')->frm = array_merge(app('data')->frm, session('fields'));
                     } else {
                         throw new RedirectException('/?a=edit_account');
                     }
@@ -101,90 +101,90 @@ if ($frm['action'] == 'edit_account') {
             } else {
                 $code = get_rand_md5(50);
                 session(['account_update_confirmation_code' => $code]);
-                session(['fields' => $frm]);
+                session(['fields' => app('data')->frm]);
                 $info = [];
                 $info['confirmation_code'] = $code;
                 $info['username'] = $userinfo['username'];
                 $info['name'] = $userinfo['name'];
-                $info['ip'] = $frm_env['REMOTE_ADDR'];
-                send_template_mail('account_update_confirmation', $userinfo['email'], $settings['system_email'], $info);
+                $info['ip'] = app('data')->env['REMOTE_ADDR'];
+                send_template_mail('account_update_confirmation', $userinfo['email'], app('data')->settings['system_email'], $info);
                 throw new RedirectException('/?a=edit_account&action=confirm');
             }
         }
 
-        $fullname = quote($frm['fullname']);
-        $password = quote($frm['password']);
+        $fullname = quote(app('data')->frm['fullname']);
+        $password = quote(app('data')->frm['password']);
         $enc_password = md5($password);
-        $email = quote($frm['email']);
+        $email = quote(app('data')->frm['email']);
 
-        $egold = quote($frm['egold_account']);
-        $perfectmoney = quote($frm['perfectmoney_account']);
-        $payeer = quote($frm['payeer_account']);
-        $bitcoin = quote($frm['bitcoin_account']);
-        $evocash = quote($frm['evocash_account']);
-        $intgold = quote($frm['intgold_account']);
-        $stormpay = quote($frm['stormpay_account']);
-        $ebullion = quote($frm['ebullion_account']);
-        $paypal = quote($frm['paypal_account']);
-        $goldmoney = quote($frm['goldmoney_account']);
-        $eeecurrency = quote($frm['eeecurrency_account']);
-        $pecunix = quote($frm['pecunix_account']);
+        $egold = quote(app('data')->frm['egold_account']);
+        $perfectmoney = quote(app('data')->frm['perfectmoney_account']);
+        $payeer = quote(app('data')->frm['payeer_account']);
+        $bitcoin = quote(app('data')->frm['bitcoin_account']);
+        $evocash = quote(app('data')->frm['evocash_account']);
+        $intgold = quote(app('data')->frm['intgold_account']);
+        $stormpay = quote(app('data')->frm['stormpay_account']);
+        $ebullion = quote(app('data')->frm['ebullion_account']);
+        $paypal = quote(app('data')->frm['paypal_account']);
+        $goldmoney = quote(app('data')->frm['goldmoney_account']);
+        $eeecurrency = quote(app('data')->frm['eeecurrency_account']);
+        $pecunix = quote(app('data')->frm['pecunix_account']);
 
-        $address = quote($frm['address']);
-        $city = quote($frm['city']);
-        $state = quote($frm['state']);
-        $zip = quote($frm['zip']);
-        $country = quote($frm['country']);
-        $transaction_code = quote($frm['transaction_code']);
+        $address = quote(app('data')->frm['address']);
+        $city = quote(app('data')->frm['city']);
+        $state = quote(app('data')->frm['state']);
+        $zip = quote(app('data')->frm['zip']);
+        $country = quote(app('data')->frm['country']);
+        $transaction_code = quote(app('data')->frm['transaction_code']);
 
-        if (($userinfo['email'] != $frm['email'] and $settings['usercanchangeemail'] == 1)) {
+        if (($userinfo['email'] != app('data')->frm['email'] and app('data')->settings['usercanchangeemail'] == 1)) {
             $q = 'update hm2_users set email = \''.$email.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
-        if (($userinfo['egold_account'] != $frm['egold_account'] and $settings['usercanchangeegoldacc'])) {
+        if (($userinfo['egold_account'] != app('data')->frm['egold_account'] and app('data')->settings['usercanchangeegoldacc'])) {
             $q = 'update hm2_users set egold_account = \''.$egold.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
-        if (($userinfo['perfectmoney_account'] != $frm['perfectmoney_account'] and $settings['usercanchangeperfectmoneyacc'])) {
+        if (($userinfo['perfectmoney_account'] != app('data')->frm['perfectmoney_account'] and app('data')->settings['usercanchangeperfectmoneyacc'])) {
             $q = 'update hm2_users set perfectmoney_account = \''.$perfectmoney.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
-        if (($userinfo['payeer_account'] != $frm['payeer_account'] and $settings['usercanchangepayeeracc'])) {
+        if (($userinfo['payeer_account'] != app('data')->frm['payeer_account'] and app('data')->settings['usercanchangepayeeracc'])) {
             $q = 'update hm2_users set payeer_account = \''.$payeer.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
-        if (($userinfo['bitcoin_account'] != $frm['bitcoin_account'] and $settings['usercanchangebitcoinacc'])) {
+        if (($userinfo['bitcoin_account'] != app('data')->frm['bitcoin_account'] and app('data')->settings['usercanchangebitcoinacc'])) {
             $q = 'update hm2_users set bitcoin_account = \''.$bitcoin.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
-        if ($frm['password'] != '') {
+        if (app('data')->frm['password'] != '') {
             $q = 'update hm2_users set password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
-            if ($settings['store_uncrypted_password'] == 1) {
-                $pswd = quote($frm['password']);
+            if (app('data')->settings['store_uncrypted_password'] == 1) {
+                $pswd = quote(app('data')->frm['password']);
                 $q = 'update hm2_users set pswd = \''.$pswd.'\' where id > 1 and id = '.$userinfo['id'];
                 db_query($q);
             }
         }
 
-        if ($frm['transaction_code'] != '') {
+        if (app('data')->frm['transaction_code'] != '') {
             $q = 'update hm2_users set transaction_code = \''.$transaction_code.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
-        if ($frm['wappassword'] != '') {
-            $enc_password = quote(md5($frm['wappassword']));
+        if (app('data')->frm['wappassword'] != '') {
+            $enc_password = quote(md5(app('data')->frm['wappassword']));
             $q = 'update hm2_users set stat_password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         $edit_location = '';
-        if ($settings['use_user_location']) {
+        if (app('data')->settings['use_user_location']) {
             $edit_location = 'address = \''.$address.'\',
                           city = \''.$city.'\',
                           state = \''.$state.'\',
@@ -193,7 +193,7 @@ if ($frm['action'] == 'edit_account') {
                          ';
         }
 
-        $user_auto_pay_earning = sprintf('%d', $frm['user_auto_pay_earning']);
+        $user_auto_pay_earning = sprintf('%d', app('data')->frm['user_auto_pay_earning']);
         $q = 'update hm2_users set name = \''.$fullname.'\',
                                  '.$edit_location.'
     	                         evocash_account = \''.$evocash.'\',
@@ -212,20 +212,20 @@ if ($frm['action'] == 'edit_account') {
         $userinfo['logged'] = 1;
 
         // 发邮件通知
-        if ($settings['sendnotify_when_userinfo_changed'] == 1) {
+        if (app('data')->settings['sendnotify_when_userinfo_changed'] == 1) {
             $info = [];
             $info['username'] = $userinfo['username'];
             $info['password'] = $password;
             $info['name'] = $userinfo['name'];
-            $info['ip'] = $frm_env['REMOTE_ADDR'];
+            $info['ip'] = app('data')->env['REMOTE_ADDR'];
             $info['egold'] = $userinfo['egold_account'];
             $info['perfectmoney'] = $userinfo['perfectmoney_account'];
             $info['email'] = $userinfo['email'];
-            if ($frm['email'] == '') {
-                $frm['email'] = $userinfo['email'];
+            if (app('data')->frm['email'] == '') {
+                app('data')->frm['email'] = $userinfo['email'];
             }
 
-            send_template_mail('change_account', $frm['email'], $settings['opt_in_email'], $info);
+            send_template_mail('change_account', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
         }
 
         throw new RedirectException('/?a=edit_account&say=changed');
@@ -233,13 +233,13 @@ if ($frm['action'] == 'edit_account') {
 }
 
 include app_path('Hm').'/inc/countries.inc';
-$q = 'select date_format(\''.$userinfo['date_register'].'\' + interval '.$settings['time_dif'].' day, \'%b-%e-%Y %r\') as date_registered';
+$q = 'select date_format(\''.$userinfo['date_register'].'\' + interval '.app('data')->settings['time_dif'].' day, \'%b-%e-%Y %r\') as date_registered';
 $sth = db_query($q);
 $row = mysql_fetch_array($sth);
 $userinfo['date_register'] = $row['date_registered'];
 $smarty->assign('userinfo', $userinfo);
 $smarty->assign('errors', $errors);
-$smarty->assign('frm', $frm);
-$smarty->assign('settings', $settings);
+$smarty->assign('frm', app('data')->frm);
+$smarty->assign('settings', app('data')->settings);
 $smarty->assign('countries', $countries);
 $smarty->display('edit_account.tpl');

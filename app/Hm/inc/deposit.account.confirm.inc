@@ -12,12 +12,12 @@
 use App\Exceptions\RedirectException;
 
 $ok = 1;
-  $amount = sprintf('%0.2f', $frm['amount']);
-  $h_id = sprintf('%d', $frm['h_id']);
-  $type = $frm['type'];
-  $ec = sprintf('%d', substr($frm['type'], 8));
+  $amount = sprintf('%0.2f', app('data')->frm['amount']);
+  $h_id = sprintf('%d', app('data')->frm['h_id']);
+  $type = app('data')->frm['type'];
+  $ec = sprintf('%d', substr(app('data')->frm['type'], 8));
   $on_hold = 0;
-  if ($settings['allow_withdraw_when_deposit_ends'] == 1) {
+  if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
       $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
       $sth = db_query($q);
       $deps = [];
@@ -36,7 +36,7 @@ $ok = 1;
       }
   }
 
-  if ($settings['hold_only_first_days'] == 1) {
+  if (app('data')->settings['hold_only_first_days'] == 1) {
       $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
   } else {
       $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
@@ -122,11 +122,11 @@ $ok = 1;
       $ok = 0;
   }
 
-  $smarty->assign('type', $frm['type']);
+  $smarty->assign('type', app('data')->frm['type']);
   $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
-      $exchange_systems[$row['ec']]['balance'] = $row['sm'];
+      app('data')->exchange_systems[$row['ec']]['balance'] = $row['sm'];
   }
 
   $accounting = get_user_balance($userinfo['id']);
@@ -142,15 +142,15 @@ $ok = 1;
       }
   }
 
-  $ps = substr($frm['type'], 8);
-  if ($exchange_systems[$ps]['balance'] < $amount + $on_hold) {
-      if ($amount <= $exchange_systems[$ps]['balance']) {
+  $ps = substr(app('data')->frm['type'], 8);
+  if (app('data')->exchange_systems[$ps]['balance'] < $amount + $on_hold) {
+      if ($amount <= app('data')->exchange_systems[$ps]['balance']) {
           $smarty->assign('on_hold', 1);
       } else {
           $smarty->assign('not_enough_funds', 1);
       }
 
-      $max_deposit = $exchange_systems[$ps]['balance'];
+      $max_deposit = app('data')->exchange_systems[$ps]['balance'];
       $ok = 0;
   }
 
@@ -160,10 +160,10 @@ $ok = 1;
       $ok = 0;
   }
 
-  $smarty->assign('ps', $exchange_systems[$ps]['name']);
-  if (($ok == 1 and $frm['action'] == 'confirm')) {
+  $smarty->assign('ps', app('data')->exchange_systems[$ps]['name']);
+  if (($ok == 1 and app('data')->frm['action'] == 'confirm')) {
       $ec = $ps;
-      $compound = sprintf('%.02f', $frm['compound']);
+      $compound = sprintf('%.02f', app('data')->frm['compound']);
       if ($use_compound) {
           if ($type['compound_percents_type'] == 1) {
               $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);

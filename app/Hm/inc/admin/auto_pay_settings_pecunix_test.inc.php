@@ -38,13 +38,13 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       curl_close($ch);
       preg_match('/Date: \\w+, \\d+ \\w+ \\d+ (\\d+)/', $a, $m);
       $hour = $m[1];
-      $token = strtoupper(md5($frm['pass'].':'.gmdate('Ymd').(''.':'.$hour)));
+      $token = strtoupper(md5(app('data')->frm['pass'].':'.gmdate('Ymd').(''.':'.$hour)));
       $data = '
   <TransferRequest>
     <Transfer>
       <TransferId> </TransferId>
-      <Payer> '.$frm['acc'].' </Payer>
-      <Payee> '.$frm['acc'].' </Payee>
+      <Payer> '.app('data')->frm['acc'].' </Payer>
+      <Payee> '.app('data')->frm['acc'].' </Payee>
       <CurrencyId> GAU </CurrencyId>
       <Equivalent>
         <CurrencyId> USD </CurrencyId>

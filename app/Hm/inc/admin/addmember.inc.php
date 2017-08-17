@@ -74,11 +74,11 @@ echo '<b>Add A New Member Account:</b><br>
  </td>
 </tr><tr>
  <td colspan=2><input type=checkbox name=auto_withdraw value=1 ';
-  echo $settings['use_auto_payment'] == 1 ? 'checked' : '';
+  echo app('data')->settings['use_auto_payment'] == 1 ? 'checked' : '';
   echo '>
               Auto-withdrawal enabled 
               ';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '              &nbsp; &nbsp; ';
       echo '<s';
       echo 'pan style="color: #D20202;">Checkbox available in 
@@ -91,7 +91,7 @@ echo '<b>Add A New Member Account:</b><br>
  <td colspan=2><input type=checkbox name=admin_auto_pay_earning value=1>
               Pay earnings directly to the user\'s e-gold account 
               ';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '              &nbsp; &nbsp; ';
       echo '<s';
       echo 'pan style="color: #D20202;">Checkbox available in 

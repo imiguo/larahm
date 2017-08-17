@@ -25,62 +25,62 @@ $q = 'select count(*) as col from hm2_users where id > 1';
       $types[$row['id']] = $row['name'];
   }
 
-  $frm_env['HTTP_HOST'] = preg_replace('/www\\./', '', $frm_env['HTTP_HOST']);
+  app('data')->env['HTTP_HOST'] = preg_replace('/www\\./', '', app('data')->env['HTTP_HOST']);
   echo ' <b>Send a bonus:</b><br>
 <br>';
-  if ($frm['say'] == 'wrongamount') {
+  if (app('data')->frm['say'] == 'wrongamount') {
       echo 'Bonus has not been sent. You had entered the wrong amount!<br>
 <br>';
   }
 
-  if ($frm['say'] == 'someerror') {
+  if (app('data')->frm['say'] == 'someerror') {
       echo 'Bonus has not been sent. Unknown error!<br><br>';
   }
 
-  if ($frm['say'] == 'notsend') {
+  if (app('data')->frm['say'] == 'notsend') {
       echo 'Bonus has not been sent. No users found!<br><br>';
   }
 
-  if ($frm['say'] == 'send') {
+  if (app('data')->frm['say'] == 'send') {
       echo 'Bonus has been sent. Total: $';
-      echo number_format($frm['total'], 2);
+      echo number_format(app('data')->frm['total'], 2);
       echo '<br><br>';
   }
 
-  if ($frm['say'] == 'invalid_code') {
+  if (app('data')->frm['say'] == 'invalid_code') {
       echo 'Bonus has been sent. Invalid confirmation code.<br><br>';
   }
 
-  if ($frm['say'] == 'wrongplan') {
+  if (app('data')->frm['say'] == 'wrongplan') {
       echo 'Bonus has not been sent. Invalid Investment Plan selected.<br><br>';
   }
 
   echo '
 ';
-  if ($frm['action'] == 'confirm') {
+  if (app('data')->frm['action'] == 'confirm') {
       echo '<form method=post name=formb>
 <input type=hidden name=a value=send_bonuce>
 <input type=hidden name=action value=send_bonuce>
 <input type=hidden name=amount value="';
-      echo $frm['amount'];
+      echo app('data')->frm['amount'];
       echo '">
 <input type=hidden name=ec value="';
-      echo $frm['ec'];
+      echo app('data')->frm['ec'];
       echo '">
 <input type=hidden name=to value="';
-      echo $frm['to'];
+      echo app('data')->frm['to'];
       echo '">
 <input type=hidden name=username value="';
-      echo $frm['username'];
+      echo app('data')->frm['username'];
       echo '">
 <input type=hidden name=description value="';
-      echo $frm['description'];
+      echo app('data')->frm['description'];
       echo '">
 <input type=hidden name=deposit value="';
-      echo $frm['deposit'];
+      echo app('data')->frm['deposit'];
       echo '">
 <input type=hidden name=hyip_id value="';
-      echo $frm['hyip_id'];
+      echo app('data')->frm['hyip_id'];
       echo '">
 <table cellspacing=0 cellpadding=2 border=0 width=100%><tr><td valign=top>
 <table cellspacing=0 cellpadding=2 border=0>
@@ -133,7 +133,7 @@ function checkform() {
 	';
       echo '<s';
       echo 'elect name=ec class=inpts>';
-      foreach ($exchange_systems as $id => $data) {
+      foreach (app('data')->exchange_systems as $id => $data) {
           if ($data['status'] != 1) {
               continue;
           }
@@ -188,10 +188,10 @@ function checkform() {
  <td colspan=2>';
       echo start_info_table();
       echo 'For security reason you will be asked confirmation code on next page. E-mail with confirmation code will be sent to account you enter bellow. E-mail account should be on \'';
-      echo $frm_env['HTTP_HOST'];
+      echo app('data')->env['HTTP_HOST'];
       echo '\' domain.<br><br>
 E-mail: <input type=text name=conf_email value="admin" class=inpts size=10>@';
-      echo $frm_env['HTTP_HOST'];
+      echo app('data')->env['HTTP_HOST'];
       echo end_info_table();
       echo '</td>
 </tr><tr>

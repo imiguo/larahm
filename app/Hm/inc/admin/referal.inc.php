@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-if ($settings['demomode'] == 1) {
+if (app('data')->settings['demomode'] == 1) {
     echo start_info_table('100%');
     echo '<b>Demo version restriction!</b><br>
 You cannot edit referral settings!';
@@ -37,7 +37,7 @@ function checkref(a) {
 <input type=hidden name=action value=change>
 
 <input type=checkbox name=usereferal value=1 ';
-  echo $settings['use_referal_program'] == 1 ? 'checked' : '';
+  echo app('data')->settings['use_referal_program'] == 1 ? 'checked' : '';
   echo '> Use referral program?<br><br>
   ';
   echo start_info_table('100%');
@@ -47,7 +47,7 @@ function checkref(a) {
   echo '  <br>
   <br>
 <input type=checkbox name=force_upline value=1 ';
-  echo $settings['force_upline'] == 1 ? 'checked' : '';
+  echo app('data')->settings['force_upline'] == 1 ? 'checked' : '';
   echo '>
   Force an upline during the signup.<br>
   <br>
@@ -59,7 +59,7 @@ function checkref(a) {
   echo '  <br>
   <br>
 <input type=checkbox name=get_rand_ref value=1 ';
-  echo $settings['get_rand_ref'] == 1 ? 'checked' : '';
+  echo app('data')->settings['get_rand_ref'] == 1 ? 'checked' : '';
   echo '>
   Get a random upline (requires \'Force an upline during the signup\' option enabled)<br>
   <br>
@@ -72,7 +72,7 @@ function checkref(a) {
   <br>
 
 <input type=checkbox name=show_refstat value=1 ';
-  echo $settings['show_refstat'] == 1 ? 'checked' : '';
+  echo app('data')->settings['show_refstat'] == 1 ? 'checked' : '';
   echo '>
   Show the income/registerations statistics in the members area.<br>
   <br>
@@ -86,7 +86,7 @@ function checkref(a) {
   <br>
 
 <input type=checkbox name=show_referals value=1 ';
-  echo $settings['show_referals'] == 1 ? 'checked' : '';
+  echo app('data')->settings['show_referals'] == 1 ? 'checked' : '';
   echo '>
   Show referrals\' usernames and e-mail in the members area.<br>
   <br>
@@ -103,14 +103,14 @@ function checkref(a) {
    <tr>
     <td colspan=2>
      <input type=checkbox name=use_solid_referral_commission value=1 ';
-  echo $settings['use_solid_referral_commission'] == 1 ? 'checked' : '';
+  echo app('data')->settings['use_solid_referral_commission'] == 1 ? 'checked' : '';
   echo '> Pay solid referral commision
     </td>
    </tr>
    <tr>
     <td>Solid referral commision Amount: $</td>
     <td><input type=text name=solid_referral_commission_amount value="';
-  echo $settings['solid_referral_commission_amount'];
+  echo app('data')->settings['solid_referral_commission_amount'];
   echo '" class=inpts></td>
    </tr>
   </table>
@@ -125,7 +125,7 @@ function checkref(a) {
   <br>
 
 <input type=checkbox name=payactivereferal value=1 ';
-  echo $settings['pay_active_referal'] == 1 ? 'checked' : '';
+  echo app('data')->settings['pay_active_referal'] == 1 ? 'checked' : '';
   echo '>
   Pay referral commision to users who have made deposit.
   <br>
@@ -138,7 +138,7 @@ function checkref(a) {
   <br>
 
 <input type=checkbox name=useactivereferal value=1 ';
-  echo $settings['use_active_referal'] == 1 ? 'checked' : '';
+  echo app('data')->settings['use_active_referal'] == 1 ? 'checked' : '';
   echo '>
   Count only the referrals who have made deposit.<br>
   <br>
@@ -274,7 +274,7 @@ function checkref(a) {
  <td align=center><input type=text name=ref';
       echo $i;
       echo '_cms class=inpts size=8 style="text-align: right" value="';
-      echo $settings['ref'.$i.'_cms'];
+      echo app('data')->settings['ref'.$i.'_cms'];
       echo '">%</td>
 </tr>';
   }

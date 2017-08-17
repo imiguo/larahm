@@ -12,16 +12,16 @@
 echo '<b>Wire Transfer Details.</b><br>
 <br>
 ';
-  $id = sprintf('%d', $frm['id']);
-  $q = 'select hm2_wires.*, date_format(hm2_wires.wire_date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as wire_date1, hm2_users.username from hm2_wires, hm2_users where hm2_wires.id = '.$id.' and hm2_users.id = hm2_wires.user_id');
+  $id = sprintf('%d', app('data')->frm['id']);
+  $q = 'select hm2_wires.*, date_format(hm2_wires.wire_date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as wire_date1, hm2_users.username from hm2_wires, hm2_users where hm2_wires.id = '.$id.' and hm2_users.id = hm2_wires.user_id');
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   echo '
 <form method=post name=nform >
 <input type=hidden name=a value=wiredetails>';
-  if (($frm['action'] == 'movetodeposit' or $frm['action'] == 'movetoaccount')) {
+  if ((app('data')->frm['action'] == 'movetodeposit' or app('data')->frm['action'] == 'movetoaccount')) {
       echo '<input type=hidden name=action value="';
-      echo $frm['action'];
+      echo app('data')->frm['action'];
       echo '">
 <input type=hidden name=confirm value="yes">
 <input type=hidden name=id value=';
@@ -37,7 +37,7 @@ echo '<b>Wire Transfer Details.</b><br>
 </tr><tr>
  <td>Amount:</td>
  <td>';
-  if (($frm['action'] != 'movetodeposit' and $frm['action'] != 'movetoaccount')) {
+  if ((app('data')->frm['action'] != 'movetodeposit' and app('data')->frm['action'] != 'movetoaccount')) {
       echo number_format($row['amount'], 2);
   } else {
       echo '<input type=text name=amount value=\''.sprintf('%0.2f', $row['amount']).'\' class=inpts style=\'text-align: right;\'';
@@ -45,7 +45,7 @@ echo '<b>Wire Transfer Details.</b><br>
 
   echo '</td>
 </tr>';
-  if ($frm['action'] != 'movetoaccount') {
+  if (app('data')->frm['action'] != 'movetoaccount') {
       if (0 < $row['compound']) {
           echo '<tr>
       <td>Compounding percent:</td>
@@ -56,7 +56,7 @@ echo '<b>Wire Transfer Details.</b><br>
       }
   }
 
-  if (($frm['action'] == 'movetodeposit' or $frm['action'] == 'movetoaccount')) {
+  if ((app('data')->frm['action'] == 'movetodeposit' or app('data')->frm['action'] == 'movetoaccount')) {
       echo '<tr>
       <td colspan=2>
         ';
@@ -78,7 +78,7 @@ echo '<b>Wire Transfer Details.</b><br>
   echo $row['username'];
   echo '</td>
 </tr>';
-  if (($frm['action'] != 'movetodeposit' and $frm['action'] != 'movetoaccount')) {
+  if ((app('data')->frm['action'] != 'movetodeposit' and app('data')->frm['action'] != 'movetoaccount')) {
       echo '<tr>
  <td colspan=2><br><b>Personal information</b></td>
 </tr><tr>
@@ -163,10 +163,10 @@ echo '<b>Wire Transfer Details.</b><br>
 
   echo '</table>
 <br>';
-  if ($frm['action'] == 'movetoaccount') {
+  if (app('data')->frm['action'] == 'movetoaccount') {
       echo '<input type=submit value="Add funds to account" class=sbmt>';
   } else {
-      if ($frm['action'] != 'movetodeposit') {
+      if (app('data')->frm['action'] != 'movetodeposit') {
           echo '<input type=button value="Move to deposit" class=sbmt onClick="document.location=\'?a=wiredetails&action=movetodeposit&id=';
           echo $row['id'];
           echo '\';"> &nbsp;
@@ -195,10 +195,10 @@ echo '<b>Wire Transfer Details.</b><br>
 
 <br>';
   echo start_info_table('100%');
-  if ($frm['action'] == 'movetodeposit') {
+  if (app('data')->frm['action'] == 'movetodeposit') {
       echo 'You can change the amount before moving this transfer to the deposit. ';
   } else {
-      if ($frm['action'] == 'movetoaccount') {
+      if (app('data')->frm['action'] == 'movetoaccount') {
           echo 'You can change the amount before moving this transfer to the account. ';
       } else {
           echo 'This screen helps you to manage Wire Transfers.<br>

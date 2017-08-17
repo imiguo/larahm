@@ -10,7 +10,7 @@
  */
 
 echo '<b>';
-  echo $frm['type'] == 'problem' ? 'Problem' : 'New';
+  echo app('data')->frm['type'] == 'problem' ? 'Problem' : 'New';
   echo ' Wire Transfers:</b><br><br>
 <form method=post name=nform >
 
@@ -22,7 +22,7 @@ echo '<b>';
  <th bgcolor=FFEA00>Bank Account</th>
  <th bgcolor=FFEA00>-</th>
 </tr>';
-  if ($frm['type'] == 'problem') {
+  if (app('data')->frm['type'] == 'problem') {
       $q = 'select hm2_wires.*, hm2_users.username from hm2_wires, hm2_users where hm2_wires.status=\'problem\' and hm2_users.id = hm2_wires.user_id order by wire_date desc';
   } else {
       $q = 'select hm2_wires.*, hm2_users.username from hm2_wires, hm2_users where hm2_wires.status=\'new\' and hm2_users.id = hm2_wires.user_id order by wire_date desc';

@@ -9,42 +9,42 @@
  * with this source code in the file LICENSE.
  */
 
-$frm['day_to'] = sprintf('%d', $frm['day_to']);
-  $frm['month_to'] = sprintf('%d', $frm['month_to']);
-  $frm['year_to'] = sprintf('%d', $frm['year_to']);
-  $frm['day_from'] = sprintf('%d', $frm['day_from']);
-  $frm['month_from'] = sprintf('%d', $frm['month_from']);
-  $frm['year_from'] = sprintf('%d', $frm['year_from']);
-  if ($frm['day_to'] == 0) {
-      $frm['day_to'] = date('j', time() + $settings['time_dif'] * 60 * 60);
-      $frm['month_to'] = date('n', time() + $settings['time_dif'] * 60 * 60);
-      $frm['year_to'] = date('Y', time() + $settings['time_dif'] * 60 * 60);
-      $frm['day_from'] = 1;
-      $frm['month_from'] = $frm['month_to'];
-      $frm['year_from'] = $frm['year_to'];
+app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
+  app('data')->frm['month_to'] = sprintf('%d', app('data')->frm['month_to']);
+  app('data')->frm['year_to'] = sprintf('%d', app('data')->frm['year_to']);
+  app('data')->frm['day_from'] = sprintf('%d', app('data')->frm['day_from']);
+  app('data')->frm['month_from'] = sprintf('%d', app('data')->frm['month_from']);
+  app('data')->frm['year_from'] = sprintf('%d', app('data')->frm['year_from']);
+  if (app('data')->frm['day_to'] == 0) {
+      app('data')->frm['day_to'] = date('j', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['month_to'] = date('n', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['year_to'] = date('Y', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['day_from'] = 1;
+      app('data')->frm['month_from'] = app('data')->frm['month_to'];
+      app('data')->frm['year_from'] = app('data')->frm['year_to'];
   }
 
-  $datewhere = '\''.$frm['year_from'].'-'.$frm['month_from'].'-'.$frm['day_from'].'\' + interval 0 day < date + interval '.$settings['time_dif'].' hour and '.'\''.$frm['year_to'].'-'.$frm['month_to'].'-'.$frm['day_to'].'\' + interval 1 day > date + interval '.$settings['time_dif'].' hour ';
-  if ($frm['ttype'] != '') {
-      if ($frm['ttype'] == 'exchange') {
+  $datewhere = '\''.app('data')->frm['year_from'].'-'.app('data')->frm['month_from'].'-'.app('data')->frm['day_from'].'\' + interval 0 day < date + interval '.app('data')->settings['time_dif'].' hour and '.'\''.app('data')->frm['year_to'].'-'.app('data')->frm['month_to'].'-'.app('data')->frm['day_to'].'\' + interval 1 day > date + interval '.app('data')->settings['time_dif'].' hour ';
+  if (app('data')->frm['ttype'] != '') {
+      if (app('data')->frm['ttype'] == 'exchange') {
           $typewhere = ' and (type=\'exchange_out\' or type=\'exchange_in\')';
       } else {
-          $typewhere = ' and type=\''.quote($frm['ttype']).'\' ';
+          $typewhere = ' and type=\''.quote(app('data')->frm['ttype']).'\' ';
       }
   }
 
-  $u_id = sprintf('%d', $frm['u_id']);
+  $u_id = sprintf('%d', app('data')->frm['u_id']);
   if (1 < $u_id) {
       $userwhere = ' and user_id = '.$u_id.' ';
   }
 
   $ecwhere = '';
-  if ($frm[ec] == '') {
-      $frm[ec] = -1;
+  if (app('data')->frm[ec] == '') {
+      app('data')->frm[ec] = -1;
   }
 
-  $ec = sprintf('%d', $frm[ec]);
-  if (-1 < $frm[ec]) {
+  $ec = sprintf('%d', app('data')->frm[ec]);
+  if (-1 < app('data')->frm[ec]) {
       $ecwhere = ' and ec = '.$ec;
   }
 
@@ -52,7 +52,7 @@ $frm['day_to'] = sprintf('%d', $frm['day_to']);
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['col'];
-  $page = $frm['page'];
+  $page = app('data')->frm['page'];
   $onpage = 20;
   $colpages = ceil($count_all / $onpage);
   if ($page <= 1) {
@@ -64,9 +64,9 @@ $frm['day_to'] = sprintf('%d', $frm['day_to']);
   }
 
   $from = ($page - 1) * $onpage;
-  $order = ($settings['use_history_balance_mode'] ? 'asc' : 'desc');
-  $dformat = ($settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
-  $q = 'select *, date_format(date + interval '.$settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date '.$order.', id '.$order.' limit '.$from.', '.$onpage);
+  $order = (app('data')->settings['use_history_balance_mode'] ? 'asc' : 'desc');
+  $dformat = (app('data')->settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
+  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date '.$order.', id '.$order.' limit '.$from.', '.$onpage);
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
@@ -80,7 +80,7 @@ $frm['day_to'] = sprintf('%d', $frm['day_to']);
       }
 
       $row['debitcredit'] = ($row['actual_amount'] < 0 ? 1 : 0);
-      if ($settings['use_history_balance_mode']) {
+      if (app('data')->settings['use_history_balance_mode']) {
           $q = 'select sum(actual_amount) as balance from hm2_history where id < '.$row['id'].(''.' '.$userwhere);
           $sth1 = db_query($q);
           $row1 = mysql_fetch_array($sth1);
@@ -91,7 +91,7 @@ $frm['day_to'] = sprintf('%d', $frm['day_to']);
       array_push($trans, $row);
   }
 
-  if ($settings['use_history_balance_mode']) {
+  if (app('data')->settings['use_history_balance_mode']) {
       $q = 'select
             sum(actual_amount * (actual_amount < 0)) as debit,
             sum(actual_amount * (actual_amount > 0)) as credit,
@@ -132,7 +132,7 @@ function go(p)
 <input type=hidden name=a value=thistory>
 <input type=hidden name=action2>
 <input type=hidden name=u_id value=\'';
-  echo $frm['u_id'];
+  echo app('data')->frm['u_id'];
   echo '\'>
 <input type=hidden name=page value=\'';
   echo $page;
@@ -147,40 +147,40 @@ function go(p)
   echo 'elect name=ttype class=inpts onchange="document.trans.action2.value=\'\';document.trans.submit()">
 		<option value="">All transactions
 		<option value="add_funds" ';
-  echo $frm['ttype'] == 'add_funds' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'add_funds' ? 'selected' : '';
   echo '>Transfers from external processings
 		<option value="deposit" ';
-  echo $frm['ttype'] == 'deposit' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'deposit' ? 'selected' : '';
   echo '>Deposits
 		<option value="bonus" ';
-  echo $frm['ttype'] == 'bonus' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'bonus' ? 'selected' : '';
   echo '>Bonuses
 		<option value="penality" ';
-  echo $frm['ttype'] == 'penality' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'penality' ? 'selected' : '';
   echo '>Penalties
 		<option value="earning" ';
-  echo $frm['ttype'] == 'earning' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'earning' ? 'selected' : '';
   echo '>Earnings
 		<option value="withdrawal" ';
-  echo $frm['ttype'] == 'withdrawal' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'withdrawal' ? 'selected' : '';
   echo '>Withdrawals
 		<option value="withdraw_pending" ';
-  echo $frm['ttype'] == 'withdraw_pending' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'withdraw_pending' ? 'selected' : '';
   echo '>Withdrawal requests
 	  <option value="commissions" ';
-  echo $frm['ttype'] == 'commissions' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'commissions' ? 'selected' : '';
   echo '>Commissions
     <option value="early_deposit_release" ';
-  echo $frm['ttype'] == 'early_deposit_release' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'early_deposit_release' ? 'selected' : '';
   echo '>Early deposit releases
 <!--		<option value="early_deposit_charge" ';
-  echo $frm['ttype'] == 'early_deposit_charge' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'early_deposit_charge' ? 'selected' : '';
   echo '>Deposit releases commisions-->
 		<option value="release_deposit" ';
-  echo $frm['ttype'] == 'release_deposit' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'release_deposit' ? 'selected' : '';
   echo '>Deposit returns
 		<option value="exchange" ';
-  echo $frm['ttype'] == 'exchange' ? 'selected' : '';
+  echo app('data')->frm['ttype'] == 'exchange' ? 'selected' : '';
   echo '>Exchange
 	</select>
 <br>
@@ -188,12 +188,12 @@ function go(p)
   echo '<s';
   echo 'elect name=ec class=inpts>
 	  <option value=-1>All eCurrencies</option>';
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data[status] == 1) {
           echo '<option value=';
           echo $id;
           echo ' ';
-          echo $id == $frm[ec] ? 'selected' : '';
+          echo $id == app('data')->frm[ec] ? 'selected' : '';
           echo '>';
           echo $data[name];
           echo '</option>';
@@ -212,7 +212,7 @@ function go(p)
       echo '<option value=';
       echo $i + 1;
       echo ' ';
-      echo $i + 1 == $frm['month_from'] ? 'selected' : '';
+      echo $i + 1 == app('data')->frm['month_from'] ? 'selected' : '';
       echo '>';
       echo $month[$i];
   }
@@ -225,7 +225,7 @@ function go(p)
       echo '<option value=';
       echo $i;
       echo ' ';
-      echo $i == $frm['day_from'] ? 'selected' : '';
+      echo $i == app('data')->frm['day_from'] ? 'selected' : '';
       echo '>';
       echo $i;
   }
@@ -234,11 +234,11 @@ function go(p)
 	';
   echo '<s';
   echo 'elect name=year_from class=inpts>';
-  for ($i = $settings['site_start_year']; $i <= date('Y', time() + $settings['time_dif'] * 60 * 60); ++$i) {
+  for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       echo '<option value=';
       echo $i;
       echo ' ';
-      echo $i == $frm['year_from'] ? 'selected' : '';
+      echo $i == app('data')->frm['year_from'] ? 'selected' : '';
       echo '>';
       echo $i;
   }
@@ -254,7 +254,7 @@ function go(p)
       echo '<option value=';
       echo $i + 1;
       echo ' ';
-      echo $i + 1 == $frm['month_to'] ? 'selected' : '';
+      echo $i + 1 == app('data')->frm['month_to'] ? 'selected' : '';
       echo '>';
       echo $month[$i];
   }
@@ -267,7 +267,7 @@ function go(p)
       echo '<option value=';
       echo $i;
       echo ' ';
-      echo $i == $frm['day_to'] ? 'selected' : '';
+      echo $i == app('data')->frm['day_to'] ? 'selected' : '';
       echo '>';
       echo $i;
   }
@@ -276,11 +276,11 @@ function go(p)
 	';
   echo '<s';
   echo 'elect name=year_to class=inpts>';
-  for ($i = $settings['site_start_year']; $i <= date('Y', time() + $settings['time_dif'] * 60 * 60); ++$i) {
+  for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       echo '<option value=';
       echo $i;
       echo ' ';
-      echo $i == $frm['year_to'] ? 'selected' : '';
+      echo $i == app('data')->frm['year_to'] ? 'selected' : '';
       echo '>';
       echo $i;
   }
@@ -309,23 +309,23 @@ function func5() {
 <input type=hidden name=action2 va';
   echo 'lue=\'\'>
 ';
-  if (($frm['ttype'] == 'withdraw_pending' and $frm['say'] == 'yes')) {
+  if ((app('data')->frm['ttype'] == 'withdraw_pending' and app('data')->frm['say'] == 'yes')) {
       echo 'Withdrawal has been sent<br><br>';
   }
 
-  if (($frm['ttype'] == 'withdraw_pending' and $frm['say'] == 'no')) {
+  if ((app('data')->frm['ttype'] == 'withdraw_pending' and app('data')->frm['say'] == 'no')) {
       echo 'Withdrawal has not been sent<br><br>';
   }
 
-  if ($frm['say'] == 'massremove') {
+  if (app('data')->frm['say'] == 'massremove') {
       echo 'Pending transactions removed!<br><br>';
   }
 
-  if ($frm['say'] == 'massprocessed') {
+  if (app('data')->frm['say'] == 'massprocessed') {
       echo 'Pending transactions selected as processed!<br><br>';
   }
 
-  if ($settings['use_history_balance_mode']) {
+  if (app('data')->settings['use_history_balance_mode']) {
       echo '
 <table cellspacing=1 cellpadding=2 border=0 width=100%>
 <tr>
@@ -341,9 +341,9 @@ function func5() {
       if (0 < count($trans)) {
           for ($i = 0; $i < count($trans); ++$i) {
               $amount = abs($trans[$i]['actual_amount']);
-              $fee = floor($amount * $settings['withdrawal_fee']) / 100;
-              if ($fee < $settings['withdrawal_fee_min']) {
-                  $fee = $settings['withdrawal_fee_min'];
+              $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+              if ($fee < app('data')->settings['withdrawal_fee_min']) {
+                  $fee = app('data')->settings['withdrawal_fee_min'];
               }
 
               $to_withdraw = $amount - $fee;
@@ -354,7 +354,7 @@ function func5() {
               $to_withdraw = number_format(floor($to_withdraw * 100) / 100, 2);
               echo '<tr onMouseOver="bgColor=\'#FFECB0\';" onMouseOut="bgColor=\'\';">
  <td>';
-              echo $frm['ttype'] == 'withdraw_pending' ? '<input type=checkbox name=pend['.$trans[$i]['id'].'] value=1> &nbsp; ' : '';
+              echo app('data')->frm['ttype'] == 'withdraw_pending' ? '<input type=checkbox name=pend['.$trans[$i]['id'].'] value=1> &nbsp; ' : '';
               echo '<b>';
               echo $trans[$i]['username'];
               echo '</b></td>
@@ -390,7 +390,7 @@ function func5() {
                   echo number_format(abs($trans[$i][actual_amount]), 2);
                   echo $trans[$i]['type'] == 'withdraw_pending' ? '($'.$to_withdraw.' with fees)' : '';
                   echo ' ';
-                  echo $frm['ttype'] == 'withdraw_pending' ? ' &nbsp; <a href=?a=pay_withdraw&id='.$trans[$i]['id'].' target=_blank>[pay]</a> <a href=?a=rm_withdraw&id='.$trans[$i]['id'].' onClick="return confirm(\'Do you really want to remove this transaction?\')">[remove]</a>' : '';
+                  echo app('data')->frm['ttype'] == 'withdraw_pending' ? ' &nbsp; <a href=?a=pay_withdraw&id='.$trans[$i]['id'].' target=_blank>[pay]</a> <a href=?a=rm_withdraw&id='.$trans[$i]['id'].' onClick="return confirm(\'Do you really want to remove this transaction?\')">[remove]</a>' : '';
                   echo '  </b>
   ';
               } else {
@@ -451,9 +451,9 @@ function func5() {
       if (0 < count($trans)) {
           for ($i = 0; $i < count($trans); ++$i) {
               $amount = abs($trans[$i]['actual_amount']);
-              $fee = floor($amount * $settings['withdrawal_fee']) / 100;
-              if ($fee < $settings['withdrawal_fee_min']) {
-                  $fee = $settings['withdrawal_fee_min'];
+              $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+              if ($fee < app('data')->settings['withdrawal_fee_min']) {
+                  $fee = app('data')->settings['withdrawal_fee_min'];
               }
 
               $to_withdraw = $amount - $fee;
@@ -464,7 +464,7 @@ function func5() {
               $to_withdraw = number_format(floor($to_withdraw * 100) / 100, 2);
               echo '<tr onMouseOver="bgColor=\'#FFECB0\';" onMouseOut="bgColor=\'\';">
  <td>';
-              echo $frm['ttype'] == 'withdraw_pending' ? '<input type=checkbox name=pend['.$trans[$i]['id'].'] value=1> &nbsp; ' : '';
+              echo app('data')->frm['ttype'] == 'withdraw_pending' ? '<input type=checkbox name=pend['.$trans[$i]['id'].'] value=1> &nbsp; ' : '';
               echo '<b>';
               echo $trans[$i]['username'];
               echo '</b></td>
@@ -472,7 +472,7 @@ function func5() {
               echo number_format(abs($trans[$i]['actual_amount']), 2);
               echo $trans[$i]['type'] == 'withdraw_pending' ? ' ($'.$to_withdraw.' with fees)<br>' : '';
               echo '</b>';
-              echo $frm['ttype'] == 'withdraw_pending' ? ' &nbsp; <a href=?a=pay_withdraw&id='.$trans[$i]['id'].' target=_blank>[pay]</a> <a href=?a=rm_withdraw&id='.$trans[$i]['id'].' onClick="return confirm(\'Really need delete this transaction?\')">[remove]</a>' : '';
+              echo app('data')->frm['ttype'] == 'withdraw_pending' ? ' &nbsp; <a href=?a=pay_withdraw&id='.$trans[$i]['id'].' target=_blank>[pay]</a> <a href=?a=rm_withdraw&id='.$trans[$i]['id'].' onClick="return confirm(\'Really need delete this transaction?\')">[remove]</a>' : '';
               echo '<img src="images/';
               echo $trans[$i]['ec'];
               echo '.gif" align=absmiddle hspace=1 height=17></td>
@@ -496,7 +496,7 @@ function func5() {
           echo '<tr>
       <td colspan=2><b>For this period:</b></td>
  <td align=right><b>$ ';
-          echo number_format(((($frm['ttype'] == 'deposit' or $frm['ttype'] == 'withdraw_pending') or $frm['ttype'] == 'exchange') ? '-1' : '1') * $periodsum, 2);
+          echo number_format((((app('data')->frm['ttype'] == 'deposit' or app('data')->frm['ttype'] == 'withdraw_pending') or app('data')->frm['ttype'] == 'exchange') ? '-1' : '1') * $periodsum, 2);
           echo '</b></td>
 </tr>';
       } else {
@@ -508,13 +508,13 @@ function func5() {
       echo '<tr>
  <td colspan=2><b>Total:</b></td>
  <td align=right><b>$ ';
-      echo number_format(((($frm['ttype'] == 'deposit' or $frm['ttype'] == 'withdraw_pending') or $frm['ttype'] == 'exchange') ? '-1' : '1') * $allsum, 2);
+      echo number_format((((app('data')->frm['ttype'] == 'deposit' or app('data')->frm['ttype'] == 'withdraw_pending') or app('data')->frm['ttype'] == 'exchange') ? '-1' : '1') * $allsum, 2);
       echo '</b></td>
 </tr>
 </table>';
   }
 
-  if ($frm['ttype'] == 'withdraw_pending') {
+  if (app('data')->frm['ttype'] == 'withdraw_pending') {
       echo '<br><center>';
       echo '<s';
       echo 'cript language=javascript>
@@ -544,7 +544,7 @@ function func4() {
 </script>
 <input type=butto';
       echo 'n value="Mass payment selected.';
-      if ($settings['demomode'] == 1) {
+      if (app('data')->settings['demomode'] == 1) {
           echo ' (Pro version only!)';
       }
 
@@ -604,7 +604,7 @@ in.<br>';
   echo end_info_table();
   echo '
 <br>';
-  if ($frm['ttype'] == 'withdraw_pending') {
+  if (app('data')->frm['ttype'] == 'withdraw_pending') {
       echo start_info_table('100%');
       echo '
 <br>

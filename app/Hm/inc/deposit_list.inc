@@ -35,7 +35,7 @@ $q = 'select * from hm2_types where status = \'on\'';
       $row['period'] = $periods[$row['period']];
       $q = 'select
                 *,
-                date_format(deposit_date + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date,
+                date_format(deposit_date + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date,
                 (to_days(now()) - to_days(deposit_date)) as duration,
                 (to_days(now()) - to_days(deposit_date) - '.$row['withdraw_principal_duration'].') as pending_duration
           from
@@ -93,7 +93,7 @@ $q = 'select * from hm2_types where status = \'on\'';
             hm2_history.user_id = '.$userinfo['id'].' and
             hm2_deposits.user_id = '.$userinfo['id'].' and
             hm2_history.type=\'earning\' and
-            to_days(hm2_history.date + interval '.$settings['time_dif'].' hour) = to_days(now()) and
+            to_days(hm2_history.date + interval '.app('data')->settings['time_dif'].' hour) = to_days(now()) and
             hm2_deposits.type_id = '.$row['id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);

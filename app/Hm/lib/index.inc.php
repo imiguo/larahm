@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Cookie;
 
 function bind_ref()
 {
-    global $frm;
-    Cookie::queue('referer', $frm['ref'], 43200);
+
+    Cookie::queue('referer', app('data')->frm['ref'], 43200);
     if (Cookie::get('referer') == '') {
-        $ref = quote($frm['ref']);
+        $ref = quote(app('data')->frm['ref']);
         $q = 'select id from hm2_users where username = \''.$ref.'\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
@@ -45,11 +45,9 @@ function bind_ref()
 
 function custom2_pay_withdraw_eeecurrency()
 {
-    global $frm;
-    global $exchange_systems;
-    global $settings;
-    $batch = $frm['TRANSACTION_ID'];
-    list($id, $str) = explode('-', $frm['CUSTOM1']);
+
+    $batch = app('data')->frm['TRANSACTION_ID'];
+    list($id, $str) = explode('-', app('data')->frm['CUSTOM1']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -77,22 +75,20 @@ function custom2_pay_withdraw_eeecurrency()
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['SELLERACCOUNTID'];
+        $info['account'] = app('data')->frm['SELLERACCOUNTID'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[8]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[8]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 }
 
 function custom2_pay_withdraw()
 {
-    global $frm;
-    global $exchange_systems;
-    global $settings;
-    $batch = $frm['TRANSACTION_ID'];
-    list($id, $str) = explode('-', $frm['CUSTOM1']);
+
+    $batch = app('data')->frm['TRANSACTION_ID'];
+    list($id, $str) = explode('-', app('data')->frm['CUSTOM1']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -120,22 +116,20 @@ function custom2_pay_withdraw()
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['SELLERACCOUNTID'];
+        $info['account'] = app('data')->frm['SELLERACCOUNTID'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[2]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[2]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 }
 
 function user3_pay_withdraw_payment()
 {
-    global $frm;
-    global $exchange_systems;
-    global $settings;
-    $batch = $frm['transaction_id'];
-    list($id, $str) = explode('-', $frm['user1']);
+
+    $batch = app('data')->frm['transaction_id'];
+    list($id, $str) = explode('-', app('data')->frm['user1']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -163,135 +157,131 @@ function user3_pay_withdraw_payment()
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['payee_email'];
+        $info['account'] = app('data')->frm['payee_email'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[4]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[4]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 }
 
-function show_info_box()
+function show_info_box($stats)
 {
-    global $settings;
-    global $stats;
-    if ($settings['show_info_box_members_online'] == 1) {
-        if ($settings['crontab_stats'] == 1) {
-            $settings['show_info_box_members_online_generated'] = $stats['visitors'];
+    if (app('data')->settings['show_info_box_members_online'] == 1) {
+        if (app('data')->settings['crontab_stats'] == 1) {
+            app('data')->settings['show_info_box_members_online_generated'] = $stats['visitors'];
         } else {
             $q = 'select count(*) as col from hm2_users where last_access_time + interval 30 minute > now()';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
-            $settings['show_info_box_members_online_generated'] = $row['col'];
+            app('data')->settings['show_info_box_members_online_generated'] = $row['col'];
         }
     }
 
-    if ($settings['show_info_box_total_accounts'] == 1) {
-        if ($settings['crontab_stats'] == 1) {
-            $settings['info_box_total_accounts_generated'] = $stats['total_users'];
+    if (app('data')->settings['show_info_box_total_accounts'] == 1) {
+        if (app('data')->settings['crontab_stats'] == 1) {
+            app('data')->settings['info_box_total_accounts_generated'] = $stats['total_users'];
         } else {
             $q = 'select count(*) as col from hm2_users where id > 1';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
-            $settings['info_box_total_accounts_generated'] = $row['col'];
+            app('data')->settings['info_box_total_accounts_generated'] = $row['col'];
         }
     }
 
-    if ($settings['show_info_box_active_accounts'] == 1) {
-        if ($settings['crontab_stats'] == 1) {
-            $settings['info_box_total_active_accounts_generated'] = $stats['active_accounts'];
+    if (app('data')->settings['show_info_box_active_accounts'] == 1) {
+        if (app('data')->settings['crontab_stats'] == 1) {
+            app('data')->settings['info_box_total_active_accounts_generated'] = $stats['active_accounts'];
         } else {
             $q = 'select count(distinct user_id) as col from hm2_deposits ';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
-            $settings['info_box_total_active_accounts_generated'] = $row['col'];
+            app('data')->settings['info_box_total_active_accounts_generated'] = $row['col'];
         }
     }
 
-    if ($settings['show_info_box_vip_accounts'] == 1) {
+    if (app('data')->settings['show_info_box_vip_accounts'] == 1) {
         $q = 'select count(distinct user_id) as col from hm2_deposits where actual_amount > '.sprintf('%.02f',
-                $settings['vip_users_deposit_amount']);
+                app('data')->settings['vip_users_deposit_amount']);
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
-        $settings['info_box_total_vip_accounts_generated'] = $row['col'];
+        app('data')->settings['info_box_total_vip_accounts_generated'] = $row['col'];
     }
 
-    if ($settings['show_info_box_deposit_funds'] == 1) {
-        if ($settings['crontab_stats'] == 1) {
-            $settings['info_box_deposit_funds_generated'] = number_format($stats['total_deposited'], 2);
+    if (app('data')->settings['show_info_box_deposit_funds'] == 1) {
+        if (app('data')->settings['crontab_stats'] == 1) {
+            app('data')->settings['info_box_deposit_funds_generated'] = number_format($stats['total_deposited'], 2);
         } else {
             $q = 'select sum(amount) as sum from hm2_deposits';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
-            $settings['info_box_deposit_funds_generated'] = number_format($row['sum'], 2);
+            app('data')->settings['info_box_deposit_funds_generated'] = number_format($row['sum'], 2);
         }
     }
 
-    if ($settings['show_info_box_today_deposit_funds'] == 1) {
-        $q = 'select sum(amount) as sum from hm2_deposits where to_days(deposit_date) = to_days(now() + interval '.$settings['time_dif'].' day)';
+    if (app('data')->settings['show_info_box_today_deposit_funds'] == 1) {
+        $q = 'select sum(amount) as sum from hm2_deposits where to_days(deposit_date) = to_days(now() + interval '.app('data')->settings['time_dif'].' day)';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
-        $settings['info_box_today_deposit_funds_generated'] = number_format($row['sum'], 2);
+        app('data')->settings['info_box_today_deposit_funds_generated'] = number_format($row['sum'], 2);
     }
 
-    if ($settings['show_info_box_total_withdraw'] == 1) {
-        if ($settings['crontab_stats'] == 1) {
-            $settings['info_box_withdraw_funds_generated'] = number_format(abs($stats['total_withdraw']), 2);
+    if (app('data')->settings['show_info_box_total_withdraw'] == 1) {
+        if (app('data')->settings['crontab_stats'] == 1) {
+            app('data')->settings['info_box_withdraw_funds_generated'] = number_format(abs($stats['total_withdraw']), 2);
         } else {
             $q = 'select sum(amount) as sum from hm2_history where type=\'withdrawal\'';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
-            $settings['info_box_withdraw_funds_generated'] = number_format(abs($row['sum']), 2);
+            app('data')->settings['info_box_withdraw_funds_generated'] = number_format(abs($row['sum']), 2);
         }
     }
 
-    if ($settings['show_info_box_visitor_online'] == 1) {
+    if (app('data')->settings['show_info_box_visitor_online'] == 1) {
         $q = 'select count(*) as sum from hm2_online';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
-        $settings['info_box_visitor_online_generated'] = $row['sum'];
+        app('data')->settings['info_box_visitor_online_generated'] = $row['sum'];
     }
 
-    if ($settings['show_info_box_newest_member'] == 1) {
+    if (app('data')->settings['show_info_box_newest_member'] == 1) {
         $q = 'select username from hm2_users where status = \'on\' order by id desc limit 0,1';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
-        $settings['show_info_box_newest_member_generated'] = $row['username'];
+        app('data')->settings['show_info_box_newest_member_generated'] = $row['username'];
     }
 
-    if ($settings['show_info_box_last_update'] == 1) {
-        $settings['show_info_box_last_update_generated'] = date('M j, Y', time() + $settings['time_dif'] * 60 * 60);
+    if (app('data')->settings['show_info_box_last_update'] == 1) {
+        app('data')->settings['show_info_box_last_update_generated'] = date('M j, Y', time() + app('data')->settings['time_dif'] * 60 * 60);
     }
 }
 
 function do_login(&$userinfo)
 {
-    global $frm;
-    global $settings;
-    global $frm_env;
-    $username = quote($frm['username']);
-    $password = quote($frm['password']);
+
+    $username = quote(app('data')->frm['username']);
+    $password = quote(app('data')->frm['password']);
     $password = md5($password);
     $add_opt_in_check = '';
-    if ($settings['use_opt_in'] == 1) {
+    if (app('data')->settings['use_opt_in'] == 1) {
         $add_opt_in_check = ' and (confirm_string = "" or confirm_string is NULL)';
     }
 
     $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from hm2_users where username = \''.$username.'\' and (status=\'on\' or status=\'suspended\') '.$add_opt_in_check;
     $sth = db_query($q);
     if ($row = mysql_fetch_array($sth)) {
-        if (((extension_loaded('gd') and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars'])) {
-            if (session('validation_number') != $frm['validation_number']) {
-                throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
+        if (((extension_loaded('gd') and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars'])) {
+            if (session('validation_number') != app('data')->frm['validation_number']) {
+                throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
             }
         }
 
-        if (($settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
-            throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
+        if ((app('data')->settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
+            throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
 
-        if (($settings['brute_force_handler'] == 1 and $row['bf_counter'] == $settings['brute_force_max_tries'])) {
+        if ((app('data')->settings['brute_force_handler'] == 1 and $row['bf_counter'] == app('data')->settings['brute_force_max_tries'])) {
             $activation_code = get_rand_md5(50);
             $q = 'update hm2_users set bf_counter = bf_counter + 1, activation_code = \''.$activation_code.'\' where id = '.$row['id'];
             db_query($q);
@@ -299,20 +289,20 @@ function do_login(&$userinfo)
             $info['activation_code'] = $activation_code;
             $info['username'] = $row['username'];
             $info['name'] = $row['name'];
-            $info['ip'] = $frm_env['REMOTE_ADDR'];
-            $info['max_tries'] = $settings['brute_force_max_tries'];
-            send_template_mail('brute_force_activation', $row['email'], $settings['system_email'], $info);
-            throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
+            $info['ip'] = app('data')->env['REMOTE_ADDR'];
+            $info['max_tries'] = app('data')->settings['brute_force_max_tries'];
+            send_template_mail('brute_force_activation', $row['email'], app('data')->settings['system_email'], $info);
+            throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
         if ($row['password'] != $password) {
             $q = 'update hm2_users set bf_counter = bf_counter + 1 where id = '.$row['id'];
             db_query($q);
-            throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
+            throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
 
         $userinfo = $row;
         $userinfo['logged'] = 1;
-        $ip = $frm_env['REMOTE_ADDR'];
+        $ip = app('data')->env['REMOTE_ADDR'];
         $q = 'update hm2_users set bf_counter = 0, last_access_time = now(), last_access_ip = \''.$ip.'\' where id = '.$row['id'];
         db_query($q);
         $q = 'insert into hm2_user_access_log set user_id = '.$userinfo['id'].(', date = now(), ip = \''.$ip.'\'');
@@ -320,7 +310,7 @@ function do_login(&$userinfo)
     }
 
     if ($userinfo['logged'] == 0) {
-        throw new RedirectException('/?a=login&say=invalid_login&username='.$frm['username']);
+        throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
     }
 }
 

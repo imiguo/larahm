@@ -19,10 +19,10 @@ echo '<form method=post name=nform>
   echo 'elect name=type class=inpts onchange="document.nform.submit()">
 <option value=\'new\'>New</option>
 <option value=\'problem\' ';
-  echo $frm['type'] == 'problem' ? 'selected' : '';
+  echo app('data')->frm['type'] == 'problem' ? 'selected' : '';
   echo '>Problem</option>
 <option value=\'processed\' ';
-  echo $frm['type'] == 'processed' ? 'selected' : '';
+  echo app('data')->frm['type'] == 'processed' ? 'selected' : '';
   echo '>Processed</option>
 </select>
 <input type=submit value=\'GO\' class=sbmt>
@@ -47,10 +47,10 @@ echo '<form method=post name=nform>
       $processings[$row['id']] = unserialize($row['infofields']);
   }
 
-  $status = ($frm['type'] == 'problem' ? 'problem' : ($frm['type'] == 'processed' ? 'processed' : 'new'));
+  $status = (app('data')->frm['type'] == 'problem' ? 'problem' : (app('data')->frm['type'] == 'processed' ? 'processed' : 'new'));
   $q = 'select
           hm2_pending_deposits.*,
-          date_format(hm2_pending_deposits.date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
+          date_format(hm2_pending_deposits.date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
           hm2_users.username
         from
           hm2_pending_deposits,
@@ -65,7 +65,7 @@ echo '<form method=post name=nform>
   while ($row = mysql_fetch_array($sth)) {
       $infofields = unserialize($row['fields']);
       $fields = '';
-      if (!$exchange_systems[$row['ec']]) {
+      if (!app('data')->exchange_systems[$row['ec']]) {
           $row['ec'] = 'deleted';
           foreach ($infofields as $id => $name) {
               $fields .= $name.'<br>';

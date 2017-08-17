@@ -14,13 +14,13 @@ use App\Exceptions\RedirectException;
 
 function show_program_stat()
 {
-    global $frm;
-    $login = quote($frm['login']);
+
+    $login = quote(app('data')->frm['login']);
     $q = 'select * from hm2_users where id = 1 and username = \''.$login.'\' and stat_password <> \'\'';
     $sth = db_query($q);
     $flag = 0;
     while ($row = mysql_fetch_array($sth)) {
-        if ($row['stat_password'] == md5($frm['password'])) {
+        if ($row['stat_password'] == md5(app('data')->frm['password'])) {
             $flag = 1;
             continue;
         }
@@ -29,16 +29,16 @@ function show_program_stat()
     if ($flag == 0) {
         echo '<center>Wrong login or password</center>';
     } else {
-        if ($frm['page'] == 'members') {
+        if (app('data')->frm['page'] == 'members') {
             include app_path('Hm').'/inc/admin/members_program.inc.php';
         } else {
-            if ($frm['page'] == 'pendingwithdrawal') {
+            if (app('data')->frm['page'] == 'pendingwithdrawal') {
                 include app_path('Hm').'/inc/admin/pending_program.inc.php';
             } else {
-                if ($frm['page'] == 'whoonline') {
+                if (app('data')->frm['page'] == 'whoonline') {
                     include app_path('Hm').'/inc/admin/whoonline_program.inc.php';
                 } else {
-                    if ($frm['page'] == 'TrayInfo') {
+                    if (app('data')->frm['page'] == 'TrayInfo') {
                         include app_path('Hm').'/inc/admin/tray_info.php';
                     } else {
                         include app_path('Hm').'/inc/admin/main_program.inc.php';
@@ -64,31 +64,24 @@ function try_auth(&$userinfo)
 
 function startup_bonus()
 {
-    global $frm;
-    global $settings;
-
-    $settings['startup_bonus'] = sprintf('%0.2f', $frm['startup_bonus']);
-    $settings['startup_bonus_ec'] = sprintf('%d', $frm['ec']);
-    $settings['forbid_withdraw_before_deposit'] = ($frm['forbid_withdraw_before_deposit'] ? 1 : 0);
-    $settings['activation_fee'] = sprintf('%0.2f', $frm['activation_fee']);
+    app('data')->settings['startup_bonus'] = sprintf('%0.2f', app('data')->frm['startup_bonus']);
+    app('data')->settings['startup_bonus_ec'] = sprintf('%d', app('data')->frm['ec']);
+    app('data')->settings['forbid_withdraw_before_deposit'] = (app('data')->frm['forbid_withdraw_before_deposit'] ? 1 : 0);
+    app('data')->settings['activation_fee'] = sprintf('%0.2f', app('data')->frm['activation_fee']);
     save_settings();
     throw new RedirectException('/?a=startup_bonus&say=yes');
 }
 
 function save_exchange_rates()
 {
-    global $frm;
-    global $settings;
-    global $exchange_systems;
-
-    if ($settings['demomode']) {
+    if (app('data')->settings['demomode']) {
         throw new RedirectException('/?a=exchange_rates&say=demo');
     }
 
-    $exch = $frm['exch'];
+    $exch = app('data')->frm['exch'];
     if (is_array($exch)) {
-        foreach ($exchange_systems as $id_from => $value) {
-            foreach ($exchange_systems as $id_to => $value) {
+        foreach (app('data')->exchange_systems as $id_from => $value) {
+            foreach (app('data')->exchange_systems as $id_to => $value) {
                 if ($id_to == $id_from) {
                     continue;
                 }

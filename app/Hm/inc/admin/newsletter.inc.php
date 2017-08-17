@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-if ($settings['demomode'] == 1) {
+if (app('data')->settings['demomode'] == 1) {
     echo start_info_table('100%');
     echo '<b>Demo version restriction!</b><br>
 You cannot send newsletters!';
@@ -29,19 +29,19 @@ You cannot send newsletters!';
   $pas_c = $all_c - $act_c;
   echo '
 <b>Send a newsletter to users:</b><br><br>';
-  if ($frm['say'] == 'someerror') {
+  if (app('data')->frm['say'] == 'someerror') {
       echo 'Message has not been sent. Unknown error!<br>
 <br>';
   }
 
-  if ($frm['say'] == 'notsend') {
+  if (app('data')->frm['say'] == 'notsend') {
       echo 'Message has not been sent. No users found!<br>
 <br>';
   }
 
-  if ($frm['say'] == 'send') {
+  if (app('data')->frm['say'] == 'send') {
       echo 'Message has been sent. Total: ';
-      echo $frm['total'];
+      echo app('data')->frm['total'];
       echo '<br>
 <br>';
   }

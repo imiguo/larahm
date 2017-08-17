@@ -31,7 +31,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
   if (function_exists('curl_init')) {
       $ch = curl_init();
       echo curl_error($ch);
-      curl_setopt($ch, CURLOPT_URL, 'https://www.evocash.com/evoswift/instantpayment.cfm?payingaccountid='.$frm['acc'].'&username='.$frm['username'].'&password='.$frm['pass'].'&transaction_code='.$frm['code'].'&amount=0.01&reference=ref&memo=memo&receivingaccountid='.$frm['acc']);
+      curl_setopt($ch, CURLOPT_URL, 'https://www.evocash.com/evoswift/instantpayment.cfm?payingaccountid='.app('data')->frm['acc'].'&username='.app('data')->frm['username'].'&password='.app('data')->frm['pass'].'&transaction_code='.app('data')->frm['code'].'&amount=0.01&reference=ref&memo=memo&receivingaccountid='.app('data')->frm['acc']);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       $a = curl_exec($ch);

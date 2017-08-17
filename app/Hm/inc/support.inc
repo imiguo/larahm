@@ -11,12 +11,12 @@
 
 use App\Exceptions\RedirectException;
 
-  if ($frm['action'] == 'send') {
-      $from = ($userinfo['logged'] ? $userinfo['email'] : $frm['email']);
-      $message = $settings['site_name'].' Support request from '.date('l dS of F Y h:i:s A').'
+  if (app('data')->frm['action'] == 'send') {
+      $from = ($userinfo['logged'] ? $userinfo['email'] : app('data')->frm['email']);
+      $message = app('data')->settings['site_name'].' Support request from '.date('l dS of F Y h:i:s A').'
 
 ---------------------------------------------------------------';
-      $message .= $frm['message'];
+      $message .= app('data')->frm['message'];
       $message .= '
 
 ---------------------------------------------------------------';
@@ -28,39 +28,39 @@ use App\Exceptions\RedirectException;
           $message .= 'User Name : '.$userinfo['name'].'';
           $message .= 'E-Mail    : '.$userinfo['email'].'';
           $message .= 'E-Gold Acc : '.$userinfo['egold_account'].'';
-          if ($settings[def_payee_account_intgold]) {
+          if (app('data')->settings[def_payee_account_intgold]) {
               $message .= 'IntGold Acc : '.$userinfo['intgold_account'].'';
           }
 
-          if ($settings[def_payee_account_stormpay]) {
+          if (app('data')->settings[def_payee_account_stormpay]) {
               $message .= 'StormPay Acc : '.$userinfo['stormpay_account'].'';
           }
 
-          if ($settings[def_payee_account_ebullion]) {
+          if (app('data')->settings[def_payee_account_ebullion]) {
               $message .= 'e-Bullion Acc : '.$userinfo['ebullion_account'].'';
           }
 
-          if ($settings[def_payee_account_paypal]) {
+          if (app('data')->settings[def_payee_account_paypal]) {
               $message .= 'PayPal Acc : '.$userinfo['paypal_account'].'';
           }
 
-          if ($settings[def_payee_account_goldmoney]) {
+          if (app('data')->settings[def_payee_account_goldmoney]) {
               $message .= 'GoldMoney Acc : '.$userinfo['goldmoney_account'].'';
           }
 
-          if ($settings[def_payee_account_eeecurrency]) {
+          if (app('data')->settings[def_payee_account_eeecurrency]) {
               $message .= 'eeeCurrency Acc : '.$userinfo['eeecurrency_account'].'';
           }
 
-          if ($settings[def_payee_account_pecunix]) {
+          if (app('data')->settings[def_payee_account_pecunix]) {
               $message .= 'Pecunix Acc : '.$userinfo['pecunix_account'].'';
           }
 
           $message .= 'Status    : '.$userinfo['status'].'';
           $message .= 'Active Deposits  : $'.sprintf('%.02f', $accounting['active_deposit']).'';
       } else {
-          $message .= 'User Name : '.$frm['name'].'';
-          $message .= 'E-Mail    : '.$frm['email'].'';
+          $message .= 'User Name : '.app('data')->frm['name'].'';
+          $message .= 'E-Mail    : '.app('data')->frm['email'].'';
           $message .= 'Not Registered/Logged user';
       }
 
@@ -73,10 +73,10 @@ use App\Exceptions\RedirectException;
           $admin_email = $row['email'];
       }
 
-      send_mail($admin_email, $settings['site_name'].' Support Request', $message, 'From: '.$from);
+      send_mail($admin_email, app('data')->settings['site_name'].' Support Request', $message, 'From: '.$from);
       throw new RedirectException('/?a=support&say=send');
   }
 
   $smarty->assign('token', $token);
-  $smarty->assign('say', $frm['say']);
+  $smarty->assign('say', app('data')->frm['say']);
   $smarty->display('support.tpl');

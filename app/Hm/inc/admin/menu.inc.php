@@ -73,7 +73,7 @@ echo '                   <table cellspacing=0 cellpadding=2 border=0 width="172"
 <td class=menutxt>&nbsp;</td>
 </tr><tr>
 ';
-  if ($settings['demomode'] != '1') {
+  if (app('data')->settings['demomode'] != '1') {
       echo '    <td class=menutxt><a href=?a=custompages>Custom Pages</a></td>
 </tr><tr>
 <td class=menutxt>&nbsp;</td>
@@ -97,7 +97,7 @@ echo '                   <table cellspacing=0 cellpadding=2 border=0 width="172"
     <td class=menutxt><a href=?a=auto-pay-settings>Auto-Withdraw';
   echo 'als Settings</a> 
       ';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '      <br>
 &nbsp; &nbsp; ';
       echo '<s';

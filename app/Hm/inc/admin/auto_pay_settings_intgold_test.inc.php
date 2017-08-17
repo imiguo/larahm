@@ -34,7 +34,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       curl_setopt($ch, CURLOPT_URL, 'https://intgold.com/cgi-bin/autopay.cgi');
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, 'ACCOUNTID='.$frm['acc'].'&PASSWORD='.$frm['pass'].'&SECPASSWORD='.$frm['code'].'&RECEIVER='.$frm['acc'].'&AMOUNT=0.01&TEST=Y');
+      curl_setopt($ch, CURLOPT_POSTFIELDS, 'ACCOUNTID='.app('data')->frm['acc'].'&PASSWORD='.app('data')->frm['pass'].'&SECPASSWORD='.app('data')->frm['code'].'&RECEIVER='.app('data')->frm['acc'].'&AMOUNT=0.01&TEST=Y');
       curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)');
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       $a = curl_exec($ch);

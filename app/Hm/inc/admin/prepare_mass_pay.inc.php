@@ -11,19 +11,19 @@
 
 use App\Exceptions\EmptyException;
 
-if (!is_array($frm['pend'])) {
+if (!is_array(app('data')->frm['pend'])) {
     echo 'Please select withdraw requests first';
     throw new EmptyException();
 } else {
-    $ids = implode(', ', array_keys($frm['pend']));
+    $ids = implode(', ', array_keys(app('data')->frm['pend']));
     $sum = 0;
     $q = 'select actual_amount from hm2_history where id in ('.$ids.') and ec in (0, 1, 2, 5, 8, 9)';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
         $amount = abs($row['actual_amount']);
-        $fee = floor($amount * $settings['withdrawal_fee']) / 100;
-        if ($fee < $settings['withdrawal_fee_min']) {
-            $fee = $settings['withdrawal_fee_min'];
+        $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+        if ($fee < app('data')->settings['withdrawal_fee_min']) {
+            $fee = app('data')->settings['withdrawal_fee_min'];
         }
 
         $to_withdraw = $amount - $fee;
@@ -40,7 +40,7 @@ if (!is_array($frm['pend'])) {
 
   echo ' <b>Mass Payment:</b><br>
 <br>';
-  if ($settings['demomode'] != 1) {
+  if (app('data')->settings['demomode'] != 1) {
       echo '
 <form method=post name=payform onsubmit="return di_sabled()">
 <input type=hidden name=a value=mass>
@@ -50,7 +50,7 @@ if (!is_array($frm['pend'])) {
   }
 
   echo '  ';
-  $ids = $frm['pend'];
+  $ids = app('data')->frm['pend'];
   if (is_array($ids)) {
       reset($ids);
       while (list($kk, $vv) = each($ids)) {
@@ -198,7 +198,7 @@ function en_it() {
   echo '<s';
   echo 'cript language=javascript>en_it();</script>
 ';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo start_info_table('100%');
       echo '<b>Demo restriction!</b><br>
 Not Available in demo!<br><br>

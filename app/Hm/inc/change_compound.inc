@@ -12,14 +12,14 @@
 use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
-if ($frm['complete']) {
+if (app('data')->frm['complete']) {
     $smarty->assign('fatal', 'update_completed');
     $smarty->display('change_compound.tpl');
     throw new EmptyException();
 }
 
   $user_id = $userinfo['id'];
-  $deposit_id = intval($frm['deposit']);
+  $deposit_id = intval(app('data')->frm['deposit']);
   $q = 'select
                *,
                (to_days(now()) - to_days(deposit_date)) as deposit_duration
@@ -70,8 +70,8 @@ if ($frm['complete']) {
       $smarty->assign('compound_max_percents', $type['compound_max_percent']);
   }
 
-  if ($frm['action'] == 'change') {
-      $c_percent = sprintf('%.02f', $frm['percent']);
+  if (app('data')->frm['action'] == 'change') {
+      $c_percent = sprintf('%.02f', app('data')->frm['percent']);
       if ($c_percent < 0) {
           $c_percent = 0;
       }

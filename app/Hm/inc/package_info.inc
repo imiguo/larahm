@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$id = sprintf('%d', $frm['id']);
+$id = sprintf('%d', app('data')->frm['id']);
   $q = 'select * from hm2_types where id = '.$id;
   $sth = db_query($q);
   $flag = 0;

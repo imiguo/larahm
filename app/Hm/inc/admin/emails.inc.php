@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-if (($settings['demomode'] == 1 and $frm['type'] != '')) {
+if ((app('data')->settings['demomode'] == 1 and app('data')->frm['type'] != '')) {
     echo start_info_table('100%');
     echo '<b>Demo version restriction!</b><br>
 You cannot change change e-mail templates! ';
@@ -26,7 +26,7 @@ You cannot change change e-mail templates! ';
   $q = 'select id, name, status from hm2_emails';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
-      if ($row['id'] == $frm['type']) {
+      if ($row['id'] == app('data')->frm['type']) {
           $found = 1;
       }
 
@@ -38,7 +38,7 @@ You cannot change change e-mail templates! ';
       echo '></td>
   <td width=99%><li>
   ';
-      if ($row['id'] == $frm['type']) {
+      if ($row['id'] == app('data')->frm['type']) {
           echo '  <b>';
           echo $row['name'];
           echo '</b>
@@ -61,19 +61,19 @@ You cannot change change e-mail templates! ';
 </table>
 <input type="hidden" name="_token" value="'.csrf_token().'"></form>';
   if ($found) {
-      if ($settings['demomode'] != 1) {
-          if ($frm['action'] == 'save') {
-              $subject = quote($frm['subject']);
-              $text = quote($frm['text']);
+      if (app('data')->settings['demomode'] != 1) {
+          if (app('data')->frm['action'] == 'save') {
+              $subject = quote(app('data')->frm['subject']);
+              $text = quote(app('data')->frm['text']);
               $text = preg_replace('/
 /', '', $text);
-              $q = 'update hm2_emails set subject=\''.$subject.'\', text=\''.$text.'\' where id=\''.$frm['type'].'\'';
+              $q = 'update hm2_emails set subject=\''.$subject.'\', text=\''.$text.'\' where id=\''.app('data')->frm['type'].'\'';
               $sth = db_query($q);
               echo '<br><b>Template has been saved.</b></br>';
           }
       }
 
-      $q = 'select * from hm2_emails where id = \''.$frm['type'].'\'';
+      $q = 'select * from hm2_emails where id = \''.app('data')->frm['type'].'\'';
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       echo '<br><br>
@@ -114,7 +114,7 @@ You cannot change change e-mail templates! ';
   echo '
 <br>';
   echo start_info_table('100%');
-  if ($frm['type'] == '') {
+  if (app('data')->frm['type'] == '') {
       echo 'Select e-mail type to edit system messages.<br>
 If checkbox opposite to template name is switched off e-mail will be not sent.';
   }
@@ -122,7 +122,7 @@ If checkbox opposite to template name is switched off e-mail will be not sent.';
   echo '
 
 ';
-  if ($frm['type'] == 'registration') {
+  if (app('data')->frm['type'] == 'registration') {
       echo 'Users will receive this e-mail after registration.<br><br>
 
 Personalization:<br>
@@ -139,7 +139,7 @@ Personalization:<br>
   echo '
 
 ';
-  if ($frm['type'] == 'confirm_registration') {
+  if (app('data')->frm['type'] == 'confirm_registration') {
       echo 'Users will receive this e-mail if you use double opt-in confirmation for user registration.<br><br>
 
 Personalization:<br>
@@ -156,7 +156,7 @@ This string will be replaced with uniq confirmation url for every user.';
   echo '
 
 ';
-  if ($frm['type'] == 'forgot_password') {
+  if (app('data')->frm['type'] == 'forgot_password') {
       echo 'Users will receive this e-mail if forgot they password and request new password.<br><br>
 
 Personalization:<br>
@@ -172,7 +172,7 @@ Personalization:<br>
   echo '
 
 ';
-  if ($frm['type'] == 'bonus') {
+  if (app('data')->frm['type'] == 'bonus') {
       echo 'Users will receive this e-mail if admin add deposit to they account and select checkbox \'send notification\'.<br><br>
 
 Personalization:<br>
@@ -185,7 +185,7 @@ Personalization:<br>
   echo '
 
 ';
-  if ($frm['type'] == 'penalty') {
+  if (app('data')->frm['type'] == 'penalty') {
       echo 'Users will receive this e-mail if admin add penality to they account and select checkbox \'send notification\'.<br><br>
 
 Personalization:<br>
@@ -198,7 +198,7 @@ Personalization:<br>
   echo '
 
 ';
-  if ($frm['type'] == 'change_account') {
+  if (app('data')->frm['type'] == 'change_account') {
       echo 'Users will receive this e-mail after edit account information.<br><br>
 
 Personalization:<br>
@@ -215,7 +215,7 @@ Personalization:<br>
 ';
   }
 
-  if ($frm['type'] == 'withdraw_request_user_notification') {
+  if (app('data')->frm['type'] == 'withdraw_request_user_notification') {
       echo 'Users will receive this e-mail after withdraw request.<br><br>
 
 Personalization:<br>
@@ -230,7 +230,7 @@ Personalization:<br>
 ';
   }
 
-  if ($frm['type'] == 'withdraw_request_admin_notification') {
+  if (app('data')->frm['type'] == 'withdraw_request_admin_notification') {
       echo 'Administrator will receive this e-mail after user withdraw request.<br><br>
 
 Personalization:<br>
@@ -245,7 +245,7 @@ Personalization:<br>
 ';
   }
 
-  if ($frm['type'] == 'withdraw_user_notification') {
+  if (app('data')->frm['type'] == 'withdraw_user_notification') {
       echo 'User will receive this e-mail after withdraw process. (After autopay if enabled, admin direct and mass withdraw processes)<br><br>
 
 Personalization:<br>
@@ -263,7 +263,7 @@ Personalization:<br>
 ';
   }
 
-  if ($frm['type'] == 'withdraw_admin_notification') {
+  if (app('data')->frm['type'] == 'withdraw_admin_notification') {
       echo 'User will receive this e-mail after withdraw process autopay if enabled<br><br>
 
 Personalization:<br>
@@ -281,7 +281,7 @@ Personalization:<br>
 ';
   }
 
-  if ($frm['type'] == 'deposit_admin_notification') {
+  if (app('data')->frm['type'] == 'deposit_admin_notification') {
       echo 'Administrator will receive this e-mail after user made deposit<br><br>
 
 Personalization:<br>

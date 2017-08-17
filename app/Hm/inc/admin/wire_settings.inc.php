@@ -26,7 +26,7 @@ echo '<b>Wire Transfer Settings.</b><br><br>
   $row = mysql_fetch_array($sth);
   $wire_txt = $row['value'];
 
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo start_info_table('100%');
       echo '<b>Demo version restriction!</b><br>
 You cannot edit settings!';
@@ -40,7 +40,7 @@ You cannot edit settings!';
 <input type=hidden name=a value=wire_settings>
 <input type=hidden name=action value=wire_settings>
 <input type=checkbox name=enable_wire ';
-  echo $settings['enable_wire'] == 1 ? 'checked' : '';
+  echo app('data')->settings['enable_wire'] == 1 ? 'checked' : '';
   echo ' value=1> Use Wire Transfers for incoming deposits<br><br>
 
 Wire details:<br>

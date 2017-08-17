@@ -16,7 +16,7 @@ while (list($kk, $vv) = each($ab)) {
 }
 
 $smarty->assign('ab_formated', $ab_formated);
-$smarty->assign('frm', $frm);
+$smarty->assign('frm', app('data')->frm);
 $q = 'select type_id from hm2_deposits where user_id = '.$userinfo['id'];
 $sth = db_query($q);
 $already_deposits = [];
@@ -37,7 +37,7 @@ while ($row = mysql_fetch_array($sth)) {
     }
 
     ++$i;
-    if (($row['use_compound'] == 1 and (($i == 1 and $frm['h_id'] == '') or $frm['h_id'] == $row['id']))) {
+    if (($row['use_compound'] == 1 and (($i == 1 and app('data')->frm['h_id'] == '') or app('data')->frm['h_id'] == $row['id']))) {
         $smarty->assign('default_check_compound', 1);
     }
 
@@ -67,17 +67,17 @@ while ($row = mysql_fetch_array($sth)) {
 $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
 $sth = db_query($q);
 while ($row = mysql_fetch_array($sth)) {
-    $exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], 2);
+    app('data')->exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], 2);
 }
 
 $ps = [];
-reset($exchange_systems);
-foreach ($exchange_systems as $id => $data) {
+reset(app('data')->exchange_systems);
+foreach (app('data')->exchange_systems as $id => $data) {
     array_push($ps, array_merge(['id' => $id], $data));
 }
 $smarty->assign('ps', $ps);
 $hold = [];
-if ($settings['allow_withdraw_when_deposit_ends'] == 1) {
+if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
     $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
     $sth = db_query($q);
     $deps = [];
@@ -96,7 +96,7 @@ if ($settings['allow_withdraw_when_deposit_ends'] == 1) {
     }
 }
 
-if ($settings['hold_only_first_days'] == 1) {
+if (app('data')->settings['hold_only_first_days'] == 1) {
     $q = 'select
               sum(hm2_history.actual_amount) as am,
 	      hm2_history.ec

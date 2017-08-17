@@ -13,7 +13,7 @@
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['call'];
-  $page = $frm['page'];
+  $page = app('data')->frm['page'];
   $onpage = 20;
   $colpages = ceil($count_all / $onpage);
   if ($page <= 1) {
@@ -27,7 +27,7 @@
   $from = ($page - 1) * $onpage;
   $q = 'select
                  *,
-                 date_format(date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d
+                 date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d
            from
                  hm2_news
            order by

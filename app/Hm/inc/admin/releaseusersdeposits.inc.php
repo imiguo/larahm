@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$user_id = sprintf('%d', $frm['u_id']);
+$user_id = sprintf('%d', app('data')->frm['u_id']);
   $q = 'select * from hm2_types where status = \'on\'';
   $sth = db_query($q);
   $plans = [];
@@ -18,7 +18,7 @@ $user_id = sprintf('%d', $frm['u_id']);
       $row['deposits'] = [];
       $q = 'select
                 *,
-                date_format(deposit_date + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date,
+                date_format(deposit_date + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date,
                 (to_days(now()) - to_days(deposit_date)) as duration,
                 (to_days(now()) - to_days(deposit_date) - '.$row['withdraw_principal_duration'].(''.') as pending_duration
           from
@@ -76,7 +76,7 @@ $user_id = sprintf('%d', $frm['u_id']);
             hm2_history.user_id = '.$user_id.' and
             hm2_deposits.user_id = '.$user_id.' and
             hm2_history.type=\'earning\' and
-            to_days(hm2_history.date + interval '.$settings['time_dif'].' hour) = to_days(now()) and
+            to_days(hm2_history.date + interval '.app('data')->settings['time_dif'].' hour) = to_days(now()) and
             hm2_deposits.type_id = '.$row['id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
@@ -101,7 +101,7 @@ $user_id = sprintf('%d', $frm['u_id']);
       array_push($plans, $row);
   }
 
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo start_info_table('100%');
       echo '<b>Demo version restriction!</b><br>
 You cannot release deposits!';

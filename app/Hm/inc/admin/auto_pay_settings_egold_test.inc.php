@@ -34,7 +34,7 @@ use App\Exceptions\EmptyException;
       curl_setopt($ch, CURLOPT_URL, 'https://www.e-gold.com/acct/confirm.asp');
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, 'AccountID='.$frm['acc'].'&PassPhrase='.$frm['pass'].'&Payee_Account='.$frm['acc'].'&Amount=0.01&PAY_IN=1&WORTH_OF=Gold&Memo=Test+transaction&IGNORE_RATE_CHANGE=y');
+      curl_setopt($ch, CURLOPT_POSTFIELDS, 'AccountID='.app('data')->frm['acc'].'&PassPhrase='.app('data')->frm['pass'].'&Payee_Account='.app('data')->frm['acc'].'&Amount=0.01&PAY_IN=1&WORTH_OF=Gold&Memo=Test+transaction&IGNORE_RATE_CHANGE=y');
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       $a = curl_exec($ch);
       echo '<hr>'.$a.'<hr>';

@@ -20,33 +20,33 @@ require app_path('Hm').'/lib/index.inc.php';
 $smarty = app('smarty');
 $smarty->default_modifiers = ['escape'];
 
-if (isset($frm['ref']) && $frm['ref'] != '') {
+if (isset(app('data')->frm['ref']) && app('data')->frm['ref'] != '') {
     bind_ref();
 }
 
-if ($frm['a'] == 'run_crontab') {
+if (app('data')->frm['a'] == 'run_crontab') {
     count_earning(-2);
     throw new EmptyException();
 }
 
-$q = 'delete from hm2_online where ip=\''.$frm_env['REMOTE_ADDR'].'\' or date + interval 30 minute < now()';
+$q = 'delete from hm2_online where ip=\''.app('data')->env['REMOTE_ADDR'].'\' or date + interval 30 minute < now()';
 db_query($q);
-$q = 'insert into hm2_online set ip=\''.$frm_env['REMOTE_ADDR'].'\', date = now()';
+$q = 'insert into hm2_online set ip=\''.app('data')->env['REMOTE_ADDR'].'\', date = now()';
 db_query($q);
 
 $userinfo = [];
 $userinfo['logged'] = 0;
-if ($frm['a'] == 'logout') {
+if (app('data')->frm['a'] == 'logout') {
     Auth::logout();
 }
 
 $stats = [];
-if ($settings['crontab_stats'] == 1) {
+if (app('data')->settings['crontab_stats'] == 1) {
     $s = file('stats.php');
     $stats = unserialize($s[0]);
 }
 
-show_info_box();
+show_info_box($stats);
 
 $ref = Cookie::get('referer', '');
 if ($ref) {
@@ -57,13 +57,13 @@ if ($ref) {
     }
 }
 
-$smarty->assign('settings', $settings);
+$smarty->assign('settings', app('data')->settings);
 
-if ($frm['a'] == 'do_login') {
+if (app('data')->frm['a'] == 'do_login') {
     do_login($userinfo);
     Auth::loginUsingId($userinfo['id']);
     if (($userinfo['logged'] == 1 and $userinfo['id'] == 1)) {
-        add_log('Admin logged', 'Admin entered to admin area ip='.$frm_env['REMOTE_ADDR']);
+        add_log('Admin logged', 'Admin entered to admin area ip='.app('data')->env['REMOTE_ADDR']);
 
         $admin_url = env('ADMIN_URL');
         $html = "<head><title>HYIP Manager</title><meta http-equiv=\"Refresh\" content=\"1; URL={$admin_url}\"></head>";
@@ -103,13 +103,13 @@ if ($userinfo['logged'] == 1) {
     $userinfo['balance'] = number_format(abs($balance), 2);
 }
 
-if (((((($frm['a'] != 'show_validation_image' and !$userinfo['logged']) and extension_loaded('gd')) and $settings['graph_validation'] == 1) and 0 < $settings['graph_max_chars']) and $frm['action'] != 'signup')) {
+if ((((((app('data')->frm['a'] != 'show_validation_image' and !$userinfo['logged']) and extension_loaded('gd')) and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars']) and app('data')->frm['action'] != 'signup')) {
     $userinfo['validation_enabled'] = 1;
-    $validation_number = gen_confirm_code($settings['graph_max_chars'], 0);
-    if ($settings['use_number_validation_number']) {
+    $validation_number = gen_confirm_code(app('data')->settings['graph_max_chars'], 0);
+    if (app('data')->settings['use_number_validation_number']) {
         $i = 0;
         $validation_number = '';
-        while ($i < $settings['graph_max_chars']) {
+        while ($i < app('data')->settings['graph_max_chars']) {
             $validation_number .= rand(0, 9);
             ++$i;
         }
@@ -118,8 +118,8 @@ if (((((($frm['a'] != 'show_validation_image' and !$userinfo['logged']) and exte
     session(['validation_number' => $validation_number]);
 }
 
-if (($frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
-    $id = sprintf('%d', $frm['id']);
+if ((app('data')->frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
+    $id = sprintf('%d', app('data')->frm['id']);
     $q = 'delete from hm2_history where id = '.$id.' and type=\'withdraw_pending\' and user_id = '.$userinfo['id'];
     db_query($q);
     throw new RedirectException('/?a=withdraw_history');
@@ -127,7 +127,7 @@ if (($frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
 
 $smarty->assign('userinfo', $userinfo);
 
-$smarty->assign('frm', $frm);
+$smarty->assign('frm', app('data')->frm);
 
 if (isset($userinfo['id']) && $id = $userinfo['id']) {
     $ab = get_user_balance($id);
@@ -143,28 +143,28 @@ if (isset($userinfo['id']) && $id = $userinfo['id']) {
     $smarty->assign('ab_formated', $ab_formated);
 }
 
-if (($frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
+if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
     include app_path('Hm').'/inc/signup.inc';
-} elseif (($frm['a'] == 'forgot_password' and $userinfo['logged'] != 1)) {
+} elseif ((app('data')->frm['a'] == 'forgot_password' and $userinfo['logged'] != 1)) {
     include app_path('Hm').'/inc/forgot_password.inc';
-} elseif (($frm['a'] == 'confirm_registration' and $settings['use_opt_in'] == 1)) {
+} elseif ((app('data')->frm['a'] == 'confirm_registration' and app('data')->settings['use_opt_in'] == 1)) {
     include app_path('Hm').'/inc/confirm_registration.inc';
-} elseif ($frm['a'] == 'login') {
+} elseif (app('data')->frm['a'] == 'login') {
     include app_path('Hm').'/inc/login.inc';
-} elseif ((($frm['a'] == 'do_login' or $frm['a'] == 'account') and $userinfo['logged'] == 1)) {
+} elseif (((app('data')->frm['a'] == 'do_login' or app('data')->frm['a'] == 'account') and $userinfo['logged'] == 1)) {
     include app_path('Hm').'/inc/account_main.inc';
-} elseif (($frm['a'] == 'deposit' and $userinfo['logged'] == 1)) {
-    if (substr($frm['type'], 0, 8) == 'account_') {
-        $ps = substr($frm['type'], 8);
-        if ($exchange_systems[$ps]['status'] == 1) {
+} elseif ((app('data')->frm['a'] == 'deposit' and $userinfo['logged'] == 1)) {
+    if (substr(app('data')->frm['type'], 0, 8) == 'account_') {
+        $ps = substr(app('data')->frm['type'], 8);
+        if (app('data')->exchange_systems[$ps]['status'] == 1) {
             include app_path('Hm').'/inc/deposit.account.confirm.inc';
         } else {
             include app_path('Hm').'/inc/deposit.inc';
         }
     } else {
-        if (substr($frm['type'], 0, 8) == 'process_') {
-            $ps = substr($frm['type'], 8);
-            if ($exchange_systems[$ps]['status'] == 1) {
+        if (substr(app('data')->frm['type'], 0, 8) == 'process_') {
+            $ps = substr(app('data')->frm['type'], 8);
+            if (app('data')->exchange_systems[$ps]['status'] == 1) {
                 switch ($ps) {
                     case 0:
                         include app_path('Hm').'/inc/deposit.egold.confirm.inc';
@@ -213,45 +213,45 @@ if (($frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
         }
     }
 } else {
-    if ((($frm['a'] == 'add_funds' and $settings['use_add_funds'] == 1) and $userinfo['logged'] == 1)) {
+    if (((app('data')->frm['a'] == 'add_funds' and app('data')->settings['use_add_funds'] == 1) and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/add_funds.inc';
-    } elseif (($frm['a'] == 'withdraw' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'withdraw' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/withdrawal.inc';
-    } elseif (($frm['a'] == 'withdraw_history' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'withdraw_history' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/withdrawal_history.inc';
-    } elseif (($frm['a'] == 'deposit_history' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'deposit_history' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/deposit_history.inc';
-    } elseif (($frm['a'] == 'earnings' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'earnings' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/earning_history.inc';
-    } elseif (($frm['a'] == 'deposit_list' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'deposit_list' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/deposit_list.inc';
-    } elseif (($frm['a'] == 'edit_account' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'edit_account' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/edit_account.inc';
-    } elseif (($frm['a'] == 'withdraw_principal' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'withdraw_principal' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/withdraw_principal.inc';
-    } elseif (($frm['a'] == 'change_compound' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'change_compound' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/change_compound.inc';
-    } elseif (($frm['a'] == 'internal_transfer' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'internal_transfer' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/internal_transfer.inc';
-    } elseif ($frm['a'] == 'support') {
+    } elseif (app('data')->frm['a'] == 'support') {
         include app_path('Hm').'/inc/support.inc';
-    } elseif ($frm['a'] == 'faq') {
+    } elseif (app('data')->frm['a'] == 'faq') {
         include app_path('Hm').'/inc/faq.inc';
-    } elseif ($frm['a'] == 'company') {
+    } elseif (app('data')->frm['a'] == 'company') {
         include app_path('Hm').'/inc/company.inc';
-    } elseif ($frm['a'] == 'rules') {
+    } elseif (app('data')->frm['a'] == 'rules') {
         include app_path('Hm').'/inc/rules.inc';
-    } elseif ($frm['a'] == 'show_validation_image') {
+    } elseif (app('data')->frm['a'] == 'show_validation_image') {
         include app_path('Hm').'/inc/show_validation_image.inc';
-    } elseif ((($frm['a'] == 'members_stats' and $settings['show_stats_box']) and $settings['show_members_stats'])) {
+    } elseif (((app('data')->frm['a'] == 'members_stats' and app('data')->settings['show_stats_box']) and app('data')->settings['show_members_stats'])) {
         include app_path('Hm').'/inc/members_stats.inc';
-    } elseif ((($frm['a'] == 'paidout' and $settings['show_stats_box']) and $settings['show_paidout_stats'])) {
+    } elseif (((app('data')->frm['a'] == 'paidout' and app('data')->settings['show_stats_box']) and app('data')->settings['show_paidout_stats'])) {
         include app_path('Hm').'/inc/paidout.inc';
-    } elseif ((($frm['a'] == 'top10' and $settings['show_stats_box']) and $settings['show_top10_stats'])) {
+    } elseif (((app('data')->frm['a'] == 'top10' and app('data')->settings['show_stats_box']) and app('data')->settings['show_top10_stats'])) {
         include app_path('Hm').'/inc/top10.inc';
-    } elseif ((($frm['a'] == 'last10' and $settings['show_stats_box']) and $settings['show_last10_stats'])) {
+    } elseif (((app('data')->frm['a'] == 'last10' and app('data')->settings['show_stats_box']) and app('data')->settings['show_last10_stats'])) {
         include app_path('Hm').'/inc/last10.inc';
-    } elseif ((($frm['a'] == 'refs10' and $settings['show_stats_box']) and $settings['show_refs10_stats'])) {
+    } elseif (((app('data')->frm['a'] == 'refs10' and app('data')->settings['show_stats_box']) and app('data')->settings['show_refs10_stats'])) {
         include app_path('Hm').'/inc/refs10.inc';
     } elseif ($_GET['a'] == 'return_egold') {
         include app_path('Hm').'/inc/deposit.egold.status.inc';
@@ -259,27 +259,27 @@ if (($frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
         include app_path('Hm').'/inc/deposit.perfectmoney.status.inc';
     } elseif ($_GET['a'] == 'return_payeer') {
         include app_path('Hm').'/inc/deposit.payeer.status.inc';
-    } elseif ((($frm['a'] == 'referallinks' and $settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
+    } elseif (((app('data')->frm['a'] == 'referallinks' and app('data')->settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/referal.links.inc';
-    } elseif ((($frm['a'] == 'referals' and $settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
+    } elseif (((app('data')->frm['a'] == 'referals' and app('data')->settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/referals.inc';
-    } elseif ($frm['a'] == 'news') {
+    } elseif (app('data')->frm['a'] == 'news') {
         include app_path('Hm').'/inc/news.inc';
-    } elseif ($frm['a'] == 'calendar') {
+    } elseif (app('data')->frm['a'] == 'calendar') {
         include app_path('Hm').'/inc/calendar.inc';
-    } elseif (($frm['a'] == 'exchange' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'exchange' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/exchange.inc';
-    } elseif (($frm['a'] == 'banner' and $userinfo['logged'] == 1)) {
+    } elseif ((app('data')->frm['a'] == 'banner' and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/banner.inc';
-    } elseif ($frm['a'] == 'activate') {
+    } elseif (app('data')->frm['a'] == 'activate') {
         include app_path('Hm').'/inc/activate.inc';
-    } elseif ($frm['a'] == 'show_package_info') {
+    } elseif (app('data')->frm['a'] == 'show_package_info') {
         include app_path('Hm').'/inc/package_info.inc';
-    } elseif ($frm['a'] == 'ref_plans') {
+    } elseif (app('data')->frm['a'] == 'ref_plans') {
         include app_path('Hm').'/inc/ref_plans.inc';
     } else {
-        if ($frm['a'] == 'cust') {
-            $file = $frm['page'];
+        if (app('data')->frm['a'] == 'cust') {
+            $file = app('data')->frm['page'];
             $file = basename($file);
             if (file_exists(tmpl_path().'/custom/'.$file.'.tpl')) {
                 $smarty->display('custom/'.$file.'.tpl');
@@ -287,11 +287,11 @@ if (($frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
                 include app_path('Hm').'/inc/home.inc';
             }
         } else {
-            if ($frm['a'] == 'invest_page') {
-                $smarty->assign('frm', $frm);
+            if (app('data')->frm['a'] == 'invest_page') {
+                $smarty->assign('frm', app('data')->frm);
                 include app_path('Hm').'/inc/invest_page.inc';
             } else {
-                $smarty->assign('frm', $frm);
+                $smarty->assign('frm', app('data')->frm);
                 include app_path('Hm').'/inc/home.inc';
             }
         }

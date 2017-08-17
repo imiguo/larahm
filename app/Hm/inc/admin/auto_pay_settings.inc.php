@@ -45,7 +45,7 @@ $q = 'select * from hm2_pay_settings where n=\'egold_account_password\'';
       $pecunix_password = $row['v'];
   }
 
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo start_info_table('100%');
       echo '<b>Demo version restriction</b><br>
 You cannot edit these settings.<br>
@@ -54,16 +54,16 @@ Note: This screen is available in Pro version only!!! ';
       echo end_info_table();
   }
 
-  if ($frm['say'] == 'invalid_passphrase') {
+  if (app('data')->frm['say'] == 'invalid_passphrase') {
       echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
   }
 
-  if ($frm['say'] == 'done') {
+  if (app('data')->frm['say'] == 'done') {
       echo '<b style="color:green">Changes has been successfully made.</b><br>
 <br>';
   }
 
-  if ($settings['demomode'] != 1) {
+  if (app('data')->settings['demomode'] != 1) {
       echo start_info_table('100%');
       echo '<b>We recommend to use the auto-payment feature only on the dedicated servers. Virtual Shared Hosting has much less security.
 <br>Use Mass Payment tool instead <a href=?a=thistory&ttype=withdraw_pending>here</a>.</b>';
@@ -74,7 +74,7 @@ Note: This screen is available in Pro version only!!! ';
   echo '<s';
   echo 'cript language=javascript>
 function test_egold() {';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '  alert("Sorry, not available in demo mode");
   return false;';
   }
@@ -105,7 +105,7 @@ function test_egold() {';
 ';
   echo '
 function test_intgold() {';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '  alert("Sorry, not available in demo mode");
   return false;';
   }
@@ -141,7 +141,7 @@ function test_intgold() {';
 }
 
 function test_eeecurrency() {';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '  alert("Sorry, not available in demo mode");
   return false;';
   }
@@ -177,7 +177,7 @@ function test_eeecurrency() {';
 }
 
 function test_pecunix() {';
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo '  alert("Sorry, not available in demo mode");
   return false;';
   }
@@ -237,7 +237,7 @@ function test_pecunix() {';
 <table cellspacing=0 cellpadding=2 border=0 width=100%>
 <tr>
  <td colspan=2><input type=checkbox name=use_auto_payment value=1 ';
-  echo $settings['use_auto_payment'] == 1 ? 'checked' : '';
+  echo app('data')->settings['use_auto_payment'] == 1 ? 'checked' : '';
   echo '> Use auto-payment</td>
 </tr><tr>
  <td colspan=2><br>
@@ -245,7 +245,7 @@ function test_pecunix() {';
 </tr><tr>
  <td>Account number:</td>
  <td><input type=text name=egold_from_account value="';
-  echo $settings['egold_from_account'];
+  echo app('data')->settings['egold_from_account'];
   echo '" class=inpts size=30></td>
 </tr>';
   if ($egold_password != '') {
@@ -265,12 +265,12 @@ function test_pecunix() {';
 </tr><tr>
  <td>Account number:</td>
  <td><input type=text name=evocash_from_account value="';
-  echo $settings['evocash_from_account'];
+  echo app('data')->settings['evocash_from_account'];
   echo '" class=inpts size=30></td>
 </tr><tr>
  <td>Account username:</td>
  <td><input type=text name=evocash_username value="';
-  echo $settings['evocash_username'];
+  echo app('data')->settings['evocash_username'];
   echo '" class=inpts size=30></td>
 </tr>';
   if ($evocash_password != '') {
@@ -303,7 +303,7 @@ function test_pecunix() {';
 <tr>
  <td>Account Id:</td>
  <td><input type=text name=intgold_from_account value="';
-  echo $settings['intgold_from_account'];
+  echo app('data')->settings['intgold_from_account'];
   echo '" class=inpts size=30></td>
 </tr>';
   if ($intgold_password != '') {
@@ -336,7 +336,7 @@ function test_pecunix() {';
 <tr>
  <td>Account Id:</td>
  <td><input type=text name=eeecurrency_from_account value="';
-  echo $settings['eeecurrency_from_account'];
+  echo app('data')->settings['eeecurrency_from_account'];
   echo '" class=inpts size=30></td>
 </tr>';
   if ($eeecurrency_password != '') {
@@ -369,7 +369,7 @@ function test_pecunix() {';
 <tr>
  <td>Account Id:</td>
  <td><input type=text name=pecunix_from_account value="';
-  echo $settings['pecunix_from_account'];
+  echo app('data')->settings['pecunix_from_account'];
   echo '" class=inpts size=30></td>
 </tr>';
   if ($pecunix_password != '') {
@@ -392,17 +392,17 @@ function test_pecunix() {';
 <tr>
       <td>Minimal automatic withdrawal amount (US$):</td>
  <td><input type=text name=min_auto_withdraw value="';
-  echo $settings['min_auto_withdraw'];
+  echo app('data')->settings['min_auto_withdraw'];
   echo '" class=inpts size=30></td>
 </tr><tr>
       <td>Maximal automatic withdrawal amount (US$):</td>
  <td><input type=text name=max_auto_withdraw value="';
-  echo $settings['max_auto_withdraw'];
+  echo app('data')->settings['max_auto_withdraw'];
   echo '" class=inpts size=30></td>
 </tr><tr>
       <td>Maximal daily withdrawal for every user. (US$):</td>
  <td><input type=text name=max_auto_withdraw_user value="';
-  echo $settings['max_auto_withdraw_user'];
+  echo app('data')->settings['max_auto_withdraw_user'];
   echo '" class=inpts size=30></td>
 </tr>';
   if ($userinfo['transaction_code'] != '') {

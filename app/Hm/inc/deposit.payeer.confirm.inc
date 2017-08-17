@@ -9,13 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
-$amount = sprintf('%0.2f', $frm['amount']);
-$h_id = sprintf('%d', $frm['h_id']);
-if (($settings['use_add_funds'] and $h_id == -1)) {
+$amount = sprintf('%0.2f', app('data')->frm['amount']);
+$h_id = sprintf('%d', app('data')->frm['h_id']);
+if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     if (0.01 <= $amount) {
         $smarty->assign('h_id', -1);
         $smarty->assign('amount', $amount);
-        $smarty->assign('amount_format', number_format($frm['amount'], 2, '.', ''));
+        $smarty->assign('amount_format', number_format(app('data')->frm['amount'], 2, '.', ''));
         $smarty->display('deposit.payeer.confirm.tpl');
     }
 } else {
@@ -96,15 +96,15 @@ if (($settings['use_add_funds'] and $h_id == -1)) {
             }
         }
 
-        $m_desc = "Deposit to {$settings['site_name']} User {$userinfo['username']}";
+        $m_desc = "Deposit to {app('data')->settings['site_name']} User {$userinfo['username']}";
         $m_desc = base64_encode($m_desc);
         $arHash = [
-            $settings['def_payee_account_payeer'], // m_shop
+            app('data')->settings['def_payee_account_payeer'], // m_shop
             $userinfo['id'].'-'.time().'-'.$h_id, // m_orderid
             $amount, // m_amount
             'USD', // m_curr
             $m_desc, // m_desc
-            $settings['def_payee_key_payeer'], //m_key
+            app('data')->settings['def_payee_key_payeer'], //m_key
         ];
         $m_sign = strtoupper(hash('sha256', implode(':', $arHash)));
 
@@ -114,8 +114,8 @@ if (($settings['use_add_funds'] and $h_id == -1)) {
         $smarty->assign('m_orderid', $userinfo['id'].'-'.time().'-'.$h_id);
         $smarty->assign('h_id', $h_id);
         $smarty->assign('amount', $amount);
-        $smarty->assign('amount_format', number_format($frm['amount'], 2, '.', ''));
-        $smarty->assign('compounding', sprintf('%d', $frm['compound']));
+        $smarty->assign('amount_format', number_format(app('data')->frm['amount'], 2, '.', ''));
+        $smarty->assign('compounding', sprintf('%d', app('data')->frm['compound']));
         $smarty->display('deposit.payeer.confirm.tpl');
     }
 }

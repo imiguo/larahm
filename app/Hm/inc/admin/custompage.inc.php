@@ -20,11 +20,11 @@ To create custom page you should follow the next steps:<br>
 <li>Upload this file to your server into \'';
   echo 'tmpl/custom\' directory</li>
 <li>Check result - ';
-  echo $settings['site_url'];
+  echo app('data')->settings['site_url'];
   echo '/?a=cust&page=[your_document_name] <br>Example: <a href=';
-  echo $settings['site_url'];
+  echo app('data')->settings['site_url'];
   echo '/?a=cust&page=rate_us target=_blank>';
-  echo $settings['site_url'];
+  echo app('data')->settings['site_url'];
   echo '/?a=cust&page=rate_us</a></li>
 <li>Add this link to the top menu (edit \'tmpl/logo.tpl\' file) or to the left menu 
   (edit \'tmpl/left.tpl\' file)</li>

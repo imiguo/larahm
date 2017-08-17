@@ -26,8 +26,8 @@ include app_path('Hm').'/inc/index.plans.inc';
   $smarty->assign('ref_plans', $ref_plans);
   $ref_levels = [];
   for ($l = 2; $l < 11; ++$l) {
-      if ((0 < $settings['ref'.$l.'_cms'] and $settings['ref'.$l.'_cms'] < 100)) {
-          array_push($ref_levels, ['level' => $l, 'percent' => $settings['ref'.$l.'_cms']]);
+      if ((0 < app('data')->settings['ref'.$l.'_cms'] and app('data')->settings['ref'.$l.'_cms'] < 100)) {
+          array_push($ref_levels, ['level' => $l, 'percent' => app('data')->settings['ref'.$l.'_cms']]);
           continue;
       }
   }

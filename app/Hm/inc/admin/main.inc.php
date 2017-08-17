@@ -11,7 +11,7 @@
 
 $stats = [];
   $total_earned = 0;
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data['status'] == 1) {
           $q = 'select sum(actual_amount) as col from hm2_history where type=\'add_funds\' and to_days(now()) = to_days(date) and ec='.$id;
           $sth = db_query($q);
@@ -169,7 +169,7 @@ $';
   echo '<br>
 <br><br>
 ';
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data['status'] != 1) {
           continue;
       }

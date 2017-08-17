@@ -13,10 +13,10 @@ use App\Exceptions\EmptyException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-$mymd5 = $settings['md5altphrase_goldmoney'];
-if ($frm['a'] == 'pay_withdraw') {
-    $batch = $frm['OMI_TXN_ID'];
-    list($id, $str) = explode('-', $frm['withdraw']);
+$mymd5 = app('data')->settings['md5altphrase_goldmoney'];
+if (app('data')->frm['a'] == 'pay_withdraw') {
+    $batch = app('data')->frm['OMI_TXN_ID'];
+    list($id, $str) = explode('-', app('data')->frm['withdraw']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -45,32 +45,32 @@ if ($frm['a'] == 'pay_withdraw') {
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['OMI_MERCHANT_HLD_NO'];
+        $info['account'] = app('data')->frm['OMI_MERCHANT_HLD_NO'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[7]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[7]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 
     echo 1;
     throw new EmptyException();
 }
 
-if ($frm['OMI_MODE'] != 'LIVE') {
+if (app('data')->frm['OMI_MODE'] != 'LIVE') {
     echo '1';
     throw new EmptyException();
 }
 
-$hash = strtoupper(md5($frm['OMI_MERCHANT_REF_NO'].'?'.$frm['OMI_MODE'].'?'.$frm['OMI_MERCHANT_HLD_NO'].'?'.$frm['OMI_PAYER_HLD_NO'].'?'.$frm['OMI_CURRENCY_CODE'].'?'.$frm['OMI_CURRENCY_AMT'].'?'.$frm['OMI_GOLDGRAM_AMT'].'?'.$frm['OMI_TXN_ID'].'?'.$frm['OMI_TXN_DATETIME'].'?'.$mymd5));
-if (($hash == strtoupper($frm['OMI_HASH']) and $exchange_systems[7]['status'] == 1)) {
-    $user_id = sprintf('%d', $frm['userid']);
-    $h_id = sprintf('%d', $frm['hyipid']);
-    $compound = sprintf('%d', $frm['compound']);
-    $amount = $frm['OMI_CURRENCY_AMT'];
-    $batch = $frm['OMI_TXN_ID'];
-    $account = $frm['OMI_PAYER_HLD_NO'];
-    if (($frm['a'] == 'checkpayment' and $frm['OMI_CURRENCY_CODE'] == 840)) {
+$hash = strtoupper(md5(app('data')->frm['OMI_MERCHANT_REF_NO'].'?'.app('data')->frm['OMI_MODE'].'?'.app('data')->frm['OMI_MERCHANT_HLD_NO'].'?'.app('data')->frm['OMI_PAYER_HLD_NO'].'?'.app('data')->frm['OMI_CURRENCY_CODE'].'?'.app('data')->frm['OMI_CURRENCY_AMT'].'?'.app('data')->frm['OMI_GOLDGRAM_AMT'].'?'.app('data')->frm['OMI_TXN_ID'].'?'.app('data')->frm['OMI_TXN_DATETIME'].'?'.$mymd5));
+if (($hash == strtoupper(app('data')->frm['OMI_HASH']) and app('data')->exchange_systems[7]['status'] == 1)) {
+    $user_id = sprintf('%d', app('data')->frm['userid']);
+    $h_id = sprintf('%d', app('data')->frm['hyipid']);
+    $compound = sprintf('%d', app('data')->frm['compound']);
+    $amount = app('data')->frm['OMI_CURRENCY_AMT'];
+    $batch = app('data')->frm['OMI_TXN_ID'];
+    $account = app('data')->frm['OMI_PAYER_HLD_NO'];
+    if ((app('data')->frm['a'] == 'checkpayment' and app('data')->frm['OMI_CURRENCY_CODE'] == 840)) {
         add_deposit(7, $user_id, $amount, $batch, $account, $h_id, $compound);
     }
 }

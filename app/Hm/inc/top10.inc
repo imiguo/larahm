@@ -12,7 +12,7 @@
 $q = 'select 
                u.username,
                sum(h.actual_amount) as balance,
-               date_format(u.date_register + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd
+               date_format(u.date_register + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd
          from 
                hm2_users as u left outer join hm2_history as h
                  on u.id = h.user_id

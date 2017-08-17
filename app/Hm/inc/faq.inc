@@ -9,5 +9,5 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('site_name', $settings['site_name']);
+$smarty->assign('site_name', app('data')->settings['site_name']);
   $smarty->display('faq.tpl');

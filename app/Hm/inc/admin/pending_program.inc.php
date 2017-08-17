@@ -14,7 +14,7 @@ echo '<html>
 <link href="images/adminstyle.css" rel="stylesheet" type="text/css">
 </head>
 <body>';
-  if ($frm['ttype'] != '') {
+  if (app('data')->frm['ttype'] != '') {
       $typewhere = ' and type=\'withdraw_pending\' ';
   }
 
@@ -22,7 +22,7 @@ echo '<html>
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['col'];
-  $page = $frm['page'];
+  $page = app('data')->frm['page'];
   $onpage = 20;
   $colpages = ceil($count_all / $onpage);
   if ($page <= 1) {
@@ -97,7 +97,7 @@ echo '<html>
       echo '<tr>
  <td colspan=2><b>For this period:</b></td>
  <td align=right><b>$ ';
-      echo number_format((($frm['ttype'] == 'deposit' or $frm['ttype'] == 'withdraw_pending') ? '-1' : '1') * $periodsum, 2);
+      echo number_format(((app('data')->frm['ttype'] == 'deposit' or app('data')->frm['ttype'] == 'withdraw_pending') ? '-1' : '1') * $periodsum, 2);
       echo '</b></td>
 </tr>';
   } else {
@@ -109,7 +109,7 @@ echo '<html>
   echo '<tr>
  <td colspan=2><b>Total:</b></td>
  <td align=right><b>$ ';
-  echo number_format((($frm['ttype'] == 'deposit' or $frm['ttype'] == 'withdraw_pending') ? '-1' : '1') * $allsum, 2);
+  echo number_format(((app('data')->frm['ttype'] == 'deposit' or app('data')->frm['ttype'] == 'withdraw_pending') ? '-1' : '1') * $allsum, 2);
   echo '</b></td>
 </tr>
 </table>

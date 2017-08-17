@@ -9,5 +9,5 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('frm', $frm);
+$smarty->assign('frm', app('data')->frm);
   $smarty->display('error.tpl');

@@ -11,7 +11,7 @@
 
 use App\Exceptions\EmptyException;
 
-$id = sprintf('%d', $frm['id']);
+$id = sprintf('%d', app('data')->frm['id']);
   $q = 'select * from hm2_types where id= '.$id;
   if (!($sth = db_query($q))) {
   }
@@ -39,7 +39,7 @@ $id = sprintf('%d', $frm['id']);
       array_push($packages, $row1);
   }
 
-  if (($id < 3 and $settings['demomode'] == 1)) {
+  if (($id < 3 and app('data')->settings['demomode'] == 1)) {
       echo start_info_table('100%');
       echo '<b>Demo version restriction!</b><br>
 You cannot edit this package. You should create a new package for edition. ';

@@ -9,37 +9,37 @@
  * with this source code in the file LICENSE.
  */
 
-if ($settings['demomode'] != 1) {
-    if ($frm['action'] == 'add') {
-        $title = quote($frm['title']);
-        $small_text = quote($frm['small_text']);
+if (app('data')->settings['demomode'] != 1) {
+    if (app('data')->frm['action'] == 'add') {
+        $title = quote(app('data')->frm['title']);
+        $small_text = quote(app('data')->frm['small_text']);
         $small_text = preg_replace('/\\r/', '', $small_text);
-        $full_text = quote($frm['full_text']);
+        $full_text = quote(app('data')->frm['full_text']);
         $full_text = preg_replace('/\\r/', '', $full_text);
         $q = 'insert into hm2_news set date=now(), title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\'';
         db_query($q);
     }
 
-    if (($frm['action'] == 'edit' and $frm['save'] == 1)) {
-        $id = intval($frm['id']);
-        $title = quote($frm['title']);
-        $small_text = quote($frm['small_text']);
+    if ((app('data')->frm['action'] == 'edit' and app('data')->frm['save'] == 1)) {
+        $id = intval(app('data')->frm['id']);
+        $title = quote(app('data')->frm['title']);
+        $small_text = quote(app('data')->frm['small_text']);
         $small_text = preg_replace('/\\r/', '', $small_text);
-        $full_text = quote($frm['full_text']);
+        $full_text = quote(app('data')->frm['full_text']);
         $full_text = preg_replace('/\\r/', '', $full_text);
         $q = 'update hm2_news set title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\' where id = '.$id;
         db_query($q);
-        $frm['action'] = '';
+        app('data')->frm['action'] = '';
     }
 
-    if ($frm['action'] == 'delete') {
-        $id = intval($frm['id']);
+    if (app('data')->frm['action'] == 'delete') {
+        $id = intval(app('data')->frm['id']);
         $q = 'delete from hm2_news where id = '.$id;
         db_query($q);
     }
 }
 
-  if ($settings['demomode'] == 1) {
+  if (app('data')->settings['demomode'] == 1) {
       echo start_info_table('100%');
       echo '<b>Demo version restriction!</b><br>
 You cannot add/edit news!';
@@ -60,7 +60,7 @@ You cannot add/edit news!';
 
   if (0 < $count_all) {
       echo '<table cellspacing=1 cellpadding=2 border=0 width=100%>';
-      $page = $frm['page'];
+      $page = app('data')->frm['page'];
       $onpage = 20;
       $colpages = ceil($count_all / $onpage);
       if ($page <= 1) {
@@ -73,10 +73,10 @@ You cannot add/edit news!';
 
       $from = ($page - 1) * $onpage;
       $edit_row = [];
-      $q = 'select *, date_format(date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d from hm2_news order by date desc limit '.$from.', '.$onpage);
+      $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d from hm2_news order by date desc limit '.$from.', '.$onpage);
       $sth = db_query($q);
       while ($row = mysql_fetch_array($sth)) {
-          if (($frm['action'] == 'edit' and $row['id'] == $frm['id'])) {
+          if ((app('data')->frm['action'] == 'edit' and $row['id'] == app('data')->frm['id'])) {
               $edit_row = $row;
           }
 

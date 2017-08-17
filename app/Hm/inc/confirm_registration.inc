@@ -10,9 +10,9 @@
  */
 
 $success = 0;
-  if ($frm['c'] != '') {
+  if (app('data')->frm['c'] != '') {
       $info = [];
-      $conf_string = quote($frm['c']);
+      $conf_string = quote(app('data')->frm['c']);
       $q = 'select * from hm2_users where confirm_string = \''.$conf_string.'\'';
       if (!($sth = db_query($q))) {
       }
@@ -31,7 +31,7 @@ $success = 0;
           if (!(db_query($q))) {
           }
 
-          send_template_mail('registration', $info['email'], $settings['opt_in_email'], $info);
+          send_template_mail('registration', $info['email'], app('data')->settings['opt_in_email'], $info);
           $ref = quote($info['ref']);
           $q = 'select * from hm2_users where id = \''.$ref.'\'';
           $sth = db_query($q);
@@ -42,7 +42,7 @@ $success = 0;
               $refminfo['ref_username'] = $info['username'];
               $refminfo['ref_name'] = $info['name'];
               $refminfo['ref_email'] = $info['email'];
-              send_template_mail('direct_signup_notification', $refinfo['email'], $settings['opt_in_email'], $refminfo);
+              send_template_mail('direct_signup_notification', $refinfo['email'], app('data')->settings['opt_in_email'], $refminfo);
           }
       }
   }

@@ -25,12 +25,12 @@ function en_dis() {
   echo '<td colspan=2><b>Startup bonus:</b></td>
 </tr><tr>
  <td colspan=2><input type=checkbox name=add_startup_bonus value=1 ';
-  echo 0 < $settings['startup_bonus'] ? 'checked' : '';
+  echo 0 < app('data')->settings['startup_bonus'] ? 'checked' : '';
   echo ' onclick="en_dis()"> Enable startup bonus</td>
 </tr><tr>
  <td>Amount:</td>
  <td><input type=text name=\'startup_bonus\' value="';
-  echo sprintf('%0.2f', $settings[startup_bonus]);
+  echo sprintf('%0.2f', app('data')->settings[startup_bonus]);
   echo '" class=inpts style="text-align: right"></td>
 </tr>
  <td>Currency:</td>
@@ -38,14 +38,14 @@ function en_dis() {
  ';
   echo '<s';
   echo 'elect name=ec class=inpts>';
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data['status'] != 1) {
           continue;
       }
       echo '	<option value="';
       echo $id;
       echo '" ';
-      echo $id == $settings['startup_bonus_ec'] ? 'selected' : '';
+      echo $id == app('data')->settings['startup_bonus_ec'] ? 'selected' : '';
       echo '>';
       echo $data['name'];
   }
@@ -56,7 +56,7 @@ function en_dis() {
  <td colspan=2>&nbsp;</td>
 </tr><tr>
  <td colspan=2><input type=checkbox name=forbid_withdraw_before_deposit value=1 ';
-  echo 0 < $settings['forbid_withdraw_before_deposit'] ? 'checked' : '';
+  echo 0 < app('data')->settings['forbid_withdraw_before_deposit'] ? 'checked' : '';
   echo '> Forbid withdrawal till deposit</td>
 </tr><tr>
  <td>&nbsp;</td>

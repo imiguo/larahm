@@ -13,13 +13,13 @@ use App\Exceptions\EmptyException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', json_encode($frm).PHP_EOL, FILE_APPEND);
-file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', 'IP:'.$frm_env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
+file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
+file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
 
-$mymd5 = $settings['md5altphrase_perfectmoney'];
-if ($frm['a'] == 'pay_withdraw') {
-    $batch = $frm['PAYMENT_BATCH_NUM'];
-    list($id, $str) = explode('-', $frm['withdraw']);
+$mymd5 = app('data')->settings['md5altphrase_perfectmoney'];
+if (app('data')->frm['a'] == 'pay_withdraw') {
+    $batch = app('data')->frm['PAYMENT_BATCH_NUM'];
+    list($id, $str) = explode('-', app('data')->frm['withdraw']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -49,39 +49,39 @@ if ($frm['a'] == 'pay_withdraw') {
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['PAYEE_ACCOUNT'];
+        $info['account'] = app('data')->frm['PAYEE_ACCOUNT'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[0]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[0]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 
     echo 1;
     throw new EmptyException();
 }
 
-if ($frm['a'] == 'checkpayment') {
-    $string = $frm['PAYMENT_ID'].':'.$frm['PAYEE_ACCOUNT'].':'.
-              $frm['PAYMENT_AMOUNT'].':'.$frm['PAYMENT_UNITS'].':'.
-              $frm['PAYMENT_BATCH_NUM'].':'.
-              $frm['PAYER_ACCOUNT'].':'.$mymd5.':'.
-              $frm['TIMESTAMPGMT'];
+if (app('data')->frm['a'] == 'checkpayment') {
+    $string = app('data')->frm['PAYMENT_ID'].':'.app('data')->frm['PAYEE_ACCOUNT'].':'.
+              app('data')->frm['PAYMENT_AMOUNT'].':'.app('data')->frm['PAYMENT_UNITS'].':'.
+              app('data')->frm['PAYMENT_BATCH_NUM'].':'.
+              app('data')->frm['PAYER_ACCOUNT'].':'.$mymd5.':'.
+              app('data')->frm['TIMESTAMPGMT'];
     $hash = strtoupper(md5($string));
 
-    if ($hash == $frm['V2_HASH'] and $exchange_systems[3]['status'] == 1) {
-        // $ip = $frm_env['REMOTE_ADDR'];
+    if ($hash == app('data')->frm['V2_HASH'] and app('data')->exchange_systems[3]['status'] == 1) {
+        // $ip = app('data')->env['REMOTE_ADDR'];
         // if ( ! preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
         //     throw new EmptyException();
         // }
 
-        $user_id = sprintf('%d', $frm['PAYMENT_ID']);
-        $h_id = sprintf('%d', $frm['plan_id']);
-        $compound = sprintf('%d', $frm['compound']);
-        $amount = $frm['PAYMENT_AMOUNT'];
-        $batch = $frm['PAYMENT_BATCH_NUM'];
-        $account = $frm['PAYER_ACCOUNT'];
-        if ($frm['PAYMENT_UNITS'] == 'USD') {
+        $user_id = sprintf('%d', app('data')->frm['PAYMENT_ID']);
+        $h_id = sprintf('%d', app('data')->frm['plan_id']);
+        $compound = sprintf('%d', app('data')->frm['compound']);
+        $amount = app('data')->frm['PAYMENT_AMOUNT'];
+        $batch = app('data')->frm['PAYMENT_BATCH_NUM'];
+        $account = app('data')->frm['PAYER_ACCOUNT'];
+        if (app('data')->frm['PAYMENT_UNITS'] == 'USD') {
             add_deposit(3, $user_id, $amount, $batch, $account, $h_id, $compound);
         }
     }

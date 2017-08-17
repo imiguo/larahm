@@ -12,11 +12,11 @@
 use App\Exceptions\RedirectException;
 
 $ok = 1;
-  $amount = sprintf('%0.2f', $frm['amount']);
-  $h_id = sprintf('%d', $frm['h_id']);
-  $ps = substr($frm['type'], 8);
+  $amount = sprintf('%0.2f', app('data')->frm['amount']);
+  $h_id = sprintf('%d', app('data')->frm['h_id']);
+  $ps = substr(app('data')->frm['type'], 8);
   $accounting = get_user_balance($userinfo['id']);
-  if (($settings[use_add_funds] and $h_id == -1)) {
+  if ((app('data')->settings[use_add_funds] and $h_id == -1)) {
       if ($amount < 0.01) {
           $smarty->assign('zero_amount', 1);
           $ok = 0;
@@ -105,8 +105,8 @@ $ok = 1;
   $q = 'select * from hm2_processings where id = '.$ps;
   $sth = db_query($q);
   $processing = mysql_fetch_array($sth);
-  if (($ok == 1 and $frm['action'] == 'confirm')) {
-      $compound = sprintf('%.02f', $frm['compound']);
+  if (($ok == 1 and app('data')->frm['action'] == 'confirm')) {
+      $compound = sprintf('%.02f', app('data')->frm['compound']);
       if ($use_compound) {
           if ($type['compound_percents_type'] == 1) {
               $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
@@ -124,7 +124,7 @@ $ok = 1;
           }
       }
 
-      $infofields = $frm['fields'];
+      $infofields = app('data')->frm['fields'];
       $fields = serialize($infofields);
       if ($h_id == -1) {
           $h_id = 0;
@@ -143,25 +143,25 @@ $ok = 1;
       $fields = '';
       $infofields = unserialize($processing['infofields']);
       foreach ($infofields as $id => $name) {
-          $fields .= $name.': '.$frm['fields'][$id].'';
+          $fields .= $name.': '.app('data')->frm['fields'][$id].'';
       }
 
       $info = [];
       $info['username'] = $userinfo['username'];
       $info['name'] = $userinfo['name'];
       $info['amount'] = number_format($amount, 2);
-      $info['currency'] = $exchange_systems[$ps]['name'];
+      $info['currency'] = app('data')->exchange_systems[$ps]['name'];
       $info['fields'] = $fields;
       $info['plan'] = $plan_name;
       $info['compound'] = $compound;
-      $q = 'select date_format(now() + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date';
+      $q = 'select date_format(now() + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as date';
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $info['date'] = $row['date'];
       $q = 'select email from hm2_users where id = 1';
       $sth = db_query($q);
       $admin_row = mysql_fetch_array($sth);
-      send_template_mail('pending_deposit_admin_notification', $admin_row['email'], $settings['opt_in_email'], $info);
+      send_template_mail('pending_deposit_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
       if ($h_id == 0) {
           throw new RedirectException('/?a=add_funds&say=deposit_saved');
       } else {
@@ -169,7 +169,7 @@ $ok = 1;
       }
   }
 
-  $compound = sprintf('%d', $frm['compound']);
+  $compound = sprintf('%d', app('data')->frm['compound']);
   $processing['description'] = preg_replace('/#amount#/', number_format($amount, 2), $processing['description']);
   $processing['description'] = preg_replace('/#username#/', $userinfo['username'], $processing['description']);
   $processing['description'] = preg_replace('/#id#/', $userinfo['id'], $processing['description']);
@@ -187,6 +187,6 @@ $ok = 1;
   $smarty->assign('amount', number_format($amount, 2));
   $smarty->assign('famount', $amount);
   $smarty->assign('compounding', $compound);
-  $smarty->assign('type', $frm['type']);
-  $smarty->assign('cname', $exchange_systems[$ps]['name']);
+  $smarty->assign('type', app('data')->frm['type']);
+  $smarty->assign('cname', app('data')->exchange_systems[$ps]['name']);
   $smarty->display('deposit.other.confirm.tpl');

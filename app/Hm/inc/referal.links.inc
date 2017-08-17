@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-$smarty->assign('site_name', $settings['site_name']);
-  if ($settings[use_names_in_referral_links] == 1) {
+$smarty->assign('site_name', app('data')->settings['site_name']);
+  if (app('data')->settings[use_names_in_referral_links] == 1) {
       $userinfo[name] = preg_replace('/\\s+/', '_', $userinfo[name]);
       $userinfo[username] = $userinfo[name];
   }

@@ -10,14 +10,14 @@
  */
 
 $qonpage = 50;
-  $qstatus = quote($frm['status']);
+  $qstatus = quote(app('data')->frm['status']);
   if ($qstatus == '') {
       $qstatus = 'on';
   }
 
   $searchpart = '';
-  if ($frm['q'] != '') {
-      $qsearch = quote($frm['q']);
+  if (app('data')->frm['q'] != '') {
+      $qsearch = quote(app('data')->frm['q']);
       $searchpart = ' and (username like \'%'.$qsearch.'%\' or email like \'%'.$qsearch.'%\' or name like \'%'.$qsearch.'%\') ';
   }
 
@@ -30,7 +30,7 @@ $qonpage = 50;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $total = $row[0];
-  $page = sprintf('%d', $frm['p']);
+  $page = sprintf('%d', app('data')->frm['p']);
   if ($page == 0) {
       $page = 1;
   }
@@ -47,7 +47,7 @@ $qonpage = 50;
 
   $end = $page * $qonpage;
   $end = ($total < $end ? $total : $end);
-  $q = 'select *, date_format(date_register + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as dr from hm2_users where '.$where_status.' and id <> 1 '.$searchpart.' order by id desc limit ').(0 < $start ? $start : 0).(''.', '.$qonpage);
+  $q = 'select *, date_format(date_register + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as dr from hm2_users where '.$where_status.' and id <> 1 '.$searchpart.' order by id desc limit ').(0 < $start ? $start : 0).(''.', '.$qonpage);
   $sth = db_query($q);
   $members = [];
   while ($row = mysql_fetch_array($sth)) {
@@ -102,7 +102,7 @@ function reverce(flag)
   echo $qstatus;
   echo '\'>
 	<input type=text name=q value=\'';
-  echo quote($frm['q']);
+  echo quote(app('data')->frm['q']);
   echo '\' class=inpts size=30> <input type=submit value="Search" class=sbmt>
 	<input type="hidden" name="_token" value="'.csrf_token().'"></form>
  </td>
@@ -199,11 +199,11 @@ function reverce(flag)
 	<a href="?a=deleteaccount&id=';
           echo $members[$i]['id'];
           echo '&p=';
-          echo $frm['p'];
+          echo app('data')->frm['p'];
           echo '&q=';
-          echo $frm['q'];
+          echo app('data')->frm['q'];
           echo '&status=';
-          echo $frm['status'];
+          echo app('data')->frm['status'];
           echo '" onclick="return confirm(\'Are you sure you want to delete this user?\');">[delete]</a>
 	<a href=\'mailto:';
           echo quote($members[$i]['email']);
@@ -239,7 +239,7 @@ function reverce(flag)
               echo ' <a href="?a=members&status=';
               echo $qstatus;
               echo '&q=';
-              echo $frm['q'];
+              echo app('data')->frm['q'];
               echo '&p=';
               echo $i;
               echo '">';

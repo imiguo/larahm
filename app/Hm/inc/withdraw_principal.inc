@@ -12,14 +12,14 @@
 use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
-if ($frm['complete']) {
+if (app('data')->frm['complete']) {
     $smarty->assign('fatal', 'withdraw_complete');
     $smarty->display('withdraw_principal.tpl');
     throw new EmptyException();
 }
 
   $user_id = $userinfo['id'];
-  $deposit_id = intval($frm['deposit']);
+  $deposit_id = intval(app('data')->frm['deposit']);
   $q = 'select
                *,
                (to_days(now()) - to_days(deposit_date)) as deposit_duration
@@ -59,8 +59,8 @@ if ($frm['complete']) {
   }
 
   $deposit['deposit'] = sprintf('%.02f', floor($deposit['actual_amount'] * 100) / 100);
-  if ($frm['action'] == 'withdraw_preview') {
-      $withdraw_amount = sprintf('%.02f', $frm['amount']);
+  if (app('data')->frm['action'] == 'withdraw_preview') {
+      $withdraw_amount = sprintf('%.02f', app('data')->frm['amount']);
       if ($deposit['actual_amount'] < $withdraw_amount) {
           $smarty->assign('deposit', $deposit);
           $smarty->assign('type', $type);
@@ -97,8 +97,8 @@ if ($frm['complete']) {
       throw new EmptyException();
   }
 
-  if ($frm['action'] == 'withdraw') {
-      $withdraw_amount = sprintf('%.02f', $frm['amount']);
+  if (app('data')->frm['action'] == 'withdraw') {
+      $withdraw_amount = sprintf('%.02f', app('data')->frm['amount']);
       if ($deposit['actual_amount'] < $withdraw_amount) {
           $smarty->assign('deposit', $deposit);
           $smarty->assign('type', $type);

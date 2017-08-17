@@ -26,7 +26,7 @@
 	    <tr>
 		  <td background="images/ver.gif" bgcolor=#FF8D00><img src="images/top.gif" width=304 height=142 border="0" align=left></td>
 		  <td background="images/ver.gif" bgcolor=#FF8D00 valign=bottom align=right>';
-  if ((($settings['md5altphrase'] == '' and $settings['md5altphrase_evocash'] == '') and $settings['md5altphrase_intgold'] == '')) {
+  if (((app('data')->settings['md5altphrase'] == '' and app('data')->settings['md5altphrase_evocash'] == '') and app('data')->settings['md5altphrase_intgold'] == '')) {
       echo start_info_table('100%');
       echo 'To receive deposits you should enter your \'Secret alternate password md5 hash\' on the settings screen!<br>
           You can receive the secret alternate password md5 hash here:<br>
@@ -49,9 +49,9 @@
   if (rand (1, 5) == 3)
   {
     echo '<img src="http://www.goldcoders.com/check.cgi?i=1&license=1&domain=';
-    echo $frm_env['HTTP_HOST'];
+    echo app('data')->env['HTTP_HOST'];
     echo '&n=';
-    echo $frm_env['SCRIPT_NAME'];
+    echo app('data')->env['SCRIPT_NAME'];
     echo '" width=1 height=1> ';
   }
   */

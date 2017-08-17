@@ -15,24 +15,18 @@ ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 
 require 'function.inc.php';
 
-global $frm;
-global $settings;
-global $frm_env;
-global $exchange_systems;
-global $stats;
-
 if (!extension_loaded('gd')) {
     $prefix = (PHP_SHLIB_SUFFIX == 'dll' ? 'php_' : '');
     dl($prefix.'gd.'.PHP_SHLIB_SUFFIX);
 }
 
-$frm = request()->toArray();
+app('data')->frm = request()->toArray();
 
-$frm_env = array_merge($_ENV, $_SERVER);
-$frm_env['HTTP_HOST'] = preg_replace('/^www\./', '', $frm_env['HTTP_HOST']);
+app('data')->env = array_merge($_ENV, $_SERVER);
+app('data')->env['HTTP_HOST'] = preg_replace('/^www\./', '', app('data')->env['HTTP_HOST']);
 
-$referer = isset($frm_env['HTTP_REFERER']) ? $frm_env['HTTP_REFERER'] : null;
-$host = $frm_env['HTTP_HOST'];
+$referer = isset(app('data')->env['HTTP_REFERER']) ? app('data')->env['HTTP_REFERER'] : null;
+$host = app('data')->env['HTTP_HOST'];
 if (!strpos($referer, '//'.$host)) {
     Cookie::queue('came_from', $referer, 43200);
 }
@@ -55,7 +49,7 @@ $transtype = [
     'internal_transaction_spend'   => 'Spent on Internal Transaction',
     'internal_transaction_receive' => 'Received from Internal Transaction',
 ];
-$exchange_systems = [
+app('data')->exchange_systems = [
     0  => ['name' => 'e-gold', 'sfx' => 'egold'],
     2  => ['name' => 'INTGold', 'sfx' => 'intgold'],
     3  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney'],
@@ -69,20 +63,20 @@ $exchange_systems = [
     11 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
 ];
 
-$settings = get_settings();
-foreach ($exchange_systems as $id => $data) {
-    if (isset($settings['def_payee_account_'.$data['sfx']]) and $settings['def_payee_account_'.$data['sfx']] != '' and $settings['def_payee_account_'.$data['sfx']] != '0') {
-        $exchange_systems[$id]['status'] = 1;
+app('data')->settings = get_settings();
+foreach (app('data')->exchange_systems as $id => $data) {
+    if (isset(app('data')->settings['def_payee_account_'.$data['sfx']]) and app('data')->settings['def_payee_account_'.$data['sfx']] != '' and app('data')->settings['def_payee_account_'.$data['sfx']] != '0') {
+        app('data')->exchange_systems[$id]['status'] = 1;
         continue;
     } else {
-        $exchange_systems[$id]['status'] = 0;
+        app('data')->exchange_systems[$id]['status'] = 0;
         continue;
     }
 }
-$settings['site_url'] = (is_SSL() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
+app('data')->settings['site_url'] = (is_SSL() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
 
-$ip = $frm_env['REMOTE_ADDR'];
+$ip = app('data')->env['REMOTE_ADDR'];
 $time = time();
-$url = $frm_env['REQUEST_URI'];
-$agent = $frm_env['HTTP_USER_AGENT'];
+$url = app('data')->env['REQUEST_URI'];
+$agent = app('data')->env['HTTP_USER_AGENT'];
 $ret = db_query("insert hm2_visit (`ip`, `time`, `url`, `agent`) values('$ip', '$time', '$url', '$agent')");

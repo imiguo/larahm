@@ -16,7 +16,7 @@ $q = 'select
          from
                hm2_users as u1 left outer join hm2_users as u2
                  on u1.id = u2.ref
-         where u2.date_register > \''.$settings[refs10_start_date].'\' + interval '.$settings['time_dif'].' hour
+         where u2.date_register > \''.app('data')->settings[refs10_start_date].'\' + interval '.app('data')->settings['time_dif'].' hour
          group by
                u1.username
          having col > 0
@@ -41,7 +41,7 @@ $q = 'select
       array_push($stats, $row);
   }
 
-  $q = 'select date_format(\''.$settings[refs10_start_date].'\' + interval '.$settings['time_dif'].' hour, \'%b-%e-%Y\') as d';
+  $q = 'select date_format(\''.app('data')->settings[refs10_start_date].'\' + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y\') as d';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $smarty->assign('start_date', $row[d]);

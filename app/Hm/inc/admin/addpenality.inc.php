@@ -9,11 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-$id = sprintf('%d', $frm['id']);
+$id = sprintf('%d', app('data')->frm['id']);
   $q = 'select * from hm2_users where id = '.$id;
   $sth = db_query($q);
   $userinfo = mysql_fetch_array($sth);
-  if ($frm['say'] == 'done') {
+  if (app('data')->frm['say'] == 'done') {
       echo ' The penalty has been sent to the user.<br>
 <br>';
   }
@@ -103,7 +103,7 @@ $id = sprintf('%d', $frm['id']);
 	';
   echo '<s';
   echo 'elect name=ec class=inpts>';
-  foreach ($exchange_systems as $id => $data) {
+  foreach (app('data')->exchange_systems as $id => $data) {
       if ($data['status'] != 1) {
           continue;
       }

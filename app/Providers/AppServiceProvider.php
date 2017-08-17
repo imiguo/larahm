@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use mysqli;
 use Smarty;
+use App\DataContainer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,6 +48,10 @@ class AppServiceProvider extends ServiceProvider
             $smarty->assign('app_url', env('APP_URL'));
 
             return $smarty;
+        });
+
+        $this->app->singleton('data', function () {
+            return new DataContainer();
         });
     }
 }

@@ -11,11 +11,11 @@
 
 use App\Exceptions\EmptyException;
 
-$id = intval($frm['type']);
+$id = intval(app('data')->frm['type']);
   $plans = [];
   $q = 'select *,
-               date_format(now() + interval '.$settings['time_dif'].' hour, \'%m/%d/%Y\') as from_date,
-               date_format((now() + interval '.$settings['time_dif'].(''.' hour) + interval q_days day, \'%m/%d/%Y\') as to_date
+               date_format(now() + interval '.app('data')->settings['time_dif'].' hour, \'%m/%d/%Y\') as from_date,
+               date_format((now() + interval '.app('data')->settings['time_dif'].(''.' hour) + interval q_days day, \'%m/%d/%Y\') as to_date
         from hm2_types where id = '.$id);
   if (!($sth = db_query($q))) {
   }

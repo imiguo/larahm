@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-$amount = sprintf('%0.2f', $frm['amount']);
-  $h_id = sprintf('%d', $frm['h_id']);
-  if (($settings[use_add_funds] and $h_id == -1)) {
+$amount = sprintf('%0.2f', app('data')->frm['amount']);
+  $h_id = sprintf('%d', app('data')->frm['h_id']);
+  if ((app('data')->settings[use_add_funds] and $h_id == -1)) {
       if (0.01 <= $amount) {
           $smarty->assign('h_id', -1);
           $smarty->assign('amount', $amount);
@@ -99,7 +99,7 @@ $amount = sprintf('%0.2f', $frm['amount']);
           $smarty->assign('h_id', $h_id);
           $smarty->assign('amount', $amount);
           $smarty->assign('amount_format', number_format($amount, 2));
-          $smarty->assign('compounding', sprintf('%d', $frm['compound']));
+          $smarty->assign('compounding', sprintf('%d', app('data')->frm['compound']));
           $smarty->display('deposit.paypal.confirm.tpl');
       }
   }

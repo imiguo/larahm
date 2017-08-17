@@ -13,7 +13,7 @@
   $BGred = 155;
   $BGgreen = 155;
   $BGblue = 155;
-  if (eregi('[#]?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})', $settings['graph_bg_color'], $ret)) {
+  if (eregi('[#]?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})', app('data')->settings['graph_bg_color'], $ret)) {
       $BGred = hexdec($ret[1]);
       $BGgreen = hexdec($ret[2]);
       $BGblue = hexdec($ret[3]);
@@ -22,20 +22,20 @@
   $FGred = 0;
   $FGgreen = 0;
   $FGblue = 0;
-  if (eregi('[#]?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})', $settings['graph_text_color'], $ret)) {
+  if (eregi('[#]?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})', app('data')->settings['graph_text_color'], $ret)) {
       $FGred = hexdec($ret[1]);
       $FGgreen = hexdec($ret[2]);
       $FGblue = hexdec($ret[3]);
   }
 
-  if (($settings['advanced_graph_validation'] == 1 and function_exists('imagettfbbox'))) {
+  if ((app('data')->settings['advanced_graph_validation'] == 1 and function_exists('imagettfbbox'))) {
       $width = 0;
       $height = 0;
       $font_file = './fonts/font.ttf';
       $chars = [];
       $max_height = 0;
       for ($i = 0; $i < strlen($string); ++$i) {
-          $font_size = rand($settings['advanced_graph_validation_min_font_size'], $settings['advanced_graph_validation_max_font_size']);
+          $font_size = rand(app('data')->settings['advanced_graph_validation_min_font_size'], app('data')->settings['advanced_graph_validation_max_font_size']);
           $angle = rand(-10, 10);
           $box = imagettfbbox($font_size, $angle, $font_file, $string[$i]);
           $c_height = max($box[1], $box[3], $box[5], $box[7]) - min($box[1], $box[3], $box[5], $box[7]);

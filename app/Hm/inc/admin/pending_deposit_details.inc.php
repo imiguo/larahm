@@ -11,10 +11,10 @@
 
 echo '<b>Deposit Details:</b><br><br>
 ';
-  $id = sprintf('%d', $frm['id']);
+  $id = sprintf('%d', app('data')->frm['id']);
   $q = 'select 
           hm2_pending_deposits.*,
-          date_format(hm2_pending_deposits.date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
+          date_format(hm2_pending_deposits.date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
           hm2_users.username
         from
           hm2_pending_deposits,
@@ -32,9 +32,9 @@ echo '<b>Deposit Details:</b><br><br>
   echo '
 <form method=post name=nform>
 <input type=hidden name=a value=pending_deposit_details>';
-  if (($frm['action'] == 'movetodeposit' or $frm['action'] == 'movetoaccount')) {
+  if ((app('data')->frm['action'] == 'movetodeposit' or app('data')->frm['action'] == 'movetoaccount')) {
       echo '<input type=hidden name=action value="';
-      echo $frm['action'];
+      echo app('data')->frm['action'];
       echo '">
 <input type=hidden name=confirm value="yes">';
   }
@@ -46,7 +46,7 @@ echo '<b>Deposit Details:</b><br><br>
 </tr><tr>
  <td>Amount:</td>
  <td>';
-  if (($frm['action'] != 'movetodeposit' and $frm['action'] != 'movetoaccount')) {
+  if ((app('data')->frm['action'] != 'movetodeposit' and app('data')->frm['action'] != 'movetoaccount')) {
       echo(''.'$').number_format($row['amount'], 2);
   } else {
       echo '<input type=text name=amount value=\''.sprintf('%0.2f', $row['amount']).'\' class=inpts style=\'text-align: right;\'>';
@@ -57,10 +57,10 @@ echo '<b>Deposit Details:</b><br><br>
 <tr>
  <td>Currency:</td>
  <td>';
-  echo $exchange_systems[$row['ec']] ? $exchange_systems[$row['ec']]['name'] : 'Delated';
+  echo app('data')->exchange_systems[$row['ec']] ? app('data')->exchange_systems[$row['ec']]['name'] : 'Delated';
   echo '</td>
 </tr>';
-  if ($frm['action'] != 'movetoaccount') {
+  if (app('data')->frm['action'] != 'movetoaccount') {
       if (0 < $row['compound']) {
           echo '<tr>
  <td>Componding percent:</td>
@@ -81,12 +81,12 @@ echo '<b>Deposit Details:</b><br><br>
   echo $row['username'];
   echo '</td>
 </tr>';
-  if (($frm['action'] != 'movetodeposit' and $frm['action'] != 'movetoaccount')) {
+  if ((app('data')->frm['action'] != 'movetodeposit' and app('data')->frm['action'] != 'movetoaccount')) {
       echo '<tr>
  <td colspan=2><br><b>Transaction Information:</b></td>
 </tr>';
       $infofields = unserialize($row['fields']);
-      if (!$exchange_systems[$row['ec']]) {
+      if (!app('data')->exchange_systems[$row['ec']]) {
           $row['ec'] = 'deleted';
           foreach ($infofields as $id => $name) {
               echo '       <tr>
@@ -114,11 +114,11 @@ echo '<b>Deposit Details:</b><br><br>
 <br>
 ';
   if ($row['status'] != 'processed') {
-      if ($frm['action'] == 'movetoaccount') {
+      if (app('data')->frm['action'] == 'movetoaccount') {
           echo '<input type=submit value="Add funds to account" class=sbmt>';
       } else {
           echo '  ';
-          if ($frm['action'] != 'movetodeposit') {
+          if (app('data')->frm['action'] != 'movetodeposit') {
               echo '<input type=button value="Move to deposit" class=sbmt onClick="document.location=\'?a=pending_deposit_details&action=movetodeposit&id=';
               echo $row['id'];
               echo '\';"> &nbsp;
@@ -155,7 +155,7 @@ echo '<b>Deposit Details:</b><br><br>
 
 <br>';
   echo start_info_table('100%');
-  if ($frm['action'] == 'movetodeposit') {
+  if (app('data')->frm['action'] == 'movetodeposit') {
       echo 'You can change the amount before moving this transfer to the deposit ';
   } else {
       echo 'This screen helps you to manage your Wire Transfers.<br>

@@ -9,26 +9,26 @@
  * with this source code in the file LICENSE.
  */
 
-$frm['month'] = intval($frm['month']);
-  if ($frm['month'] == 0) {
-      $frm['month'] = date('n', time() + $settings['time_dif'] * 60 * 60);
+app('data')->frm['month'] = intval(app('data')->frm['month']);
+  if (app('data')->frm['month'] == 0) {
+      app('data')->frm['month'] = date('n', time() + app('data')->settings['time_dif'] * 60 * 60);
   }
 
-  $frm['year'] = intval($frm['year']);
-  if ($frm['year'] == 0) {
-      $frm['year'] = date('Y', time() + $settings['time_dif'] * 60 * 60);
+  app('data')->frm['year'] = intval(app('data')->frm['year']);
+  if (app('data')->frm['year'] == 0) {
+      app('data')->frm['year'] = date('Y', time() + app('data')->settings['time_dif'] * 60 * 60);
   }
 
-  $smarty->assign('frm', $frm);
+  $smarty->assign('frm', app('data')->frm);
   $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   $smarty->assign('month', $month);
   $year = [];
-  for ($i = $settings['site_start_year']; $i <= date('Y', time() + $settings['time_dif'] * 60 * 60); ++$i) {
+  for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       array_push($year, $i);
   }
 
   $smarty->assign('year', $year);
-  $datewhere = ' \''.$frm['year'].'\' = year(date + interval '.$settings['time_dif'].' hour) and '.'\''.$frm['month'].'\' = month(date + interval '.$settings['time_dif'].' hour) ';
+  $datewhere = ' \''.app('data')->frm['year'].'\' = year(date + interval '.app('data')->settings['time_dif'].' hour) and '.'\''.app('data')->frm['month'].'\' = month(date + interval '.app('data')->settings['time_dif'].' hour) ';
   $type = 'withdrawal';
   $q = '
         select
@@ -41,7 +41,7 @@ $frm['month'] = intval($frm['month']);
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['cnt'];
-  $page = intval($frm['page']);
+  $page = intval(app('data')->frm['page']);
   $onpage = 20;
   $colpages = ceil($count_all / $onpage);
   if ($page < 1) {
@@ -57,7 +57,7 @@ $frm['month'] = intval($frm['month']);
               u.username,
               h.type,
               h.actual_amount,
-              date_format(date + interval '.$settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as dd
+              date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as dd
         from
               hm2_users as u left outer join hm2_history as h
                 on u.id = h.user_id

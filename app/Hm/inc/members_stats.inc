@@ -64,7 +64,7 @@ function compare($a, $b)
   $total['withdrawal'] = number_format($total['withdrawal'], 2);
   $smarty->assign('total', $total);
   usort($astats, compare);
-  $page = $frm['page'];
+  $page = app('data')->frm['page'];
   $onpage = 20;
   $colpages = ceil($count_all / $onpage);
   if ($page <= 1) {

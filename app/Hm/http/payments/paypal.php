@@ -13,9 +13,9 @@ use App\Exceptions\RedirectException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-list($action, $user_id, $h_id) = preg_split('/\\|/', $frm['custom']);
+list($action, $user_id, $h_id) = preg_split('/\\|/', app('data')->frm['custom']);
 if ($action == 'pay_withdraw') {
-    $batch = $frm['txn_id'];
+    $batch = app('data')->frm['txn_id'];
     list($id, $str) = explode('-', $user_id);
     $id = sprintf('%d', $id);
     if ($str == '') {
@@ -45,12 +45,12 @@ if ($action == 'pay_withdraw') {
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['business'];
+        $info['account'] = app('data')->frm['business'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[6]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[6]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 
     throw new RedirectException("/?a=pay_withdraw&say=yes");
@@ -58,7 +58,7 @@ if ($action == 'pay_withdraw') {
 
 if (function_exists('curl_init')) {
     $req = 'cmd=_notify-validate';
-    foreach ($frm as $key => $value) {
+    foreach (app('data')->frm as $key => $value) {
         $value = urlencode(stripslashes($value));
         $req .= '&'.$key.'='.$value;
     }
@@ -71,13 +71,13 @@ if (function_exists('curl_init')) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $res = curl_exec($ch);
     curl_close($ch);
-    if ((((($res == 'VERIFIED' and $frm['payment_status'] == 'Completed') and $frm['business'] == $settings['def_payee_account_paypal']) and $frm['mc_currency'] == 'USD') and $exchange_systems[6]['status'] == 1)) {
+    if ((((($res == 'VERIFIED' and app('data')->frm['payment_status'] == 'Completed') and app('data')->frm['business'] == app('data')->settings['def_payee_account_paypal']) and app('data')->frm['mc_currency'] == 'USD') and app('data')->exchange_systems[6]['status'] == 1)) {
         $user_id = sprintf('%d', $user_id);
         $h_id = sprintf('%d', $h_id);
-        $compound = sprintf('%d', $frm['compound']);
-        $amount = $frm['mc_gross'];
-        $batch = $frm['txn_id'];
-        $account = $frm['payer_email'];
+        $compound = sprintf('%d', app('data')->frm['compound']);
+        $amount = app('data')->frm['mc_gross'];
+        $batch = app('data')->frm['txn_id'];
+        $account = app('data')->frm['payer_email'];
         if ($action == 'checkpayment') {
             add_deposit(6, $user_id, $amount, $batch, $account, $h_id, $compound);
             throw new RedirectException('/?a=return_egold&process=yes');

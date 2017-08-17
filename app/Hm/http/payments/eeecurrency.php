@@ -13,19 +13,19 @@ use App\Exceptions\EmptyException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-$mymd5 = $settings['md5altphrase_eeecurrency'];
-if (($mymd5 == $frm['HASH'] and ($frm['TRANSACTION_ID'] != '' and $exchange_systems[8]['status'] == 1))) {
-    if ($frm['RESULT'] != '0') {
+$mymd5 = app('data')->settings['md5altphrase_eeecurrency'];
+if (($mymd5 == app('data')->frm['HASH'] and (app('data')->frm['TRANSACTION_ID'] != '' and app('data')->exchange_systems[8]['status'] == 1))) {
+    if (app('data')->frm['RESULT'] != '0') {
         throw new EmptyException();
     }
 
-    $user_id = sprintf('%d', $frm['ITEM_NUMBER']);
-    $h_id = sprintf('%d', $frm['CUSTOM2']);
-    $compound = sprintf('%d', $frm['CUSTOM4']);
-    $amount = $frm['AMOUNT'];
-    $batch = $frm['TRANSACTION_ID'];
-    $account = $frm['BUYERACCOUNTID'];
-    if ($frm['CUSTOM3'] == 'checkpayment') {
+    $user_id = sprintf('%d', app('data')->frm['ITEM_NUMBER']);
+    $h_id = sprintf('%d', app('data')->frm['CUSTOM2']);
+    $compound = sprintf('%d', app('data')->frm['CUSTOM4']);
+    $amount = app('data')->frm['AMOUNT'];
+    $batch = app('data')->frm['TRANSACTION_ID'];
+    $account = app('data')->frm['BUYERACCOUNTID'];
+    if (app('data')->frm['CUSTOM3'] == 'checkpayment') {
         add_deposit(8, $user_id, $amount, $batch, $account, $h_id, $compound);
     }
 }

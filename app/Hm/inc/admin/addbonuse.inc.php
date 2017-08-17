@@ -9,11 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-$id = sprintf('%d', $frm['id']);
+$id = sprintf('%d', app('data')->frm['id']);
   $q = 'select * from hm2_users where id = '.$id;
   $sth = db_query($q);
   $userinfo = mysql_fetch_array($sth);
-  $frm_env['HTTP_HOST'] = preg_replace('/www\\./', '', $frm_env['HTTP_HOST']);
+  app('data')->env['HTTP_HOST'] = preg_replace('/www\\./', '', app('data')->env['HTTP_HOST']);
   $types = [];
   $q = 'select * from hm2_types where status = \'on\'';
   $sth = db_query($q);
@@ -24,21 +24,21 @@ $id = sprintf('%d', $frm['id']);
   echo '
 <b>Add a bonus:</b><br><br>
 ';
-  if ($frm['say'] == 'done') {
+  if (app('data')->frm['say'] == 'done') {
       echo 'The bonus has been sent to the user.<br><br>';
   }
 
-  if ($frm['say'] == 'invalid_code') {
+  if (app('data')->frm['say'] == 'invalid_code') {
       echo 'The bonus has been not sent to the user. Invalid confirmation code.<br><br>';
   }
 
-  if ($frm['say'] == 'wrongplan') {
+  if (app('data')->frm['say'] == 'wrongplan') {
       echo 'Bonus has not been sent. Invalid Investment Plan selected.<br><br>';
   }
 
   echo '
 ';
-  if ($frm['action'] == 'confirm') {
+  if (app('data')->frm['action'] == 'confirm') {
       echo '<form method=post name=formb>
 <input type=hidden name=a value=addbonuse>
 <input type=hidden name=action value=addbonuse>
@@ -46,22 +46,22 @@ $id = sprintf('%d', $frm['id']);
       echo $id;
       echo '">
 <input type=hidden name=amount value="';
-      echo $frm['amount'];
+      echo app('data')->frm['amount'];
       echo '">
 <input type=hidden name=ec value="';
-      echo $frm['ec'];
+      echo app('data')->frm['ec'];
       echo '">
 <input type=hidden name=desc value="';
-      echo $frm['desc'];
+      echo app('data')->frm['desc'];
       echo '">
 <input type=hidden name=inform value="';
-      echo $frm['inform'];
+      echo app('data')->frm['inform'];
       echo '">
 <input type=hidden name=deposit value="';
-      echo $frm['deposit'];
+      echo app('data')->frm['deposit'];
       echo '">
 <input type=hidden name=hyip_id value="';
-      echo $frm['hyip_id'];
+      echo app('data')->frm['hyip_id'];
       echo '">
 <table cellspacing=0 cellpadding=2 border=0 width=100%><tr><td valign=top>
 <table cellspacing=0 cellpadding=2 border=0>
@@ -154,7 +154,7 @@ $id = sprintf('%d', $frm['id']);
 	';
       echo '<s';
       echo 'elect name=ec class=inpts>';
-      foreach ($exchange_systems as $id => $data) {
+      foreach (app('data')->exchange_systems as $id => $data) {
           if ($data['status'] != 1) {
               continue;
           }
@@ -198,10 +198,10 @@ $id = sprintf('%d', $frm['id']);
  <td colspan=2>';
       echo start_info_table();
       echo 'For security reason you will be asked confirmation code on next page. E-mail with confirmation code will be sent to account you enter bellow. E-mail account should be on \'';
-      echo $frm_env['HTTP_HOST'];
+      echo app('data')->env['HTTP_HOST'];
       echo '\' domain.<br><br>
 E-mail: <input type=text name=conf_email value="admin" class=inpts size=10>@';
-      echo $frm_env['HTTP_HOST'];
+      echo app('data')->env['HTTP_HOST'];
       echo end_info_table();
       echo '</tr><tr>
 </td>

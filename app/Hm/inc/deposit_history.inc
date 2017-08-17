@@ -10,26 +10,26 @@
  */
 
 $id = $userinfo['id'];
-  $frm['day_to'] = sprintf('%d', $frm['day_to']);
-  $frm['month_to'] = sprintf('%d', $frm['month_to']);
-  $frm['year_to'] = sprintf('%d', $frm['year_to']);
-  $frm['day_from'] = sprintf('%d', $frm['day_from']);
-  $frm['month_from'] = sprintf('%d', $frm['month_from']);
-  $frm['year_from'] = sprintf('%d', $frm['year_from']);
-  if ($frm['day_to'] == 0) {
-      $frm['day_to'] = date('j', time() + $settings['time_dif'] * 60 * 60);
-      $frm['month_to'] = date('n', time() + $settings['time_dif'] * 60 * 60);
-      $frm['year_to'] = date('Y', time() + $settings['time_dif'] * 60 * 60);
-      $frm['day_from'] = 1;
-      $frm['month_from'] = $frm['month_to'];
-      $frm['year_from'] = $frm['year_to'];
+  app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
+  app('data')->frm['month_to'] = sprintf('%d', app('data')->frm['month_to']);
+  app('data')->frm['year_to'] = sprintf('%d', app('data')->frm['year_to']);
+  app('data')->frm['day_from'] = sprintf('%d', app('data')->frm['day_from']);
+  app('data')->frm['month_from'] = sprintf('%d', app('data')->frm['month_from']);
+  app('data')->frm['year_from'] = sprintf('%d', app('data')->frm['year_from']);
+  if (app('data')->frm['day_to'] == 0) {
+      app('data')->frm['day_to'] = date('j', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['month_to'] = date('n', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['year_to'] = date('Y', time() + app('data')->settings['time_dif'] * 60 * 60);
+      app('data')->frm['day_from'] = 1;
+      app('data')->frm['month_from'] = app('data')->frm['month_to'];
+      app('data')->frm['year_from'] = app('data')->frm['year_to'];
   }
 
-  $datewhere = '\''.$frm['year_from'].'-'.$frm['month_from'].'-'.$frm['day_from'].'\' + interval 0 day < date + interval '.$settings['time_dif'].' hour and '.'\''.$frm['year_to'].'-'.$frm['month_to'].'-'.$frm['day_to'].'\' + interval 1 day > date + interval '.$settings['time_dif'].' hour ';
+  $datewhere = '\''.app('data')->frm['year_from'].'-'.app('data')->frm['month_from'].'-'.app('data')->frm['day_from'].'\' + interval 0 day < date + interval '.app('data')->settings['time_dif'].' hour and '.'\''.app('data')->frm['year_to'].'-'.app('data')->frm['month_to'].'-'.app('data')->frm['day_to'].'\' + interval 1 day > date + interval '.app('data')->settings['time_dif'].' hour ';
   $typewhere = ' and type in (\'deposit\', \'early_deposit_release\', \'release_deposit\', \'early_deposit_charge\')';
-  $order = ($settings['use_history_balance_mode'] ? 'asc' : 'desc');
-  $dformat = ($settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
-  $q = 'select *, date_format(date + interval '.$settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$typewhere.' and user_id = '.$id.' order by date '.$order.', id '.$order);
+  $order = (app('data')->settings['use_history_balance_mode'] ? 'asc' : 'desc');
+  $dformat = (app('data')->settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
+  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$typewhere.' and user_id = '.$id.' order by date '.$order.', id '.$order);
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
@@ -40,7 +40,7 @@ $id = $userinfo['id'];
       array_push($trans, $row);
   }
 
-  if ($settings['use_history_balance_mode']) {
+  if (app('data')->settings['use_history_balance_mode']) {
       $perioddebit = 0;
       $periodcredit = 0;
       for ($i = 0; $i < sizeof($trans); ++$i) {
@@ -103,12 +103,12 @@ $id = $userinfo['id'];
 
   $smarty->assign('day', $days);
   $year = [];
-  for ($i = $settings['site_start_year']; $i <= date('Y', time() + $settings['time_dif'] * 60 * 60); ++$i) {
+  for ($i = app('data')->settings['site_start_year']; $i <= date('Y', time() + app('data')->settings['time_dif'] * 60 * 60); ++$i) {
       array_push($year, $i);
   }
 
   $smarty->assign('year', $year);
   $smarty->assign('trans', $trans);
   $smarty->assign('qtrans', sizeof($trans));
-  $smarty->assign('frm', $frm);
+  $smarty->assign('frm', app('data')->frm);
   $smarty->display('deposit_history.tpl');

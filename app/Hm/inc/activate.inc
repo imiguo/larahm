@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$activation_code = quote($frm['code']);
+$activation_code = quote(app('data')->frm['code']);
   $code_found = 0;
   if ($activation_code != '') {
       $q = 'select id from hm2_users where activation_code = \''.$activation_code.'\'';

@@ -13,10 +13,10 @@ use App\Exceptions\EmptyException;
 
 include app_path('Hm').'/lib/config.inc.php';
 
-$mymd5 = $settings['md5altphrase_intgold'];
-if ($frm['CUSTOM2'] == 'pay_withdraw') {
-    $batch = $frm['TRANSACTION_ID'];
-    list($id, $str) = explode('-', $frm['CUSTOM1']);
+$mymd5 = app('data')->settings['md5altphrase_intgold'];
+if (app('data')->frm['CUSTOM2'] == 'pay_withdraw') {
+    $batch = app('data')->frm['TRANSACTION_ID'];
+    list($id, $str) = explode('-', app('data')->frm['CUSTOM1']);
     $id = sprintf('%d', $id);
     if ($str == '') {
         $str = 'abcdef';
@@ -45,30 +45,30 @@ if ($frm['CUSTOM2'] == 'pay_withdraw') {
         $info['username'] = $userinfo['username'];
         $info['name'] = $userinfo['name'];
         $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = $frm['SELLERACCOUNTID'];
+        $info['account'] = app('data')->frm['SELLERACCOUNTID'];
         $info['batch'] = $batch;
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
-        $info['currency'] = $exchange_systems[2]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], $settings['system_email'], $info);
+        $info['currency'] = app('data')->exchange_systems[2]['name'];
+        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
     }
 
     echo 1;
     throw new EmptyException();
 }
 
-if (($mymd5 == $frm['HASH'] and ($frm['TRANSACTION_ID'] != '' and $exchange_systems[2]['status'] == 1))) {
-    if ($frm['RESULT'] != '0') {
+if (($mymd5 == app('data')->frm['HASH'] and (app('data')->frm['TRANSACTION_ID'] != '' and app('data')->exchange_systems[2]['status'] == 1))) {
+    if (app('data')->frm['RESULT'] != '0') {
         throw new EmptyException();
     }
 
-    $user_id = sprintf('%d', $frm['ITEM_NUMBER']);
-    $h_id = sprintf('%d', $frm['CUSTOM2']);
-    $compound = sprintf('%d', $frm['CUSTOM4']);
-    $amount = $frm['AMOUNT'];
-    $batch = $frm['TRANSACTION_ID'];
-    $account = $frm['BUYERACCOUNTID'];
-    if ($frm['CUSTOM3'] == 'checkpayment') {
+    $user_id = sprintf('%d', app('data')->frm['ITEM_NUMBER']);
+    $h_id = sprintf('%d', app('data')->frm['CUSTOM2']);
+    $compound = sprintf('%d', app('data')->frm['CUSTOM4']);
+    $amount = app('data')->frm['AMOUNT'];
+    $batch = app('data')->frm['TRANSACTION_ID'];
+    $account = app('data')->frm['BUYERACCOUNTID'];
+    if (app('data')->frm['CUSTOM3'] == 'checkpayment') {
         add_deposit(2, $user_id, $amount, $batch, $account, $h_id, $compound);
     }
 }

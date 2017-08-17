@@ -21,7 +21,7 @@ while ($row = mysql_fetch_array($sth)) {
 }
 
 $gpg_version = 0;
-$gpg_command = escapeshellcmd($settings['gpg_path']).' --version';
+$gpg_command = escapeshellcmd(app('data')->settings['gpg_path']).' --version';
 $fp = popen(''.$gpg_command, 'r');
 if ($fp) {
     while (!feof($fp)) {
@@ -36,14 +36,14 @@ if ($fp) {
     pclose($fp);
 }
 
-$settings['md5altphrase_ebullion'] = decode_pass_for_mysql($settings['md5altphrase_ebullion']);
+app('data')->settings['md5altphrase_ebullion'] = decode_pass_for_mysql(app('data')->settings['md5altphrase_ebullion']);
 
-$settings['use_alternative_passphrase'] = ($userinfo['transaction_code'] != '' ? 1 : 0);
-if (isset($frm['say']) && $frm['say'] == 'invalid_passphrase') {
+app('data')->settings['use_alternative_passphrase'] = ($userinfo['transaction_code'] != '' ? 1 : 0);
+if (isset(app('data')->frm['say']) && app('data')->frm['say'] == 'invalid_passphrase') {
     echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
 }
 
-if (isset($frm['say']) && $frm['say'] == 'done') {
+if (isset(app('data')->frm['say']) && app('data')->frm['say'] == 'done') {
     echo '<b style="color:green">Changes has been successfully saved.</b><br><br>';
 }
 
@@ -52,7 +52,7 @@ echo 'cript language=javascript>
 function check_form()
 {
   var d = document.mainform;';
-if ($settings['use_alternative_passphrase'] == 0) {
+if (app('data')->settings['use_alternative_passphrase'] == 0) {
     echo '  if (d.use_alternative_passphrase.options[d.use_alternative_passphrase.selectedIndex].value == 1 && d.new_alternative_passphrase.value == \'\')
   {
     alert(\'Please enter your New Alternative Passphrase!\');
@@ -82,7 +82,7 @@ echo '=settings>
 </tr><tr>
  <td>Site name:</td>
  <td><input type=text name=site_name value=\'';
-echo quote($settings['site_name']);
+echo quote(app('data')->settings['site_name']);
 echo '\' class=inpts size=30></td>
 </tr>
 <tr>
@@ -94,7 +94,7 @@ for ($i = 1; $i < 32; ++$i) {
     echo '<option value=';
     echo $i;
     echo ' ';
-    echo $i == $settings['site_start_day'] ? 'selected' : '';
+    echo $i == app('data')->settings['site_start_day'] ? 'selected' : '';
     echo '>';
     echo $i;
 }
@@ -106,7 +106,7 @@ for ($i = 0; $i < count($month); ++$i) {
     echo '<option value=';
     echo $i + 1;
     echo ' ';
-    echo $i + 1 == $settings['site_start_month'] ? 'selected' : '';
+    echo $i + 1 == app('data')->settings['site_start_month'] ? 'selected' : '';
     echo '>';
     echo $month[$i];
 }
@@ -118,7 +118,7 @@ for ($i = date('Y') - 6; $i <= date('Y'); ++$i) {
     echo '<option value=';
     echo $i;
     echo ' ';
-    echo $i == $settings['site_start_year'] ? 'selected' : '';
+    echo $i == app('data')->settings['site_start_year'] ? 'selected' : '';
     echo '>';
     echo $i;
 }
@@ -127,7 +127,7 @@ echo '</select>
  </td>
 </tr><tr>
 <td colspan=2><input type=checkbox name=reverse_columns value=1 ';
-echo $settings['reverse_columns'] == 1 ? 'checked' : '';
+echo app('data')->settings['reverse_columns'] == 1 ? 'checked' : '';
 echo '> Reverse left and right columns</td>
 </tr>
 
@@ -136,17 +136,17 @@ echo '> Reverse left and right columns</td>
 </tr><tr>
  <td>Your Perfect Money USD account number:</td>
  <td><input type=text name=\'def_payee_account_perfectmoney\' value=\'';
-echo quote($settings['def_payee_account_perfectmoney']);
+echo quote(app('data')->settings['def_payee_account_perfectmoney']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your Perfect Money account name:</td>
  <td><input type=text name=\'def_payee_name_perfectmoney\' value=\'';
-echo quote($settings['def_payee_name_perfectmoney']);
+echo quote(app('data')->settings['def_payee_name_perfectmoney']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Secret alternate password md5 hash:</td>
  <td><input type=text name=\'md5altphrase_perfectmoney\' value=\'';
-echo quote($settings['md5altphrase_perfectmoney']);
+echo quote(app('data')->settings['md5altphrase_perfectmoney']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Alternate Password:</td>
@@ -158,17 +158,17 @@ echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your Payeer Merchant’s ID:</td>
  <td><input type=text name=\'def_payee_account_payeer\' value=\'';
-echo quote($settings['def_payee_account_payeer']);
+echo quote(app('data')->settings['def_payee_account_payeer']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your Payeer Secret key:</td>
  <td><input type=text name=\'def_payee_key_payeer\' value=\'';
-echo quote($settings['def_payee_key_payeer']);
+echo quote(app('data')->settings['def_payee_key_payeer']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your Payeer Additional Key:</td>
  <td><input type=text name=\'def_payee_additionalkey_payeer\' value=\'';
-echo quote($settings['def_payee_additionalkey_payeer']);
+echo quote(app('data')->settings['def_payee_additionalkey_payeer']);
 echo '\' class=inpts size=30></td>
 </tr>
 
@@ -177,12 +177,12 @@ echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your BitCoin Receive Address:</td>
  <td><input type=text name=\'def_payee_account_bitcoin\' value=\'';
-echo quote($settings['def_payee_account_bitcoin']);
+echo quote(app('data')->settings['def_payee_account_bitcoin']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your BitCoin QR Code Url:</td>
  <td><input type=text name=\'def_payee_qrcode_bitcoin\' value=\'';
-echo quote($settings['def_payee_qrcode_bitcoin']);
+echo quote(app('data')->settings['def_payee_qrcode_bitcoin']);
 echo '\' class=inpts size=30></td>
 </tr>
 
@@ -192,17 +192,17 @@ echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your e-gold account number:</td>
  <td><input type=text name=\'def_payee_account\' value=\'';
-echo quote($settings['def_payee_account']);
+echo quote(app('data')->settings['def_payee_account']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your e-gold account name:</td>
  <td><input type=text name=\'def_payee_name\' value=\'';
-echo quote($settings['def_payee_name']);
+echo quote(app('data')->settings['def_payee_name']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Secret alternate password md5 hash:</td>
  <td><input type=text name=\'md5altphrase\' value=\'';
-echo quote($settings['md5altphrase']);
+echo quote(app('data')->settings['md5altphrase']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Alternate Password:</td>
@@ -228,17 +228,17 @@ if (file_exists('intgold_processing.php')) {
 echo '<tr>
  <td>Your INTGold account number:</td>
  <td><input type=text name=\'def_payee_account_intgold\' value=\'';
-echo quote($settings['def_payee_account_intgold']);
+echo quote(app('data')->settings['def_payee_account_intgold']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Password for MD5 verification:</td>
  <td><input type=text name=\'md5altphrase_intgold\' value=\'';
-echo quote($settings['md5altphrase_intgold']);
+echo quote(app('data')->settings['md5altphrase_intgold']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
       <td>INTGold PostUrl number:</td>
  <td><input type=text name=\'intgold_posturl\' value=\'';
-echo quote($settings['intgold_posturl']);
+echo quote(app('data')->settings['intgold_posturl']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
 <td colspan=2>&nbsp;<br><b>eeeCurrency settings</b></td>
@@ -258,17 +258,17 @@ if (file_exists('eeecurrency_processing.php')) {
 echo '<tr>
  <td>Your eeeCurrency account number:</td>
  <td><input type=text name=\'def_payee_account_eeecurrency\' value=\'';
-echo quote($settings['def_payee_account_eeecurrency']);
+echo quote(app('data')->settings['def_payee_account_eeecurrency']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Password for MD5 verification:</td>
  <td><input type=text name=\'md5altphrase_eeecurrency\' value=\'';
-echo quote($settings['md5altphrase_eeecurrency']);
+echo quote(app('data')->settings['md5altphrase_eeecurrency']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>eeeCurrency PostUrl number:</td>
  <td><input type=text name=\'eeecurrency_posturl\' value=\'';
-echo quote($settings['eeecurrency_posturl']);
+echo quote(app('data')->settings['eeecurrency_posturl']);
 echo '\' class=inpts size=30></td>
 </tr>
 <tr>
@@ -277,12 +277,12 @@ echo '\' class=inpts size=30></td>
 <tr>
  <td>Your Pecunix account:</td>
  <td><input type=text name=\'def_payee_account_pecunix\' value=\'';
-echo quote($settings['def_payee_account_pecunix']);
+echo quote(app('data')->settings['def_payee_account_pecunix']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Sdared Secret:</td>
  <td><input type=text name=\'md5altphrase_pecunix\' value=\'';
-echo quote($settings['md5altphrase_pecunix']);
+echo quote(app('data')->settings['md5altphrase_pecunix']);
 echo '\' class=inpts size=30></td>
 </tr>
 <tr>
@@ -303,28 +303,28 @@ if (file_exists('stormpay_processing.php')) {
 echo '<tr>
  <td>Your stormpay account name:</td>
  <td><input type=text name=\'def_payee_account_stormpay\' value=\'';
-echo quote($settings['def_payee_account_stormpay']);
+echo quote(app('data')->settings['def_payee_account_stormpay']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Secret Code:</td>
  <td><input type=text name=\'md5altphrase_stormpay\' value=\'';
-echo quote($settings['md5altphrase_stormpay']);
+echo quote(app('data')->settings['md5altphrase_stormpay']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
       <td>IPN url:</td>
  <td><input type=text name=\'stormpay_posturl\' value=\'';
-echo quote($settings['stormpay_posturl']);
+echo quote(app('data')->settings['stormpay_posturl']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td colspan=2><input type=checkbox name=dec_stormpay_fee value=1 ';
-echo $settings['dec_stormpay_fee'] == 1 ? 'checked' : '';
+echo app('data')->settings['dec_stormpay_fee'] == 1 ? 'checked' : '';
 echo '> Decrease stormpay fee (6.9% plus 0.69)</td>
 </tr><tr>
  <td colspan=2>&nbsp;<br><b>e-Bullion settings</td>
 </tr><tr>
  <td>GPG Path:</td>
  <td><input type=text name=\'gpg_path\' value=\'';
-echo quote($settings['gpg_path']);
+echo quote(app('data')->settings['gpg_path']);
 echo '\' class=inpts size=30> ';
 echo $gpg_version != '' ? 'Version: '.$gpg_version : '';
 echo '</td>
@@ -332,22 +332,22 @@ echo '</td>
 if ($gpg_version != '') {
     echo ' <td>Your e-Bullion account ID:</td>
  <td><input type=text name=\'def_payee_account_ebullion\' value=\'';
-    echo quote($settings['def_payee_account_ebullion']);
+    echo quote(app('data')->settings['def_payee_account_ebullion']);
     echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your e-Bullion account Name:</td>
  <td><input type=text name=\'def_payee_name_ebullion\' value=\'';
-    echo quote($settings['def_payee_name_ebullion']);
+    echo quote(app('data')->settings['def_payee_name_ebullion']);
     echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>GPG Passphrase:</td>
  <td><input type=text name=\'md5altphrase_ebullion\' value=\'';
-    echo quote($settings['md5altphrase_ebullion']);
+    echo quote(app('data')->settings['md5altphrase_ebullion']);
     echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>GPG key ID:</td>
  <td><input type=text name=\'ebullion_keyID\' value=\'';
-    echo quote($settings['ebullion_keyID']);
+    echo quote(app('data')->settings['ebullion_keyID']);
     echo '\' class=inpts size=30></td>
 </tr><tr>
  <td colspan=2>';
@@ -361,10 +361,10 @@ if ($gpg_version != '') {
         Unpack the archive onto your local computer and choose the next files in the fields below:<br>
         <table cellspacing=0 cellpadding=2 border=0>
          <tr><td>atip.pl :</td><td><input type=file name=atip_pl class=inpts></td><td>';
-    echo ($settings['def_payee_account_ebullion'] and $settings['md5altphrase_ebullion']) ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
+    echo (app('data')->settings['def_payee_account_ebullion'] and app('data')->settings['md5altphrase_ebullion']) ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
     echo '</td></tr>
          <tr><td>status.php :</td><td><input type=file name=status_php class=inpts></td><td>';
-    echo $settings['ebullion_keyID'] ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
+    echo app('data')->settings['ebullion_keyID'] ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
     echo '</td></tr>
          <tr><td>pubring.gpg :</td><td><input type=file name=pubring_gpg class=inpts></td><td>';
     echo is_file(storage_path('tmpl_c').'/pubring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
@@ -400,7 +400,7 @@ if (function_exists('curl_init')) {
 </tr><tr>
  <td>Your PayPal account e-mail:</td>
  <td><input type=text name=\'def_payee_account_paypal\' value=\'';
-    echo quote($settings['def_payee_account_paypal']);
+    echo quote(app('data')->settings['def_payee_account_paypal']);
     echo '\' class=inpts size=30></td>
 </tr><tr>
       <td colspan=2>
@@ -421,12 +421,12 @@ echo ' <td colspan=2>&nbsp;<br><b>GoldMoney account settings:</b></td>
 </tr><tr>
  <td>Your GoldMoney Holding Number:</td>
  <td><input type=text name=\'def_payee_account_goldmoney\' value=\'';
-echo quote($settings['def_payee_account_goldmoney']);
+echo quote(app('data')->settings['def_payee_account_goldmoney']);
 echo '\' class=inpts size=30></td>
 </tr><tr>
  <td>Your GoldMoney Secret Key:</td>
  <td><input type=text name=\'md5altphrase_goldmoney\' value=\'';
-echo quote($settings['md5altphrase_goldmoney']);
+echo quote(app('data')->settings['md5altphrase_goldmoney']);
 echo '\' class=inpts size=30></td>
 </tr>
 -->
@@ -479,9 +479,9 @@ echo '</td>
  <td>';
 echo '<s';
 echo 'elect name=deny_registration class=inpts><option value=1 ';
-echo $settings['deny_registration'] == 1 ? 'selected' : '';
+echo app('data')->settings['deny_registration'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['deny_registration'] == 0 ? 'selected' : '';
+echo app('data')->settings['deny_registration'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 <tr>
@@ -489,15 +489,15 @@ echo '>No</select></td>
  <td>';
 echo '<s';
 echo 'elect name=use_opt_in class=inpts><option value=1 ';
-echo $settings['use_opt_in'] == 1 ? 'selected' : '';
+echo app('data')->settings['use_opt_in'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['use_opt_in'] == 0 ? 'selected' : '';
+echo app('data')->settings['use_opt_in'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 <tr>
  <td>Opt-in e-mail:</td>
  <td><input type=text name=opt_in_email value=\'';
-echo quote($settings['opt_in_email']);
+echo quote(app('data')->settings['opt_in_email']);
 echo '\' class=inpts size=30>
 </tr>
 <tr>
@@ -505,39 +505,39 @@ echo '\' class=inpts size=30>
  <td>';
 echo '<s';
 echo 'elect name=use_user_location class=inpts><option value=1 ';
-echo $settings['use_user_location'] == 1 ? 'selected' : '';
+echo app('data')->settings['use_user_location'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['use_user_location'] == 0 ? 'selected' : '';
+echo app('data')->settings['use_user_location'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 <tr>
  <td>Minimal user password length:</td>
  <td><input type=text name=min_user_password_length value=\'';
-echo quote($settings['min_user_password_length']);
+echo quote(app('data')->settings['min_user_password_length']);
 echo '\' class=inpts size=6>
 </tr>
 <tr>
  <td>System e-mail:</td>
  <td><input type=text name=system_email value=\'';
-echo quote($settings['system_email']);
+echo quote(app('data')->settings['system_email']);
 echo '\' class=inpts size=30>
 </tr><tr>
  <td>Enable Calculator:</td>
  <td>';
 echo '<s';
 echo 'elect name=enable_calculator class=inpts><option value=1 ';
-echo $settings['enable_calculator'] == 1 ? 'selected' : '';
+echo app('data')->settings['enable_calculator'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['enable_calculator'] == 0 ? 'selected' : '';
+echo app('data')->settings['enable_calculator'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Use double entry accounting:</td>
  <td>';
 echo '<s';
 echo 'elect name=use_history_balance_mode class=inpts><option value=1 ';
-echo $settings['use_history_balance_mode'] == 1 ? 'selected' : '';
+echo app('data')->settings['use_history_balance_mode'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['use_history_balance_mode'] == 0 ? 'selected' : '';
+echo app('data')->settings['use_history_balance_mode'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Redirect to HTTPS:</td>
@@ -546,9 +546,9 @@ echo '>No</select></td>
    <td>';
 echo '<s';
 echo 'elect name=redirect_to_https class=inpts><option value=1 ';
-echo $settings['redirect_to_https'] == 1 ? 'selected' : '';
+echo app('data')->settings['redirect_to_https'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['redirect_to_https'] == 0 ? 'selected' : '';
+echo app('data')->settings['redirect_to_https'] == 0 ? 'selected' : '';
 echo '>No</select></td>
    <td style="padding-left:5px">';
 echo '<s';
@@ -557,17 +557,17 @@ echo 'mall>Do not change this option if you don\'t exactly know how does it work
 </tr><tr>
  <td>Withdrawal Fee (%):</td>
  <td><input type=text name=withdrawal_fee value=\'';
-echo quote($settings['withdrawal_fee']);
+echo quote(app('data')->settings['withdrawal_fee']);
 echo '\' class=inpts size=6></td>
 </tr><tr>
  <td>Minimal Withdrawal Fee ($):</td>
  <td><input type=text name=withdrawal_fee_min value=\'';
-echo quote($settings['withdrawal_fee_min']);
+echo quote(app('data')->settings['withdrawal_fee_min']);
 echo '\' class=inpts size=6></td>
 </tr><tr>
  <td>Minimal Withdrawal Amount ($):</td>
  <td><input type=text name=min_withdrawal_amount value=\'';
-echo quote($settings['min_withdrawal_amount']);
+echo quote(app('data')->settings['min_withdrawal_amount']);
 echo '\' class=inpts size=6></td>
 </tr>
       <td colspan=2>
@@ -594,27 +594,27 @@ echo '</td>
  <td>';
 echo '<s';
 echo 'elect name=usercanaccesswap class=inpts><option value=1 ';
-echo $settings['accesswap'] == 1 ? 'selected' : '';
+echo app('data')->settings['accesswap'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['accesswap'] == 0 ? 'selected' : '';
+echo app('data')->settings['accesswap'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Users should use a transaction code to withdraw:</td>
  <td>';
 echo '<s';
 echo 'elect name=use_transaction_code class=inpts><option value=1 ';
-echo $settings['use_transaction_code'] == 1 ? 'selected' : '';
+echo app('data')->settings['use_transaction_code'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['use_transaction_code'] == 0 ? 'selected' : '';
+echo app('data')->settings['use_transaction_code'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Use confirmation code when account update:</td>
  <td>';
 echo '<s';
 echo 'elect name=account_update_confirmation class=inpts><option value=1 ';
-echo $settings['account_update_confirmation'] == 1 ? 'selected' : '';
+echo app('data')->settings['account_update_confirmation'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['account_update_confirmation'] == 0 ? 'selected' : '';
+echo app('data')->settings['account_update_confirmation'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 
@@ -623,9 +623,9 @@ echo '>No</select></td>
  <td>';
 echo '<s';
 echo 'elect name=usercanchangeegoldacc class=inpts><option value=1 ';
-echo $settings['usercanchangeegoldacc'] == 1 ? 'selected' : '';
+echo app('data')->settings['usercanchangeegoldacc'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['usercanchangeegoldacc'] == 0 ? 'selected' : '';
+echo app('data')->settings['usercanchangeegoldacc'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 
@@ -634,9 +634,9 @@ echo '>No</select></td>
  <td>';
 echo '<s';
 echo 'elect name=usercanchangeperfectmoneyacc class=inpts><option value=1 ';
-echo $settings['usercanchangeperfectmoneyacc'] == 1 ? 'selected' : '';
+echo app('data')->settings['usercanchangeperfectmoneyacc'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['usercanchangeperfectmoneyacc'] == 0 ? 'selected' : '';
+echo app('data')->settings['usercanchangeperfectmoneyacc'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 
@@ -645,41 +645,41 @@ echo '>No</select></td>
  <td>';
 echo '<s';
 echo 'elect name=usercanchangeemail class=inpts><option value=1 ';
-echo $settings['usercanchangeemail'] == 1 ? 'selected' : '';
+echo app('data')->settings['usercanchangeemail'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['usercanchangeemail'] == 0 ? 'selected' : '';
+echo app('data')->settings['usercanchangeemail'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
       <td>Notify user of his profile change:</td>
  <td>';
 echo '<s';
 echo 'elect name=sendnotify_when_userinfo_changed class=inpts><option value=1 ';
-echo $settings['sendnotify_when_userinfo_changed'] == 1 ? 'selected' : '';
+echo app('data')->settings['sendnotify_when_userinfo_changed'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['sendnotify_when_userinfo_changed'] == 0 ? 'selected' : '';
+echo app('data')->settings['sendnotify_when_userinfo_changed'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Allow internal transfer:</td>
  <td>';
 echo '<s';
 echo 'elect name=internal_transfer_enabled class=inpts><option value=1 ';
-echo $settings['internal_transfer_enabled'] == 1 ? 'selected' : '';
+echo app('data')->settings['internal_transfer_enabled'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['internal_transfer_enabled'] == 0 ? 'selected' : '';
+echo app('data')->settings['internal_transfer_enabled'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Allow Deposit to Account:</td>
  <td>';
 echo '<s';
 echo 'elect name=use_add_funds class=inpts><option value=1 ';
-echo $settings['use_add_funds'] == 1 ? 'selected' : '';
+echo app('data')->settings['use_add_funds'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['use_add_funds'] == 0 ? 'selected' : '';
+echo app('data')->settings['use_add_funds'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Max daily withdraw:</td>
  <td><input type=text name=max_daily_withdraw class=inpts value=\'';
-echo sprintf('%0.2f', $settings['max_daily_withdraw']);
+echo sprintf('%0.2f', app('data')->settings['max_daily_withdraw']);
 echo '\' style=\'text-align: right\'> ';
 echo '<s';
 echo 'mall>(0 for unlimited)</small></td>
@@ -705,51 +705,51 @@ echo '      </td>
  <td>';
 echo '<s';
 echo 'elect name=graph_validation class=inpts><option value=1 ';
-echo $settings['graph_validation'] == 1 ? 'selected' : '';
+echo app('data')->settings['graph_validation'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['graph_validation'] == 0 ? 'selected' : '';
+echo app('data')->settings['graph_validation'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
       <td>Number of characters in the turing image:</td>
  <td><input type=text name=graph_max_chars value="';
-echo $settings['graph_max_chars'];
+echo app('data')->settings['graph_max_chars'];
 echo '" class=inpts size=10></td>
 </tr><tr>
  <td colspan=2><input type=checkbox name=use_number_validation_number value=1 ';
-echo $settings['use_number_validation_number'] == 1 ? 'checked' : '';
+echo app('data')->settings['use_number_validation_number'] == 1 ? 'checked' : '';
 echo '> Show numbers only in the validation image</td>
 </tr><tr>
  <td>Turing image text color:</td>
  <td><input type=text name=graph_text_color value="';
-echo $settings['graph_text_color'];
+echo app('data')->settings['graph_text_color'];
 echo '" class=inpts size=10></td>
 </tr><tr>
  <td>Turing image bg color:</td>
  <td><input type=text name=graph_bg_color value="';
-echo $settings['graph_bg_color'];
+echo app('data')->settings['graph_bg_color'];
 echo '" class=inpts size=10></td>
 </tr>';
-if ((function_exists('imagettfbbox') or $settings['demomode'] == 1)) {
+if ((function_exists('imagettfbbox') or app('data')->settings['demomode'] == 1)) {
     echo '<tr>
  <td>Use advanced turing verification:</td>
  <td>';
     echo '<s';
     echo 'elect name=advanced_graph_validation class=inpts><option value=1 ';
-    echo $settings['advanced_graph_validation'] == 1 ? 'selected' : '';
+    echo app('data')->settings['advanced_graph_validation'] == 1 ? 'selected' : '';
     echo '>Yes<option value=0 ';
-    echo $settings['advanced_graph_validation'] == 0 ? 'selected' : '';
+    echo app('data')->settings['advanced_graph_validation'] == 0 ? 'selected' : '';
     echo '>No</select></td>
 </tr>
 <tr>
  <td>Font minimal size:</td>
  <td><input type=text name=advanced_graph_validation_min_font_size value="';
-    echo $settings['advanced_graph_validation_min_font_size'];
+    echo app('data')->settings['advanced_graph_validation_min_font_size'];
     echo '" class=inpts size=10></td>
 </tr>
 <tr>
  <td>Font maximal size:</td>
  <td><input type=text name=advanced_graph_validation_max_font_size value="';
-    echo $settings['advanced_graph_validation_max_font_size'];
+    echo app('data')->settings['advanced_graph_validation_max_font_size'];
     echo '" class=inpts size=10></td>
 </tr>';
 }
@@ -778,14 +778,14 @@ echo '      </td>
  <td>';
 echo '<s';
 echo 'elect name=brute_force_handler class=inpts><option value=1 ';
-echo $settings['brute_force_handler'] == 1 ? 'selected' : '';
+echo app('data')->settings['brute_force_handler'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['brute_force_handler'] == 0 ? 'selected' : '';
+echo app('data')->settings['brute_force_handler'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr><tr>
  <td>Max invalid tries:</td>
  <td><input type=text name=brute_force_max_tries value="';
-echo $settings['brute_force_max_tries'];
+echo app('data')->settings['brute_force_max_tries'];
 echo '" class=inpts size=10></td>
 </tr><tr>
       <td colspan=2>
@@ -813,12 +813,12 @@ echo '</td>
 </tr><tr>
  <td>System time:</td>
  <td>';
-echo date('dS of F Y h:i:s A', time() + $settings['time_dif'] * 60 * 60);
+echo date('dS of F Y h:i:s A', time() + app('data')->settings['time_dif'] * 60 * 60);
 echo '</td>
 </tr><tr>
  <td>Difference:</td>
  <td><input type=text name=time_dif value="';
-echo $settings['time_dif'];
+echo app('data')->settings['time_dif'];
 echo '" class=inpts size=10> hours</td>
 </tr><tr>
       <td colspan=2>
@@ -840,9 +840,9 @@ echo '</td>
  <td>';
 echo '<s';
 echo 'elect name=use_alternative_passphrase class=inpts><option value=1 ';
-echo $settings['use_alternative_passphrase'] == 1 ? 'selected' : '';
+echo app('data')->settings['use_alternative_passphrase'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
-echo $settings['use_alternative_passphrase'] == 0 ? 'selected' : '';
+echo app('data')->settings['use_alternative_passphrase'] == 0 ? 'selected' : '';
 echo '>No</select></td>
 </tr>
 <tr>
@@ -867,7 +867,7 @@ echo '      </td>
 <tr>
  <td>&nbsp;</td>
 </tr>';
-if ($settings['use_alternative_passphrase']) {
+if (app('data')->settings['use_alternative_passphrase']) {
     echo '<tr>
  <td>Alternative Passphrase: </td>
  <td><input type=password name="alternative_passphrase" value="" class=inpts size=30></td>

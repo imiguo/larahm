@@ -13,34 +13,34 @@ use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
 
 $id = $userinfo['id'];
-  if ($frm['display'] == 'ok') {
+  if (app('data')->frm['display'] == 'ok') {
       $smarty->assign('exchanged', 1);
       $smarty->display('exchange_preview.tpl');
       throw new EmptyException();
   }
 
-  if ($frm['action'] == 'preview') {
-      $from = intval($frm['from']);
+  if (app('data')->frm['action'] == 'preview') {
+      $from = intval(app('data')->frm['from']);
       $q = 'select sum(actual_amount) as sm from hm2_history where user_id = '.$id.' and ec = '.$from;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $row['sm'] = floor($row['sm'] * 100) / 100;
-      if ((!isset($exchange_systems[$from]) or ($exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
+      if ((!isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           $smarty->assign('error', 'no_from');
           $smarty->display('exchange_preview.tpl');
           throw new EmptyException();
       }
 
-      $to = intval($frm[''.'to_'.$from]);
-      if (((($frm['to'] === '' or !isset($exchange_systems[$to])) or $exchange_systems[$to]['status'] != 1) or $to == $from)) {
+      $to = intval(app('data')->frm[''.'to_'.$from]);
+      if ((((app('data')->frm['to'] === '' or !isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1) or $to == $from)) {
           $smarty->assign('error', 'no_to');
           $smarty->display('exchange_preview.tpl');
           throw new EmptyException();
       }
 
-      $frm[''.'amount_'.$from] = str_replace(',', '.', $frm[''.'amount_'.$from]);
-      $amount = sprintf('%.02f', $frm[''.'amount_'.$from]);
-      if ($settings['hold_only_first_days'] == 1) {
+      app('data')->frm[''.'amount_'.$from] = str_replace(',', '.', app('data')->frm[''.'amount_'.$from]);
+      $amount = sprintf('%.02f', app('data')->frm[''.'amount_'.$from]);
+      if (app('data')->settings['hold_only_first_days'] == 1) {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
       } else {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id ';
@@ -98,36 +98,36 @@ $id = $userinfo['id'];
       }
 
       $smarty->assign('from', $from);
-      $smarty->assign('from_name', $exchange_systems[$from]['name']);
+      $smarty->assign('from_name', app('data')->exchange_systems[$from]['name']);
       $smarty->assign('to', $to);
-      $smarty->assign('to_name', $exchange_systems[$to]['name']);
+      $smarty->assign('to_name', app('data')->exchange_systems[$to]['name']);
       $smarty->assign('amount', $amount);
       $smarty->assign('exchange_amount', $exchange_amount);
       $smarty->display('exchange_preview.tpl');
       throw new EmptyException();
   }
 
-  if ($frm['action'] == 'exchange') {
-      $from = intval($frm['from']);
+  if (app('data')->frm['action'] == 'exchange') {
+      $from = intval(app('data')->frm['from']);
       $q = 'select sum(actual_amount) as sm from hm2_history where user_id = '.$id.' and ec = '.$from;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $row['sm'] = floor($row['sm'] * 100) / 100;
-      if ((!isset($exchange_systems[$from]) or ($exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
+      if ((!isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           $smarty->assign('error', 'no_from');
           $smarty->display('exchange_preview.tpl');
           throw new EmptyException();
       }
 
-      $to = intval($frm['to']);
-      if ((($frm['to'] == '' or !isset($exchange_systems[$to])) or $exchange_systems[$to]['status'] != 1)) {
+      $to = intval(app('data')->frm['to']);
+      if (((app('data')->frm['to'] == '' or !isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1)) {
           $smarty->assign('error', 'no_to');
           $smarty->display('exchange_preview.tpl');
           throw new EmptyException();
       }
 
-      $amount = sprintf('%.02f', $frm['amount']);
-      if ($settings['hold_only_first_days'] == 1) {
+      $amount = sprintf('%.02f', app('data')->frm['amount']);
+      if (app('data')->settings['hold_only_first_days'] == 1) {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
       } else {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id ';
@@ -184,8 +184,8 @@ $id = $userinfo['id'];
           throw new EmptyException();
       }
 
-      $from_name = $exchange_systems[$from]['name'];
-      $to_name = $exchange_systems[$to]['name'];
+      $from_name = app('data')->exchange_systems[$from]['name'];
+      $to_name = app('data')->exchange_systems[$to]['name'];
       $q = 'insert into hm2_history set
              user_id = '.$id.',
              amount = -'.$amount.',
@@ -209,9 +209,9 @@ $id = $userinfo['id'];
       $info = [];
       $info['username'] = $userinfo['username'];
       $info['name'] = $userinfo['name'];
-      $info['currency_from'] = $exchange_systems[$from]['name'];
+      $info['currency_from'] = app('data')->exchange_systems[$from]['name'];
       $info['amount_from'] = number_format($amount, 2);
-      $info['currency_to'] = $exchange_systems[$to]['name'];
+      $info['currency_to'] = app('data')->exchange_systems[$to]['name'];
       $info['amount_to'] = number_format($exchange_amount, 2);
       $q = 'select email from hm2_users where id = 1';
       $sth = db_query($q);
@@ -220,8 +220,8 @@ $id = $userinfo['id'];
           $admin_email = $row['email'];
       }
 
-      send_template_mail('exchange_admin_notification', $admin_email, $settings['system_email'], $info);
-      send_template_mail('exchange_user_notification', $userinfo[email], $settings['system_email'], $info);
+      send_template_mail('exchange_admin_notification', $admin_email, app('data')->settings['system_email'], $info);
+      send_template_mail('exchange_user_notification', $userinfo[email], app('data')->settings['system_email'], $info);
       throw new RedirectException('/?a=exchange&display=ok');
   }
 
@@ -237,18 +237,18 @@ $id = $userinfo['id'];
 
       $tmp_amounts[$row['ec']] = $row['sm'];
       $tos = [];
-      foreach ($exchange_systems as $to => $data) {
+      foreach (app('data')->exchange_systems as $to => $data) {
           $q1 = 'select * from hm2_exchange_rates where sfrom = '.$row['ec'].' and sto = '.$to;
           $sth1 = db_query($q1);
           $row1 = mysql_fetch_array($sth1);
           $row1['percent'] = intval($row1['percent']);
-          if (($row1['percent'] != 100 and $exchange_systems[$to]['status'])) {
-              array_push($tos, ['to' => $to, 'ec_name' => $exchange_systems[$to]['name'], 'percent' => $row1['percent']]);
+          if (($row1['percent'] != 100 and app('data')->exchange_systems[$to]['status'])) {
+              array_push($tos, ['to' => $to, 'ec_name' => app('data')->exchange_systems[$to]['name'], 'percent' => $row1['percent']]);
               continue;
           }
       }
 
-      if ($settings['hold_only_first_days'] == 1) {
+      if (app('data')->settings['hold_only_first_days'] == 1) {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
       } else {
           $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id ';
@@ -269,7 +269,7 @@ $id = $userinfo['id'];
           }
       }
 
-      array_push($balances, ['balance' => sprintf('%.02f', $row['sm'] - $on_hold), 'ec' => $row['ec'], 'ec_name' => $exchange_systems[$row['ec']]['name'], 'tos' => $tos]);
+      array_push($balances, ['balance' => sprintf('%.02f', $row['sm'] - $on_hold), 'ec' => $row['ec'], 'ec_name' => app('data')->exchange_systems[$row['ec']]['name'], 'tos' => $tos]);
   }
 
   $smarty->assign('ec', $balances);
@@ -281,13 +281,13 @@ $id = $userinfo['id'];
   }
 
   $exchange = [];
-  foreach ($exchange_systems as $from => $data) {
+  foreach (app('data')->exchange_systems as $from => $data) {
       if ((!$data['status'] and sprintf('%.02f', $tmp_amounts[$from]) <= 0)) {
           continue;
       }
 
       $tos = [];
-      foreach ($exchange_systems as $to => $data) {
+      foreach (app('data')->exchange_systems as $to => $data) {
           if ((!$data['status'] and sprintf('%.02f', $tmp_amounts[$to]) <= 0)) {
               continue;
           }
