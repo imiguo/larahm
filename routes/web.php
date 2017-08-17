@@ -21,11 +21,6 @@ Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), function () {
     return hanlder_app($app_file);
 });
 
-Route::match(['get', 'post'], '/test', function () {
-    $app_file = app_path('Hm').'/http/test.php';
-    return hanlder_app($app_file);
-});
-
 Route::match(['get', 'post'], '/payments/{payment}', function ($payment) {
     $payments = [
         'payeer',
