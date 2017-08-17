@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use mysqli;
 use Smarty;
 use App\DataContainer;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,8 +35,8 @@ class AppServiceProvider extends ServiceProvider
                 $smarty = new Smarty();
                 $smarty->template_dir = tmpl_path();
                 $smarty->compile_dir = storage_path('tmpl_c');
-                $smarty->left_delimiter = "{%";
-                $smarty->right_delimiter = "%}";
+                $smarty->left_delimiter = '{%';
+                $smarty->right_delimiter = '%}';
                 if (is_production()) {
                     $smarty->compile_check = false;
                     $smarty->force_compile = false;
@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
                     $smarty->debugging = env('smarty_debug');
                 }
 
-                $smarty->registerPlugin("block", "blade", "smarty_blade_block");
+                $smarty->registerPlugin('block', 'blade', 'smarty_blade_block');
 
                 return $smarty;
             });

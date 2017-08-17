@@ -52,7 +52,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --recipient A20077\\@e-bullion.com --local-user '.app('data')->settings['def_payee_account_ebullion'].(''.'\\@e-bullion.com --output '.$outfile.' --sign --encrypt '.$infile.' 2>&1');
       $buf = '';
       $fp = popen(''.$gpg_command, 'r');
-      while (!feof($fp)) {
+      while (! feof($fp)) {
           $buf .= fgets($fp, 4096);
       }
       pclose($fp);
@@ -89,7 +89,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       $buf = '';
       $keyID = '';
       $fp = popen(''.$gpg_command, 'r');
-      while (!feof($fp)) {
+      while (! feof($fp)) {
           $buf = fgets($fp, 4096);
           $pos = strstr($buf, 'key ID');
           if (0 < strlen($pos)) {

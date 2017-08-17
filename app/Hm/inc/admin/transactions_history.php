@@ -563,14 +563,13 @@ function func4() {
               echo '   ';
               echo $i;
               continue;
-          } else {
-              echo '   <a href="javascript:go(\'';
-              echo $i;
-              echo '\')">';
-              echo $i;
-              echo '</a>';
-              continue;
           }
+          echo '   <a href="javascript:go(\'';
+          echo $i;
+          echo '\')">';
+          echo $i;
+          echo '</a>';
+          continue;
       }
   }
 

@@ -83,12 +83,12 @@ $gpg_command = 'echo \''.$passphrase.'\' | '.$gpg_path.' '.$gpg_options.' --outp
 $buf = '';
 $keyID = '';
 $fp = @popen(''.$gpg_command, 'r');
-if (!$fp) {
+if (! $fp) {
     echo 'GPG not found';
     throw new EmptyException();
 }
 
-while (!feof($fp)) {
+while (! feof($fp)) {
     $buf = fgets($fp, 4096);
     $pos = strstr($buf, 'key ID');
     if (0 < strlen($pos)) {

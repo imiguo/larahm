@@ -86,7 +86,7 @@ echo '<b>Deposit Details:</b><br><br>
  <td colspan=2><br><b>Transaction Information:</b></td>
 </tr>';
       $infofields = unserialize($row['fields']);
-      if (!app('data')->exchange_systems[$row['ec']]) {
+      if (! app('data')->exchange_systems[$row['ec']]) {
           $row['ec'] = 'deleted';
           foreach ($infofields as $id => $name) {
               echo '       <tr>

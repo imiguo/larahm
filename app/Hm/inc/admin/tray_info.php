@@ -10,7 +10,7 @@
  */
 
 $q = 'select count(*) as col from hm2_users where id > 1';
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   $qmembers = 0;

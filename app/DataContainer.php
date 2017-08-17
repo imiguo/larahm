@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Support\Arr;
 use ArrayAccess;
+use Illuminate\Support\Arr;
 
 class DataContainer implements ArrayAccess
 {
@@ -17,7 +17,8 @@ class DataContainer implements ArrayAccess
     /**
      * Create a new DataContainer instance.
      *
-     * @param  array|object    $attributes
+     * @param array|object $attributes
+     *
      * @return void
      */
     public function __construct($attributes = [])
@@ -40,7 +41,8 @@ class DataContainer implements ArrayAccess
     /**
      * Checks if a key exists.
      *
-     * @param  string|array  $key
+     * @param string|array $key
+     *
      * @return bool
      */
     public function exists($key)
@@ -53,7 +55,8 @@ class DataContainer implements ArrayAccess
     /**
      * Checks if a key is present and not null.
      *
-     * @param  string|array  $key
+     * @param string|array $key
+     *
      * @return bool
      */
     public function has($key)
@@ -66,8 +69,9 @@ class DataContainer implements ArrayAccess
     /**
      * Get an item from the DataContainer.
      *
-     * @param  string  $key
-     * @param  mixed  $default
+     * @param string $key
+     * @param mixed  $default
+     *
      * @return mixed
      */
     public function get($key, $default = null)
@@ -78,8 +82,9 @@ class DataContainer implements ArrayAccess
     /**
      * Get the value of a given key and then forget it.
      *
-     * @param  string  $key
-     * @param  string  $default
+     * @param string $key
+     * @param string $default
+     *
      * @return mixed
      */
     public function pull($key, $default = null)
@@ -90,7 +95,8 @@ class DataContainer implements ArrayAccess
     /**
      * Replace the given DataContainer attributes entirely.
      *
-     * @param  array  $attributes
+     * @param array $attributes
+     *
      * @return void
      */
     public function replace(array $attributes)
@@ -101,8 +107,9 @@ class DataContainer implements ArrayAccess
     /**
      * Put a key / value pair or array of key / value pairs in the DataContainer.
      *
-     * @param  string|array  $key
-     * @param  mixed       $value
+     * @param string|array $key
+     * @param mixed        $value
+     *
      * @return void
      */
     public function put($key, $value = null)
@@ -119,8 +126,9 @@ class DataContainer implements ArrayAccess
     /**
      * Push a value onto a DataContainer array.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function push($key, $value)
@@ -135,8 +143,9 @@ class DataContainer implements ArrayAccess
     /**
      * Increment the value of an item in the DataContainer.
      *
-     * @param  string  $key
-     * @param  int  $amount
+     * @param string $key
+     * @param int    $amount
+     *
      * @return mixed
      */
     public function increment($key, $amount = 1)
@@ -149,8 +158,9 @@ class DataContainer implements ArrayAccess
     /**
      * Decrement the value of an item in the DataContainer.
      *
-     * @param  string  $key
-     * @param  int  $amount
+     * @param string $key
+     * @param int    $amount
+     *
      * @return int
      */
     public function decrement($key, $amount = 1)
@@ -161,7 +171,8 @@ class DataContainer implements ArrayAccess
     /**
      * Remove one or many items from the DataContainer.
      *
-     * @param  string|array  $keys
+     * @param string|array $keys
+     *
      * @return void
      */
     public function forget($keys)
@@ -182,7 +193,8 @@ class DataContainer implements ArrayAccess
     /**
      * Determine if the given offset exists.
      *
-     * @param  string  $offset
+     * @param string $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -193,7 +205,8 @@ class DataContainer implements ArrayAccess
     /**
      * Get the value for a given offset.
      *
-     * @param  string  $offset
+     * @param string $offset
+     *
      * @return mixed
      */
     public function &offsetGet($offset)
@@ -204,8 +217,9 @@ class DataContainer implements ArrayAccess
     /**
      * Set the value at the given offset.
      *
-     * @param  string  $offset
-     * @param  mixed   $value
+     * @param string $offset
+     * @param mixed  $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -216,7 +230,8 @@ class DataContainer implements ArrayAccess
     /**
      * Unset the value at the given offset.
      *
-     * @param  string  $offset
+     * @param string $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)
@@ -227,7 +242,8 @@ class DataContainer implements ArrayAccess
     /**
      * Dynamically retrieve the value of an attribute.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function &__get($key)
@@ -238,8 +254,9 @@ class DataContainer implements ArrayAccess
     /**
      * Dynamically set the value of an attribute.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function __set($key, $value)
@@ -250,7 +267,8 @@ class DataContainer implements ArrayAccess
     /**
      * Dynamically check if an attribute is set.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return bool
      */
     public function __isset($key)
@@ -261,7 +279,8 @@ class DataContainer implements ArrayAccess
     /**
      * Dynamically unset an attribute.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return void
      */
     public function __unset($key)

@@ -10,8 +10,8 @@
  */
 
 use App\Exceptions\EmptyException;
-use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;
 
 require app_path('Hm').'/lib/config.inc.php';
@@ -72,9 +72,8 @@ if (app('data')->frm['a'] == 'do_login') {
         throw new EmptyException($html);
     }
     throw new RedirectException('/?a=account');
-} else {
-    do_login_else($userinfo);
 }
+    do_login_else($userinfo);
 
 if (($userinfo['logged'] == 1 and $userinfo['should_count'] == 1)) {
     count_earning($userinfo['id']);
@@ -103,7 +102,7 @@ if ($userinfo['logged'] == 1) {
     $userinfo['balance'] = number_format(abs($balance), 2);
 }
 
-if ((((((app('data')->frm['a'] != 'show_validation_image' and !$userinfo['logged']) and extension_loaded('gd')) and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars']) and app('data')->frm['action'] != 'signup')) {
+if ((((((app('data')->frm['a'] != 'show_validation_image' and ! $userinfo['logged']) and extension_loaded('gd')) and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars']) and app('data')->frm['action'] != 'signup')) {
     $userinfo['validation_enabled'] = 1;
     $validation_number = gen_confirm_code(app('data')->settings['graph_max_chars'], 0);
     if (app('data')->settings['use_number_validation_number']) {

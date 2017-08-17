@@ -122,7 +122,7 @@ $u_id = sprintf('%d', app('data')->frm['u_id']);
               ++$q_other;
           }
 
-          if (!$parents) {
+          if (! $parents) {
               break;
           }
 

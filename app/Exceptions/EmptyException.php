@@ -3,9 +3,7 @@
 namespace App\Exceptions;
 
 /**
- * Class EmptyException
- *
- * @package \App\Exceptions
+ * Class EmptyException.
  */
 class EmptyException extends HmException
 {

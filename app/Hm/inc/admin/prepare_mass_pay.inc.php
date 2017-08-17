@@ -11,10 +11,10 @@
 
 use App\Exceptions\EmptyException;
 
-if (!is_array(app('data')->frm['pend'])) {
+if (! is_array(app('data')->frm['pend'])) {
     echo 'Please select withdraw requests first';
     throw new EmptyException();
-} else {
+}
     $ids = implode(', ', array_keys(app('data')->frm['pend']));
     $sum = 0;
     $q = 'select actual_amount from hm2_history where id in ('.$ids.') and ec in (0, 1, 2, 5, 8, 9)';
@@ -36,7 +36,6 @@ if (!is_array(app('data')->frm['pend'])) {
     }
 
     $amount = $sum;
-}
 
   echo ' <b>Mass Payment:</b><br>
 <br>';

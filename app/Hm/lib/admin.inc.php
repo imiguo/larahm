@@ -14,7 +14,6 @@ use App\Exceptions\RedirectException;
 
 function show_program_stat()
 {
-
     $login = quote(app('data')->frm['login']);
     $q = 'select * from hm2_users where id = 1 and username = \''.$login.'\' and stat_password <> \'\'';
     $sth = db_query($q);

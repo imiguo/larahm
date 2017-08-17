@@ -235,18 +235,17 @@ function reverce(flag)
           if ($page == $i) {
               echo ' ['.$i.'] ';
               continue;
-          } else {
-              echo ' <a href="?a=members&status=';
-              echo $qstatus;
-              echo '&q=';
-              echo app('data')->frm['q'];
-              echo '&p=';
-              echo $i;
-              echo '">';
-              echo $i;
-              echo '</a> ';
-              continue;
           }
+          echo ' <a href="?a=members&status=';
+          echo $qstatus;
+          echo '&q=';
+          echo app('data')->frm['q'];
+          echo '&p=';
+          echo $i;
+          echo '">';
+          echo $i;
+          echo '</a> ';
+          continue;
       }
 
       echo '</small></center>';
