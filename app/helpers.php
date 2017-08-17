@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\HmException;
+use Illuminate\Filesystem\Filesystem;
 
 if (!function_exists('mysql_query')) {
     function mysql_query($query)
@@ -100,6 +101,13 @@ if (! function_exists('hanlder_app')) {
     }
 }
 
+if (! function_exists('is_production')) {
+    function is_production()
+    {
+        return config('app.env') == 'production';
+    }
+}
+
 if (! function_exists('view_assign')) {
     function view_assign($key, $value)
     {
@@ -119,11 +127,38 @@ if (! function_exists('view_execute')) {
             'app_url' => env('APP_URL'),
         ];
         $view_data = array_merge($view_data, app('view_data')->all());
-        if (env('use_blade')) {
-            view($view)->with($view_data)->render();
-        } else {
-            app('smarty')->assign($view_data);
-            app('smarty')->display($view);
+
+        app('smarty')->assign($view_data);
+        $html = app('smarty')->fetch($view);
+        echo config('hm.auto_blade') ? blade_string($html, $view_data) : $html;
+    }
+}
+
+if (! function_exists('blade')) {
+    function blade($view, $data = [])
+    {
+        echo view($view, $data)->render();
+    }
+}
+
+if (! function_exists('blade_string')) {
+    function blade_string($string, $data = [])
+    {
+        $name = sha1($string);
+        $filesystem = app(Filesystem::class);
+        if (! view()->exists("_{$name}")) {
+            $filesystem->put(storage_path('blades')."/_{$name}.blade.php", $string);
+        }
+        return view("_{$name}", $data)->render();
+    }
+}
+
+if (! function_exists('smarty_blade_block')) {
+    function smarty_blade_block($params, $content, $smarty, &$repeat, $template)
+    {
+        if (!$repeat && $content) {
+            return blade_string($content, $params);
         }
     }
 }
+

@@ -1,6 +1,7 @@
 /node_modules
 /public/*
 /storage/*.key
+/storage/blades
 /vendor
 /.idea
 /.vagrant

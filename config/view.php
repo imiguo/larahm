@@ -14,7 +14,8 @@ return [
     */
 
     'paths' => [
-        resource_path('views'),
+        tmpl_path(),
+        storage_path('blades'),
     ],
 
     /*

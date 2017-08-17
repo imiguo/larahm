@@ -35,9 +35,18 @@ class AppServiceProvider extends ServiceProvider
                 $smarty = new Smarty();
                 $smarty->template_dir = tmpl_path();
                 $smarty->compile_dir = storage_path('tmpl_c');
-                $smarty->compile_check = true;
-                $smarty->force_compile = true;
-                $smarty->debugging = env('smarty_debug');
+                $smarty->left_delimiter = "{%";
+                $smarty->right_delimiter = "%}";
+                if (is_production()) {
+                    $smarty->compile_check = false;
+                    $smarty->force_compile = false;
+                } else {
+                    $smarty->compile_check = true;
+                    $smarty->force_compile = true;
+                    $smarty->debugging = env('smarty_debug');
+                }
+
+                $smarty->registerPlugin("block", "blade", "smarty_blade_block");
 
                 return $smarty;
             });
