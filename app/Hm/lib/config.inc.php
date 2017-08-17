@@ -49,21 +49,10 @@ $transtype = [
     'internal_transaction_spend'   => 'Spent on Internal Transaction',
     'internal_transaction_receive' => 'Received from Internal Transaction',
 ];
-app('data')->exchange_systems = [
-    0  => ['name' => 'e-gold', 'sfx' => 'egold'],
-    2  => ['name' => 'INTGold', 'sfx' => 'intgold'],
-    3  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney'],
-    4  => ['name' => 'StormPay', 'sfx' => 'stormpay'],
-    5  => ['name' => 'e-Bullion', 'sfx' => 'ebullion'],
-    6  => ['name' => 'PayPal', 'sfx' => 'paypal'],
-    7  => ['name' => 'GoldMoney', 'sfx' => 'goldmoney'],
-    8  => ['name' => 'eeeCurrency', 'sfx' => 'eeecurrency'],
-    9  => ['name' => 'Pecunix', 'sfx' => 'pecunix'],
-    10 => ['name' => 'Payeer', 'sfx' => 'payeer'],
-    11 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
-];
 
+app('data')->exchange_systems = config('hm.payments');
 app('data')->settings = get_settings();
+
 foreach (app('data')->exchange_systems as $id => $data) {
     if (isset(app('data')->settings['def_payee_account_'.$data['sfx']]) and app('data')->settings['def_payee_account_'.$data['sfx']] != '' and app('data')->settings['def_payee_account_'.$data['sfx']] != '0') {
         app('data')->exchange_systems[$id]['status'] = 1;
