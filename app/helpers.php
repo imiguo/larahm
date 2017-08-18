@@ -148,7 +148,7 @@ if (! function_exists('blade_string')) {
         $name = sha1($string);
         $filesystem = app(Filesystem::class);
         if (! view()->exists("_{$name}")) {
-            $filesystem->put(storage_path('blades')."/_{$name}.blade.php", $string);
+            $filesystem->put(config('hm.blade_path')."/_{$name}.blade.php", $string);
         }
 
         return view("_{$name}", $data)->render();
