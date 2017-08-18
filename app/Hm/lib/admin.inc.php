@@ -14,34 +14,19 @@ use App\Exceptions\RedirectException;
 
 function show_program_stat()
 {
-    $login = quote(app('data')->frm['login']);
-    $q = 'select * from hm2_users where id = 1 and username = \''.$login.'\' and stat_password <> \'\'';
-    $sth = db_query($q);
-    $flag = 0;
-    while ($row = mysql_fetch_array($sth)) {
-        if ($row['stat_password'] == md5(app('data')->frm['password'])) {
-            $flag = 1;
-            continue;
-        }
-    }
-
-    if ($flag == 0) {
-        echo '<center>Wrong login or password</center>';
+    if (app('data')->frm['page'] == 'members') {
+        include app_path('Hm').'/inc/admin/members_program.inc.php';
     } else {
-        if (app('data')->frm['page'] == 'members') {
-            include app_path('Hm').'/inc/admin/members_program.inc.php';
+        if (app('data')->frm['page'] == 'pendingwithdrawal') {
+            include app_path('Hm').'/inc/admin/pending_program.inc.php';
         } else {
-            if (app('data')->frm['page'] == 'pendingwithdrawal') {
-                include app_path('Hm').'/inc/admin/pending_program.inc.php';
+            if (app('data')->frm['page'] == 'whoonline') {
+                include app_path('Hm').'/inc/admin/whoonline_program.inc.php';
             } else {
-                if (app('data')->frm['page'] == 'whoonline') {
-                    include app_path('Hm').'/inc/admin/whoonline_program.inc.php';
+                if (app('data')->frm['page'] == 'TrayInfo') {
+                    include app_path('Hm').'/inc/admin/tray_info.php';
                 } else {
-                    if (app('data')->frm['page'] == 'TrayInfo') {
-                        include app_path('Hm').'/inc/admin/tray_info.php';
-                    } else {
-                        include app_path('Hm').'/inc/admin/main_program.inc.php';
-                    }
+                    include app_path('Hm').'/inc/admin/main_program.inc.php';
                 }
             }
         }

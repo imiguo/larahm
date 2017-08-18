@@ -21,13 +21,8 @@ require app_path('Hm').'/lib/admin.inc.php';
 $userinfo = [];
 $userinfo['logged'] = 0;
 
-/*
- * @action showprogramstat
- */
-if (app('data')->frm['a'] == 'showprogramstat') {
-    show_program_stat();
-    throw new EmptyException();
-}
+try_auth($userinfo);
+$username = $userinfo['username'];
 
 /*
  * @action logout
@@ -37,8 +32,13 @@ if (app('data')->frm['a'] == 'logout') {
     throw new RedirectException('/');
 }
 
-try_auth($userinfo);
-$username = $userinfo['username'];
+/*
+ * @action showprogramstat
+ */
+if (app('data')->frm['a'] == 'showprogramstat') {
+    show_program_stat();
+    throw new EmptyException();
+}
 
 /*
  * @action startup_bonus_set
