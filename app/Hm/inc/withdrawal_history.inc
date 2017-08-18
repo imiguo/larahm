@@ -111,4 +111,4 @@ $id = $userinfo['id'];
   view_assign('trans', $trans);
   view_assign('qtrans', sizeof($trans));
   view_assign('frm', app('data')->frm);
-  view_execute('withdrawal_history.tpl');
+  view_execute('withdrawal_history.blade.php');

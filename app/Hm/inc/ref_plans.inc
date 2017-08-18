@@ -32,4 +32,4 @@ $q = 'select max(percent) as percent from hm2_referal';
   }
 
   view_assign('ref_levels', $ref_levels);
-  view_execute('ref_plans.tpl');
+  view_execute('ref_plans.blade.php');

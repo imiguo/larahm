@@ -22,4 +22,4 @@ $activation_code = quote(app('data')->frm['code']);
   }
 
   view_assign('activated', $code_found);
-  view_execute('activate.tpl');
+  view_execute('activate.blade.php');

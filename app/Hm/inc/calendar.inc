@@ -23,7 +23,7 @@ $id = intval(app('data')->frm['type']);
   $trow = mysql_fetch_array($sth);
   if (!$trow) {
       view_assign('error', 'type_not_found');
-      view_execute('calendar_simple.tpl');
+      view_execute('calendar_simple.blade.php');
       throw new EmptyException();
   }
 
@@ -48,7 +48,7 @@ $id = intval(app('data')->frm['type']);
   $trow['min_deposit'] = $plans[0][min_deposit];
   view_assign('type', $trow);
   if ($trow['period'] == 'end') {
-      view_execute('calendar_simple.tpl');
+      view_execute('calendar_simple.blade.php');
   } else {
-      view_execute('calendar.tpl');
+      view_execute('calendar.blade.php');
   }

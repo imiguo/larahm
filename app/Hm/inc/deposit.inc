@@ -145,4 +145,4 @@ view_assign('plans', $plans);
 view_assign('qplans', sizeof($plans));
 view_assign('min_deposit', sprintf('%0.2f', $min_deposit));
 view_assign('compounding_available', $compounding_available);
-view_execute('deposit.tpl');
+view_execute('deposit.blade.php');

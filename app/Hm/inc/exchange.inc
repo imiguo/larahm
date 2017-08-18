@@ -15,7 +15,7 @@ use App\Exceptions\EmptyException;
 $id = $userinfo['id'];
   if (app('data')->frm['display'] == 'ok') {
       view_assign('exchanged', 1);
-      view_execute('exchange_preview.tpl');
+      view_execute('exchange_preview.blade.php');
       throw new EmptyException();
   }
 
@@ -27,14 +27,14 @@ $id = $userinfo['id'];
       $row['sm'] = floor($row['sm'] * 100) / 100;
       if ((!isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           view_assign('error', 'no_from');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       $to = intval(app('data')->frm[''.'to_'.$from]);
       if ((((app('data')->frm['to'] === '' or !isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1) or $to == $from)) {
           view_assign('error', 'no_to');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
@@ -63,19 +63,19 @@ $id = $userinfo['id'];
 
       if ($amount <= 0) {
           view_assign('error', 'no_amount');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       if ($row['sm'] < $amount) {
           view_assign('error', 'to_big_amount');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       if ($row['sm'] - $on_hold < $amount) {
           view_assign('error', 'on_hold');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
@@ -86,14 +86,14 @@ $id = $userinfo['id'];
       $percent /= 100;
       if (1 <= $percent) {
           view_assign('error', 'exchange_forbidden');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       $exchange_amount = sprintf('%.02f', (1 - $percent) * $amount);
       if ($exchange_amount <= 0) {
           view_assign('error', 'to_small_amount');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
@@ -103,7 +103,7 @@ $id = $userinfo['id'];
       view_assign('to_name', app('data')->exchange_systems[$to]['name']);
       view_assign('amount', $amount);
       view_assign('exchange_amount', $exchange_amount);
-      view_execute('exchange_preview.tpl');
+      view_execute('exchange_preview.blade.php');
       throw new EmptyException();
   }
 
@@ -115,14 +115,14 @@ $id = $userinfo['id'];
       $row['sm'] = floor($row['sm'] * 100) / 100;
       if ((!isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           view_assign('error', 'no_from');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       $to = intval(app('data')->frm['to']);
       if (((app('data')->frm['to'] == '' or !isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1)) {
           view_assign('error', 'no_to');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
@@ -150,19 +150,19 @@ $id = $userinfo['id'];
 
       if ($amount <= 0) {
           view_assign('error', 'no_amount');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       if ($row['sm'] < $amount) {
           view_assign('error', 'to_big_amount');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       if ($row['sm'] - $on_hold < $amount) {
           view_assign('error', 'on_hold');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
@@ -173,14 +173,14 @@ $id = $userinfo['id'];
       $percent /= 100;
       if (1 <= $percent) {
           view_assign('error', 'exchange_forbidden');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       $exchange_amount = sprintf('%.02f', (1 - $percent) * $amount);
       if ($exchange_amount <= 0) {
           view_assign('error', 'to_small_amount');
-          view_execute('exchange_preview.tpl');
+          view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
@@ -307,4 +307,4 @@ $id = $userinfo['id'];
   }
 
   view_assign('exchange', $exchange);
-  view_execute('exchange.tpl');
+  view_execute('exchange.blade.php');

@@ -16,7 +16,7 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         view_assign('h_id', -1);
         view_assign('amount', $amount);
         view_assign('amount_format', number_format(app('data')->frm['amount'], 2, '.', ''));
-        view_execute('deposit.payeer.confirm.tpl');
+        view_execute('deposit.payeer.confirm.blade.php');
     }
 } else {
     $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
@@ -116,6 +116,6 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         view_assign('amount', $amount);
         view_assign('amount_format', number_format(app('data')->frm['amount'], 2, '.', ''));
         view_assign('compounding', sprintf('%d', app('data')->frm['compound']));
-        view_execute('deposit.payeer.confirm.tpl');
+        view_execute('deposit.payeer.confirm.blade.php');
     }
 }

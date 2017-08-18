@@ -120,4 +120,4 @@ $q = 'select * from hm2_types where status = \'on\'';
 
   view_assign('plans', $plans);
   view_assign('total', number_format($total, 2));
-  view_execute('deposit_list.tpl');
+  view_execute('deposit_list.blade.php');

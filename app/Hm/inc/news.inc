@@ -66,4 +66,4 @@
       view_assign('next_page', $page + 1);
   }
 
-  view_execute('news.tpl');
+  view_execute('news.blade.php');

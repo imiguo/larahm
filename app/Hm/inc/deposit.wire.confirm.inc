@@ -167,4 +167,4 @@ $ok = 1;
   view_assign('famount', $amount);
   view_assign('wire_txt', $wire_txt);
   view_assign('compounding', $compound);
-  view_execute('deposit.wire.confirm.tpl');
+  view_execute('deposit.wire.confirm.blade.php');

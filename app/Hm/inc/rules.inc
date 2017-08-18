@@ -10,4 +10,4 @@
  */
 
 view_assign('site_name', app('data')->settings['site_name']);
-  view_execute('rules.tpl');
+  view_execute('rules.blade.php');

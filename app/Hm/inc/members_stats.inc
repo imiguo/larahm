@@ -97,4 +97,4 @@ function compare($a, $b)
       view_assign('next_page', $page + 1);
   }
 
-  view_execute('members_stats.tpl');
+  view_execute('members_stats.blade.php');

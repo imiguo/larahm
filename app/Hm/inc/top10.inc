@@ -30,4 +30,4 @@ $q = 'select
   }
 
   view_assign('top', $stats);
-  view_execute('top10.tpl');
+  view_execute('top10.blade.php');

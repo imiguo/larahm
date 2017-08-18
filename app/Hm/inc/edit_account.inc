@@ -14,7 +14,7 @@ use App\Exceptions\RedirectException;
 
 if (app('data')->frm['action'] == 'confirm') {
     view_assign('say', app('data')->frm['say']);
-    view_execute('edit_account_confirmation.tpl');
+    view_execute('edit_account_confirmation.blade.php');
     throw new EmptyException();
 }
 
@@ -242,4 +242,4 @@ view_assign('errors', $errors);
 view_assign('frm', app('data')->frm);
 view_assign('settings', app('data')->settings);
 view_assign('countries', $countries);
-view_execute('edit_account.tpl');
+view_execute('edit_account.blade.php');

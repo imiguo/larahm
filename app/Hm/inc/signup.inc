@@ -14,12 +14,12 @@ use App\Exceptions\EmptyException;
 use Illuminate\Support\Facades\Cookie;
 
 if (app('data')->frm['say'] == 'confirm') {
-      view_execute('after_registration_confirm.tpl');
+      view_execute('after_registration_confirm.blade.php');
       throw new EmptyException();
   }
 
   if (app('data')->frm['say'] == 'done') {
-      view_execute('after_registration.tpl');
+      view_execute('after_registration.blade.php');
       throw new EmptyException();
   }
 
@@ -313,4 +313,4 @@ if (app('data')->frm['say'] == 'confirm') {
   view_assign('frm', app('data')->frm);
   view_assign('countries', $countries);
   view_assign('deny_registration', app('data')->settings['deny_registration']);
-  view_execute('signup.tpl');
+  view_execute('signup.blade.php');

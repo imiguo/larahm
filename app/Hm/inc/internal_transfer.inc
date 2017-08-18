@@ -14,13 +14,13 @@ use App\Exceptions\EmptyException;
 
 if (app('data')->frm['complete']) {
     view_assign('fatal', 'completed');
-    view_execute('internal_transfer.tpl');
+    view_execute('internal_transfer.blade.php');
     throw new EmptyException();
 }
 
   if (!app('data')->settings['internal_transfer_enabled']) {
       view_assign('fatal', 'forbidden');
-      view_execute('internal_transfer.tpl');
+      view_execute('internal_transfer.blade.php');
       throw new EmptyException();
   }
 
@@ -109,7 +109,7 @@ if (app('data')->frm['complete']) {
       $ec = intval(app('data')->frm['ec']);
       if ($amount <= 0) {
           view_assign('say', 'too_small_amount');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
@@ -136,13 +136,13 @@ if (app('data')->frm['complete']) {
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] < $amount) {
           view_assign('say', 'too_big_amount');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
           view_assign('say', 'on_hold');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
@@ -152,7 +152,7 @@ if (app('data')->frm['complete']) {
       $user = mysql_fetch_array($sth);
       if (!$user) {
           view_assign('say', 'user_not_found');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
@@ -162,7 +162,7 @@ if (app('data')->frm['complete']) {
       view_assign('ec_name', app('data')->exchange_systems[$ec]['name']);
       view_assign('comment', app('data')->frm['comment']);
       view_assign('preview', 1);
-      view_execute('internal_transfer.tpl');
+      view_execute('internal_transfer.blade.php');
       throw new EmptyException();
   }
 
@@ -170,7 +170,7 @@ if (app('data')->frm['complete']) {
       if (app('data')->settings['use_transaction_code']) {
           if (app('data')->frm['transaction_code'] != $userinfo['transaction_code']) {
               view_assign('fatal', 'invalid_transaction_code');
-              view_execute('internal_transfer.tpl');
+              view_execute('internal_transfer.blade.php');
               throw new EmptyException();
           }
       }
@@ -179,7 +179,7 @@ if (app('data')->frm['complete']) {
       $ec = intval(app('data')->frm['ec']);
       if ($amount <= 0) {
           view_assign('say', 'too_small_amount');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
@@ -206,13 +206,13 @@ if (app('data')->frm['complete']) {
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] - $on_hold < $amount) {
           view_assign('say', 'on_hold');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
       if (app('data')->exchange_systems[$ec]['actual_balance'] < $amount) {
           view_assign('say', 'too_big_amount');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
@@ -222,7 +222,7 @@ if (app('data')->frm['complete']) {
       $user = mysql_fetch_array($sth);
       if (!$user) {
           view_assign('say', 'user_not_found');
-          view_execute('internal_transfer.tpl');
+          view_execute('internal_transfer.blade.php');
           throw new EmptyException();
       }
 
@@ -249,4 +249,4 @@ if (app('data')->frm['complete']) {
       throw new RedirectException('/?a=internal_transfer&complete=1');
   }
 
-  view_execute('internal_transfer.tpl');
+  view_execute('internal_transfer.blade.php');

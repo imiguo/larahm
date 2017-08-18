@@ -14,7 +14,7 @@ use App\Exceptions\EmptyException;
 
 if (app('data')->frm['complete']) {
     view_assign('fatal', 'update_completed');
-    view_execute('change_compound.tpl');
+    view_execute('change_compound.blade.php');
     throw new EmptyException();
 }
 
@@ -33,7 +33,7 @@ if (app('data')->frm['complete']) {
   $deposit = mysql_fetch_array($sth);
   if (!$deposit) {
       view_assign('fatal', 'deposit_not_found');
-      view_execute('change_compound.tpl');
+      view_execute('change_compound.blade.php');
       throw new EmptyException();
   }
 
@@ -42,7 +42,7 @@ if (app('data')->frm['complete']) {
   $type = mysql_fetch_array($sth);
   if (!$type['use_compound']) {
       view_assign('fatal', 'compound_forbidden');
-      view_execute('change_compound.tpl');
+      view_execute('change_compound.blade.php');
       throw new EmptyException();
   }
 
@@ -108,4 +108,4 @@ if (app('data')->frm['complete']) {
   $deposit['compound'] = sprintf('%.02f', $deposit['compound']);
   view_assign('deposit', $deposit);
   view_assign('type', $type);
-  view_execute('change_compound.tpl');
+  view_execute('change_compound.blade.php');

@@ -14,7 +14,7 @@ use App\Exceptions\EmptyException;
 
 if (app('data')->frm['complete']) {
     view_assign('fatal', 'withdraw_complete');
-    view_execute('withdraw_principal.tpl');
+    view_execute('withdraw_principal.blade.php');
     throw new EmptyException();
 }
 
@@ -33,7 +33,7 @@ if (app('data')->frm['complete']) {
   $deposit = mysql_fetch_array($sth);
   if (!$deposit) {
       view_assign('fatal', 'deposit_not_found');
-      view_execute('withdraw_principal.tpl');
+      view_execute('withdraw_principal.blade.php');
       throw new EmptyException();
   }
 
@@ -42,19 +42,19 @@ if (app('data')->frm['complete']) {
   $type = mysql_fetch_array($sth);
   if (!$type['withdraw_principal']) {
       view_assign('fatal', 'withdraw_forbidden');
-      view_execute('withdraw_principal.tpl');
+      view_execute('withdraw_principal.blade.php');
       throw new EmptyException();
   }
 
   if ($deposit['deposit_duration'] < $type['withdraw_principal_duration']) {
       view_assign('fatal', 'too_early_withdraw');
-      view_execute('withdraw_principal.tpl');
+      view_execute('withdraw_principal.blade.php');
       throw new EmptyException();
   }
 
   if (($type['withdraw_principal_duration_max'] <= $deposit['deposit_duration'] and $type['withdraw_principal_duration_max'] != 0)) {
       view_assign('fatal', 'too_late_withdraw');
-      view_execute('withdraw_principal.tpl');
+      view_execute('withdraw_principal.blade.php');
       throw new EmptyException();
   }
 
@@ -65,7 +65,7 @@ if (app('data')->frm['complete']) {
           view_assign('deposit', $deposit);
           view_assign('type', $type);
           view_assign('say', 'too_big_amount');
-          view_execute('withdraw_principal.tpl');
+          view_execute('withdraw_principal.blade.php');
           throw new EmptyException();
       }
 
@@ -73,7 +73,7 @@ if (app('data')->frm['complete']) {
           view_assign('deposit', $deposit);
           view_assign('type', $type);
           view_assign('say', 'too_small_amount');
-          view_execute('withdraw_principal.tpl');
+          view_execute('withdraw_principal.blade.php');
           throw new EmptyException();
       }
 
@@ -93,7 +93,7 @@ if (app('data')->frm['complete']) {
       view_assign('amount', $withdraw_amount);
       view_assign('fee', $fee);
       view_assign('to_balance', $to_balance);
-      view_execute('withdraw_principal.tpl');
+      view_execute('withdraw_principal.blade.php');
       throw new EmptyException();
   }
 
@@ -103,7 +103,7 @@ if (app('data')->frm['complete']) {
           view_assign('deposit', $deposit);
           view_assign('type', $type);
           view_assign('say', 'too_big_amount');
-          view_execute('withdraw_principal.tpl');
+          view_execute('withdraw_principal.blade.php');
           throw new EmptyException();
       }
 
@@ -111,7 +111,7 @@ if (app('data')->frm['complete']) {
           view_assign('deposit', $deposit);
           view_assign('type', $type);
           view_assign('say', 'too_small_amount');
-          view_execute('withdraw_principal.tpl');
+          view_execute('withdraw_principal.blade.php');
           throw new EmptyException();
       }
 
@@ -147,4 +147,4 @@ if (app('data')->frm['complete']) {
 
   view_assign('deposit', $deposit);
   view_assign('type', $type);
-  view_execute('withdraw_principal.tpl');
+  view_execute('withdraw_principal.blade.php');

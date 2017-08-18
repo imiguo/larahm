@@ -10,4 +10,4 @@
  */
 
 view_assign('frm', app('data')->frm);
-  view_execute('login.tpl');
+  view_execute('login.blade.php');

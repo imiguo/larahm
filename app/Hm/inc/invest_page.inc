@@ -33,4 +33,4 @@ include app_path('Hm').'/inc/index.plans.inc';
   }
 
   view_assign('ref_levels', $ref_levels);
-  view_execute('invest_page.tpl');
+  view_execute('invest_page.blade.php');

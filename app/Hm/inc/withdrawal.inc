@@ -158,7 +158,7 @@ if (app('data')->frm['action'] == 'preview') {
     view_assign('ec', $ec);
     view_assign('account', $account);
     view_assign('comment', app('data')->frm['comment']);
-    view_execute('withdrawal.tpl');
+    view_execute('withdrawal.blade.php');
 } else {
     if (app('data')->frm['action'] == 'withdraw') {
         if ((app('data')->settings['use_transaction_code'] == 1 and app('data')->frm['transaction_code'] != $userinfo['transaction_code'])) {
@@ -461,6 +461,6 @@ if (app('data')->frm['action'] == 'preview') {
 
         view_assign('hold', $hold);
         view_assign('ps', $ps);
-        view_execute('withdrawal.tpl');
+        view_execute('withdrawal.blade.php');
     }
 }

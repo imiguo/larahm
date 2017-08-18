@@ -118,4 +118,4 @@ $id = $userinfo['id'];
       view_assign('wires', $row['col']);
   }
 
-  view_execute('account_main.tpl');
+  view_execute('account_main.blade.php');

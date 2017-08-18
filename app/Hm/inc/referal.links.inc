@@ -16,4 +16,4 @@ view_assign('site_name', app('data')->settings['site_name']);
   }
 
   view_assign('user', $userinfo);
-  view_execute('referal.links.tpl');
+  view_execute('referal.links.blade.php');

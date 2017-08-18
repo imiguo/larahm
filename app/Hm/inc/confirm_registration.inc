@@ -48,4 +48,4 @@ $success = 0;
   }
 
   view_assign('success', $success);
-  view_execute('confirm_registration.tpl');
+  view_execute('confirm_registration.blade.php');

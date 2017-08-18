@@ -111,4 +111,4 @@ $id = $userinfo['id'];
   view_assign('trans', $trans);
   view_assign('qtrans', sizeof($trans));
   view_assign('frm', app('data')->frm);
-  view_execute('deposit_history.tpl');
+  view_execute('deposit_history.blade.php');

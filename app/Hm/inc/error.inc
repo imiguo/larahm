@@ -10,4 +10,4 @@
  */
 
 view_assign('frm', app('data')->frm);
-  view_execute('error.tpl');
+  view_execute('error.blade.php');

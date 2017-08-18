@@ -10,4 +10,4 @@
  */
 
 view_assign('process', app('data')->frm['process']);
-  view_execute('deposit.egold.status.tpl');
+  view_execute('deposit.egold.status.blade.php');

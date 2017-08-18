@@ -281,7 +281,7 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
             $file = app('data')->frm['page'];
             $file = basename($file);
             if (file_exists(tmpl_path().'/custom/'.$file.'.tpl')) {
-                view_execute('custom/'.$file.'.tpl');
+                view_execute('custom/'.$file.'.blade.php');
             } else {
                 include app_path('Hm').'/inc/home.inc';
             }

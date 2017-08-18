@@ -30,4 +30,4 @@ $ab = get_user_balance($userinfo['id']);
   }
 
   view_assign('ps', $ps);
-  view_execute('add_funds.tpl');
+  view_execute('add_funds.blade.php');

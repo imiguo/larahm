@@ -46,4 +46,4 @@ $q = 'select
   $row = mysql_fetch_array($sth);
   view_assign('start_date', $row[d]);
   view_assign('stats', $stats);
-  view_execute('refs10.tpl');
+  view_execute('refs10.blade.php');

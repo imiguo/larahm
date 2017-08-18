@@ -201,4 +201,4 @@ $id = $userinfo['id'];
   }
 
   view_assign('frm', app('data')->frm);
-  view_execute('earning_history.tpl');
+  view_execute('earning_history.blade.php');

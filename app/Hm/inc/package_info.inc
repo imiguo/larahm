@@ -22,4 +22,4 @@ $id = sprintf('%d', app('data')->frm['id']);
       view_assign('no_such_plan', 1);
   }
 
-  view_execute('package_info.tpl');
+  view_execute('package_info.blade.php');

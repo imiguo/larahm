@@ -9,4 +9,4 @@
  * with this source code in the file LICENSE.
  */
 
-view_execute('after_registration_confirm.tpl');
+view_execute('after_registration_confirm.blade.php');

@@ -79,4 +79,4 @@ use App\Exceptions\RedirectException;
 
   view_assign('token', $token);
   view_assign('say', app('data')->frm['say']);
-  view_execute('support.tpl');
+  view_execute('support.blade.php');

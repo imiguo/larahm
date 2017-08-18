@@ -56,4 +56,4 @@ $found_records = -1;
   }
 
   view_assign('found_records', $found_records);
-  view_execute('forgot_password.tpl');
+  view_execute('forgot_password.blade.php');

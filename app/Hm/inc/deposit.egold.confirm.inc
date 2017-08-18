@@ -16,7 +16,7 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
           view_assign('h_id', -1);
           view_assign('amount', $amount);
           view_assign('amount_format', number_format($amount, 2));
-          view_execute('deposit.egold.confirm.tpl');
+          view_execute('deposit.egold.confirm.blade.php');
       }
   } else {
       $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
@@ -100,6 +100,6 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
           view_assign('amount', $amount);
           view_assign('amount_format', number_format($amount, 2));
           view_assign('compounding', sprintf('%d', app('data')->frm['compound']));
-          view_execute('deposit.egold.confirm.tpl');
+          view_execute('deposit.egold.confirm.blade.php');
       }
   }

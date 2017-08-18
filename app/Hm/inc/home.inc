@@ -34,4 +34,4 @@ for ($l = 2; $l < 11; ++$l) {
 }
 
 view_assign('ref_levels', $ref_levels);
-view_execute('home.tpl');
+view_execute('home.blade.php');

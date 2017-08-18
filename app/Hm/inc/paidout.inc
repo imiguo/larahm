@@ -95,4 +95,4 @@ app('data')->frm['month'] = intval(app('data')->frm['month']);
       view_assign('next_page', $page + 1);
   }
 
-  view_execute('paidout.tpl');
+  view_execute('paidout.blade.php');

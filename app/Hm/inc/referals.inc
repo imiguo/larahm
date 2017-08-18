@@ -123,4 +123,4 @@ view_assign('site_name', app('data')->settings['site_name']);
   $row1 = mysql_fetch_array($sth);
   $upline = $row1;
   view_assign('upline', $upline);
-  view_execute('referals.tpl');
+  view_execute('referals.blade.php');
