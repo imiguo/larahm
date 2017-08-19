@@ -9,8 +9,17 @@ class IpService
 {
     use HttpRequest;
 
-    public function resolve($ip)
+
+    /**
+     * @param $ip
+     *
+     * @return string
+     */
+    public function get($ip)
     {
+        if ($this->isPrivateIp($ip)) {
+            return 'private';
+        }
         $longIp = ip2long($ip);
         $country = Ip::where('ip', $longIp)->value('country');
         if (! $country) {
@@ -36,7 +45,7 @@ class IpService
             [
                 'url' => 'https://ipapi.co/%s/country/',
                 'callback' => function($info) {
-                    return $info;
+                    return $info != 'Undefined' ? $info : '';
                 },
             ],
             [
@@ -77,5 +86,14 @@ class IpService
                 },
             ],
         ];
+    }
+
+    protected function isPrivateIp($ip)
+    {
+        return ! filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE |  FILTER_FLAG_NO_RES_RANGE
+        );
     }
 }

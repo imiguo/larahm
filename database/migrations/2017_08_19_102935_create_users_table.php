@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('email', 200)->unique();
             $table->enum('status', ['on', 'off', 'suspended'])->nullable();
             $table->text('came_from')->nullable();
+            $table->string('identity')->default('');
             $table->bigInteger('ref')->nullable();
             $table->float('deposit_total', 10, 2)->default(0.00);
             $table->string('confirm_string', 200)->nullable();

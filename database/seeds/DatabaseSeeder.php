@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             'username' => 'miadmin',
             'password' => bcrypt('miadmin'),
             'date_register' => Carbon::now(),
-            'email' => 'midollaradm@gmail.com',
+            'email' => 'miadmin@gmail.com',
             'status' => 'on',
         ]);
         User::create([
@@ -27,7 +27,15 @@ class DatabaseSeeder extends Seeder
             'username' => 'test',
             'password' => bcrypt('test'),
             'date_register' => Carbon::now(),
-            'email' => '1194316669@qq.com',
+            'email' => 'test@gmail.com',
+            'status' => 'on',
+        ]);
+        User::create([
+            'name' => 'hm',
+            'username' => 'hm',
+            'password' => bcrypt('hm'),
+            'date_register' => Carbon::now(),
+            'email' => 'hm@gmail.com',
             'status' => 'on',
         ]);
 

@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class HmController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('hack.monitors')->only('index');
+    }
+
     public function index()
     {
         $app_file = app_path('Hm').'/http/index.php';
