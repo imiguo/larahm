@@ -21,7 +21,7 @@ class CreateTypesTable extends Migration
             $table->increments('id');
             $table->string('name', 250)->nullable();
             $table->text('description')->nullable();
-            $table->bigInteger('q_days')->nullable();
+            $table->integer('q_days')->nullable();
             $table->float('min_deposit', 10, 2)->nullable();
             $table->float('max_deposit', 10, 2)->nullable();
             $table->enum('period', ['d', 'w', 'b-w', 'm', '2m', '3m', '6m', 'y', 'end'])->nullable();

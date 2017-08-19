@@ -19,7 +19,7 @@ class CreateUserAccessLogTable extends Migration
     {
         Schema::create('user_access_log', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('user_id');
+            $table->integer('user_id');
             $table->dateTime('date')->nullable();
             $table->string('ip', 15);
             $table->timestamps();

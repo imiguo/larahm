@@ -25,7 +25,7 @@ class CreatePlansTable extends Migration
             $table->float('max_deposit', 10, 2)->nullable();
             $table->float('percent', 10, 2)->nullable();
             $table->enum('status', ['on', 'off'])->nullable();
-            $table->bigInteger('parent');
+            $table->integer('parent');
             $table->timestamps();
         });
     }

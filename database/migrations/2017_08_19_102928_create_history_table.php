@@ -19,7 +19,7 @@ class CreateHistoryTable extends Migration
     {
         Schema::create('history', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('user_id');
+            $table->integer('user_id');
             $table->float('amount', 10, 5)->nullable();
             $table->enum('type', ['deposit', 'bonus', 'penality', 'earning', 'withdrawal', 'commissions', 'early_deposit_release', 'early_deposit_charge', 'release_deposit', 'add_funds', 'withdraw_pending', 'exchange_in', 'exchange_out', 'internal_transaction_spend', 'internal_transaction_receive'])->nullable();
             $table->text('description');
@@ -27,7 +27,7 @@ class CreateHistoryTable extends Migration
             $table->dateTime('date')->default('2017-01-01 00:00:00');
             $table->string('str', 40);
             $table->integer('ec');
-            $table->bigInteger('deposit_id');
+            $table->integer('deposit_id');
             $table->string('payment_batch_num', 15)->nullable();
             $table->timestamps();
         });

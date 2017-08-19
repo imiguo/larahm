@@ -20,9 +20,9 @@ class CreateReferalStatsTable extends Migration
         Schema::create('referal_stats', function (Blueprint $table) {
             $table->increments('id');
             $table->date('date');
-            $table->bigInteger('user_id');
-            $table->bigInteger('income');
-            $table->bigInteger('reg');
+            $table->integer('user_id');
+            $table->integer('income');
+            $table->integer('reg');
             $table->timestamps();
         });
     }

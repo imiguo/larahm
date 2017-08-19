@@ -19,12 +19,12 @@ class CreateDepositsTable extends Migration
     {
         Schema::create('deposits', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('user_id');
-            $table->bigInteger('type_id');
+            $table->integer('user_id');
+            $table->integer('type_id');
             $table->dateTime('deposit_date')->default('2017-01-01 00:00:00');
             $table->dateTime('last_pay_date')->default('2017-01-01 00:00:00');
             $table->enum('status', ['on', 'off'])->nullable()->default('on');
-            $table->bigInteger('q_pays');
+            $table->integer('q_pays');
             $table->double('amount', 10, 5)->default(0.00000);
             $table->double('actual_amount', 10, 5)->default(0.00000);
             $table->integer('ec');

@@ -19,7 +19,7 @@ class CreateWiresTable extends Migration
     {
         Schema::create('wires', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('user_id');
+            $table->integer('user_id');
             $table->string('pname', 250);
             $table->string('paddress', 250);
             $table->string('pzip', 250);
@@ -36,7 +36,7 @@ class CreateWiresTable extends Migration
             $table->string('biban', 250);
             $table->string('bswift', 250);
             $table->float('amount', 10, 5)->nullable();
-            $table->bigInteger('type_id')->nullable();
+            $table->integer('type_id')->nullable();
             $table->dateTime('wire_date');
             $table->float('compound', 10, 5)->nullable();
             $table->enum('status', ['new', 'problem', 'processed'])->nullable();

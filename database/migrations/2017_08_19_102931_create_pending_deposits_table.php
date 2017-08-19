@@ -19,11 +19,11 @@ class CreatePendingDepositsTable extends Migration
     {
         Schema::create('pending_deposits', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('ec')->nullable();
+            $table->unsignedinteger('ec')->nullable();
             $table->text('fields')->nullable();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedinteger('user_id');
             $table->float('amount', 10, 5)->default(0.00000);
-            $table->unsignedBigInteger('type_id');
+            $table->unsignedinteger('type_id');
             $table->dateTime('date')->default('2017-01-01 00:00:00');
             $table->enum('status', ['new', 'problem', 'processed'])->default('new');
             $table->double('compound', 10, 5)->default(0.00000);

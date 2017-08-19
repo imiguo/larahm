@@ -19,10 +19,10 @@ class CreateReferalTable extends Migration
     {
         Schema::create('referal', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('level');
+            $table->integer('level');
             $table->string('name', 200)->nullable();
-            $table->bigInteger('from_value');
-            $table->bigInteger('to_value');
+            $table->integer('from_value');
+            $table->integer('to_value');
             $table->double('percent', 10, 2)->nullable();
             $table->double('percent_daily', 10, 2)->nullable();
             $table->double('percent_weekly', 10, 2)->nullable();
