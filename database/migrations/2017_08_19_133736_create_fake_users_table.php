@@ -17,8 +17,6 @@ class CreateFakeUsersTable extends Migration
             $table->increments('id');
             $table->string('username', 30);
             $table->double('amount', 10, 5)->default(0.00000);
-            $table->double('deposit', 10, 5)->default(0.00000);
-            $table->double('withdraw', 10, 5)->default(0.00000);
             $table->timestamps();
         });
     }
