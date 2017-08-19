@@ -14,7 +14,7 @@ use App\Exceptions\RedirectException;
 $ok = 1;
   $amount = sprintf('%0.2f', app('data')->frm['amount']);
   $h_id = sprintf('%d', app('data')->frm['h_id']);
-  $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
+  $q = 'select * from types where id = '.$h_id.' and closed = 0';
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   if (!$type) {
@@ -54,13 +54,13 @@ $ok = 1;
   }
 
   view_assign('use_compound', $use_compound);
-  $q = 'select `value` from hm2_settings where name=\'wire_text\'';
+  $q = 'select `value` from settings where name=\'wire_text\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $wire_txt = $row['value'];
   }
 
-  $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
+  $q = 'select count(*) as col, min(min_deposit) as min from plans where parent = '.$h_id;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   if ($row) {
@@ -81,7 +81,7 @@ $ok = 1;
 
   $accounting = get_user_balance($userinfo['id']);
   $max_deposit = 0;
-  $q = 'select min(max_deposit) as min, max(max_deposit) as max from hm2_plans where parent = '.$h_id;
+  $q = 'select min(max_deposit) as min, max(max_deposit) as max from plans where parent = '.$h_id;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   if ($row) {
@@ -117,7 +117,7 @@ $ok = 1;
           }
       }
 
-      $q = 'insert into hm2_wires set
+      $q = 'insert into wires set
 	user_id = \''.$userinfo['id'].'\',
 	pname = \''.quote(app('data')->frm['pname']).'\',
 	paddress = \''.quote(app('data')->frm['paddress']).'\',
@@ -152,7 +152,7 @@ $ok = 1;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $info['date'] = $row['date'];
-      $q = 'select email from hm2_users where id = 1';
+      $q = 'select email from users where id = 1';
       $sth = db_query($q);
       $admin_row = mysql_fetch_array($sth);
       send_template_mail('wire_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);

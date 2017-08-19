@@ -97,7 +97,7 @@ if (app('data')->frm['a'] == 'test_ebullion_settings') {
 }
 
 if ($userinfo['should_count'] == 1) {
-    $q = 'update hm2_users set last_access_time = now() where username=\''.$username.'\'';
+    $q = 'update users set last_access_time = now() where username=\''.$username.'\'';
     db_query($q);
 
     count_earning(-1);
@@ -109,7 +109,7 @@ if ($userinfo['should_count'] == 1) {
 if ((app('data')->frm['a'] == 'affilates' and app('data')->frm['action'] == 'remove_ref')) {
     $u_id = sprintf('%d', app('data')->frm['u_id']);
     $ref = sprintf('%d', app('data')->frm['ref']);
-    $q = 'update hm2_users set ref = 0 where id = '.$ref;
+    $q = 'update users set ref = 0 where id = '.$ref;
     db_query($q);
     throw new RedirectException($admin_url.'?a=affilates&u_id='.$u_id);
 }
@@ -120,14 +120,14 @@ if ((app('data')->frm['a'] == 'affilates' and app('data')->frm['action'] == 'rem
 if ((app('data')->frm['a'] == 'affilates' and app('data')->frm['action'] == 'change_upline')) {
     $u_id = sprintf('%d', app('data')->frm['u_id']);
     $upline = quote(app('data')->frm['upline']);
-    $q = 'select * from hm2_users where username=\''.$upline.'\'';
+    $q = 'select * from users where username=\''.$upline.'\'';
     $sth = db_query($q);
     $id = 0;
     while ($row = mysql_fetch_array($sth)) {
         $id = $row['id'];
     }
 
-    $q = 'update hm2_users set ref = '.$id.' where id = '.$u_id;
+    $q = 'update users set ref = '.$id.' where id = '.$u_id;
     db_query($q);
     throw new RedirectException($admin_url.'?a=affilates&u_id='.$u_id);
 }
@@ -137,7 +137,7 @@ if ((app('data')->frm['a'] == 'affilates' and app('data')->frm['action'] == 'cha
  */
 if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['action'] == 'movetoproblem')) {
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'update hm2_pending_deposits set status=\'problem\' where id = '.$id;
+    $q = 'update pending_deposits set status=\'problem\' where id = '.$id;
     db_query($q);
     throw new RedirectException($admin_url.'?a=pending_deposits');
 }
@@ -147,7 +147,7 @@ if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['ac
  */
 if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['action'] == 'movetonew')) {
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'update hm2_pending_deposits set status=\'new\' where id = '.$id;
+    $q = 'update pending_deposits set status=\'new\' where id = '.$id;
     db_query($q);
     throw new RedirectException($admin_url.'?a=pending_deposits&type=problem');
 }
@@ -157,7 +157,7 @@ if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['ac
  */
 if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['action'] == 'delete')) {
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'delete from hm2_pending_deposits where id = '.$id;
+    $q = 'delete from pending_deposits where id = '.$id;
     db_query($q);
     throw new RedirectException($admin_url.'?a=pending_deposits&type='.app('data')->frm['type']);
 }
@@ -168,15 +168,15 @@ if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['ac
 if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['action'] == 'movetodeposit' or app('data')->frm['action'] == 'movetoaccount')) and app('data')->frm['confirm'] == 'yes')) {
     $deposit_id = $id = sprintf('%d', app('data')->frm['id']);
     $q = 'select
-          hm2_pending_deposits.*,
-          hm2_users.username
+          pending_deposits.*,
+          users.username
         from
-          hm2_pending_deposits,
-          hm2_users
+          pending_deposits,
+          users
         where
-          hm2_pending_deposits.user_id = hm2_users.id and
-          hm2_pending_deposits.id = '.$id.' and
-          hm2_pending_deposits.status != \'processed\'
+          pending_deposits.user_id = users.id and
+          pending_deposits.id = '.$id.' and
+          pending_deposits.status != \'processed\'
        ';
     $sth = db_query($q);
     $amount = sprintf('%0.2f', app('data')->frm['amount']);
@@ -190,7 +190,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
             $compound = 0;
         }
 
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
             user_id = '.$row['user_id'].(',
             date = now(),
             amount = '.$amount.',
@@ -200,7 +200,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
             ec = '.$row['ec'];
         db_query($q);
         if ((app('data')->frm['action'] == 'movetodeposit' and 0 < $row[type_id])) {
-            $q = 'select name, delay from hm2_types where id = '.$row['type_id'];
+            $q = 'select name, delay from types where id = '.$row['type_id'];
             ($sth1 = db_query($q));
             $row1 = mysql_fetch_array($sth1);
             $delay = $row1[delay];
@@ -208,7 +208,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
                 --$delay;
             }
 
-            $q = 'insert into hm2_deposits set
+            $q = 'insert into deposits set
               user_id = '.$row['user_id'].',
               type_id = '.$row['type_id'].(',
               deposit_date = now(),
@@ -221,7 +221,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
               compound = '.$compound);
             db_query($q);
             $deposit_id = mysql_insert_id();
-            $q = 'insert into hm2_history set
+            $q = 'insert into history set
               user_id = '.$row['user_id'].(',
               date = now(),
               amount = -'.$amount.',
@@ -236,10 +236,10 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
         }
 
         $info = [];
-        $q = 'select * from hm2_users where id = '.$user_id;
+        $q = 'select * from users where id = '.$user_id;
         $sth1 = db_query($q);
         $userinfo = mysql_fetch_array($sth1);
-        $q = 'select * from hm2_types where id = '.$row['type_id'];
+        $q = 'select * from types where id = '.$row['type_id'];
         $sth1 = db_query($q);
         $type = mysql_fetch_array($sth1);
         $info['username'] = $userinfo['username'];
@@ -248,7 +248,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
         $info['currency'] = app('data')->exchange_systems[$ps]['name'];
         $info['compound'] = number_format($type['compound'], 2);
         $info['plan'] = (0 < $row[type_id] ? $type['name'] : 'Deposit to Account');
-        $q = 'select * from hm2_processings where id = '.$row['ec'];
+        $q = 'select * from processings where id = '.$row['ec'];
         $sth = db_query($q);
         $processing = mysql_fetch_array($sth);
         $pfields = unserialize($processing['infofields']);
@@ -259,11 +259,11 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
         }
 
         $info['fields'] = $f;
-        $q = 'select date_format(date + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd from hm2_pending_deposits where id = '.$row['id'];
+        $q = 'select date_format(date + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd from pending_deposits where id = '.$row['id'];
         ($sth1 = db_query($q));
         $row1 = mysql_fetch_array($sth1);
         $info['deposit_date'] = $row1['dd'];
-        $q = 'select email from hm2_users where id = 1';
+        $q = 'select email from users where id = 1';
         $sth1 = db_query($q);
         $admin_row = mysql_fetch_array($sth1);
         send_template_mail('deposit_approved_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
@@ -271,7 +271,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
     }
 
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'update hm2_pending_deposits set status=\'processed\' where id = '.$id;
+    $q = 'update pending_deposits set status=\'processed\' where id = '.$id;
     db_query($q);
     throw new RedirectException($admin_url.'?a=pending_deposits');
 }
@@ -284,7 +284,7 @@ if (app('data')->frm['a'] == 'mass') {
         $ids = app('data')->frm['pend'];
         reset($ids);
         while (list($kk, $vv) = each($ids)) {
-            $q = 'delete from hm2_history where id = '.$kk;
+            $q = 'delete from history where id = '.$kk;
             db_query($q);
         }
 
@@ -295,10 +295,10 @@ if (app('data')->frm['a'] == 'mass') {
         $ids = app('data')->frm['pend'];
         reset($ids);
         while (list($kk, $vv) = each($ids)) {
-            $q = 'select * from hm2_history where id = '.$kk;
+            $q = 'select * from history where id = '.$kk;
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
-                $q = 'insert into hm2_history set
+                $q = 'insert into history set
 		user_id = '.$row['user_id'].',
 		amount = -'.abs($row['actual_amount']).',
 		actual_amount = -'.abs($row['actual_amount']).',
@@ -307,10 +307,10 @@ if (app('data')->frm['a'] == 'mass') {
 		description = \'Withdrawal processed\',
 		ec = '.$row['ec'];
                 db_query($q);
-                $q = 'delete from hm2_history where id = '.$row['id'];
+                $q = 'delete from history where id = '.$row['id'];
                 db_query($q);
                 $userinfo = [];
-                $q = 'select * from hm2_users where id = '.$row['user_id'];
+                $q = 'select * from users where id = '.$row['user_id'];
                 $sth1 = db_query($q);
                 $userinfo = mysql_fetch_array($sth1);
                 $info = [];
@@ -323,7 +323,7 @@ if (app('data')->frm['a'] == 'mass') {
                 $info['paying_batch'] = 'n/a';
                 $info['receiving_batch'] = 'n/a';
                 send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['opt_in_email'], $info);
-                $q = 'select email from hm2_users where id = 1';
+                $q = 'select email from users where id = 1';
                 $sth = db_query($q);
                 $admin_row = mysql_fetch_array($sth);
                 send_template_mail('withdraw_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
@@ -358,7 +358,7 @@ if (app('data')->frm['a'] == 'mass') {
 		u.paypal_account,
 		u.goldmoney_account,
 		u.eeecurrency_account
-              from hm2_history as h, hm2_users as u where h.id in ('.$s.') and u.id = h.user_id order by ec';
+              from history as h, users as u where h.id in ('.$s.') and u.id = h.user_id order by ec';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             if (100 < $row['ec']) {
@@ -426,7 +426,7 @@ if (app('data')->frm['a'] == 'mass') {
             $egold_password = app('data')->frm['egold_password'];
             app('data')->settings['egold_from_account'] = $egold_account;
         } else {
-            $q = 'select v from hm2_pay_settings where n=\'egold_account_password\'';
+            $q = 'select v from pay_settings where n=\'egold_account_password\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $egold_account = app('data')->settings['egold_from_account'];
@@ -439,7 +439,7 @@ if (app('data')->frm['a'] == 'mass') {
             $perfectmoney_password = app('data')->frm['perfectmoney_password'];
             app('data')->settings['perfectmoney_from_account'] = $perfectmoney_account;
         } else {
-            $q = 'select v from hm2_pay_settings where n=\'perfectmoney_account_password\'';
+            $q = 'select v from pay_settings where n=\'perfectmoney_account_password\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $perfectmoney_account = app('data')->settings['perfectmoney_from_account'];
@@ -454,14 +454,14 @@ if (app('data')->frm['a'] == 'mass') {
             app('data')->settings['evocash_username'] = app('data')->frm[evocash_name];
             app('data')->settings['evocash_from_account'] = $evocash_account;
         } else {
-            $q = 'select v from hm2_pay_settings where n=\'evocash_account_password\'';
+            $q = 'select v from pay_settings where n=\'evocash_account_password\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $evocash_account = app('data')->settings['evocash_from_account'];
                 $evocash_password = decode_pass_for_mysql($row['v']);
             }
 
-            $q = 'select v from hm2_pay_settings where n=\'evocash_transaction_code\'';
+            $q = 'select v from pay_settings where n=\'evocash_transaction_code\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $evocash_code = decode_pass_for_mysql($row['v']);
@@ -474,14 +474,14 @@ if (app('data')->frm['a'] == 'mass') {
             $intgold_code = app('data')->frm['intgold_code'];
             app('data')->settings['intgold_from_account'] = $intgold_account;
         } else {
-            $q = 'select v from hm2_pay_settings where n=\'intgold_password\'';
+            $q = 'select v from pay_settings where n=\'intgold_password\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $intgold_account = app('data')->settings['intgold_from_account'];
                 $intgold_password = decode_pass_for_mysql($row['v']);
             }
 
-            $q = 'select v from hm2_pay_settings where n=\'intgold_transaction_code\'';
+            $q = 'select v from pay_settings where n=\'intgold_transaction_code\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $intgold_code = decode_pass_for_mysql($row['v']);
@@ -494,14 +494,14 @@ if (app('data')->frm['a'] == 'mass') {
             $eeecurrency_code = app('data')->frm['eeecurrency_code'];
             app('data')->settings['eeecurrency_from_account'] = $eeecurrency_account;
         } else {
-            $q = 'select v from hm2_pay_settings where n=\'eeecurrency_password\'';
+            $q = 'select v from pay_settings where n=\'eeecurrency_password\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $eeecurrency_account = app('data')->settings['eeecurrency_from_account'];
                 $eeecurrency_password = decode_pass_for_mysql($row['v']);
             }
 
-            $q = 'select v from hm2_pay_settings where n=\'eeecurrency_transaction_code\'';
+            $q = 'select v from pay_settings where n=\'eeecurrency_transaction_code\'';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $eeecurrency_code = decode_pass_for_mysql($row['v']);
@@ -511,7 +511,7 @@ if (app('data')->frm['a'] == 'mass') {
         @set_time_limit(9999999);
         reset($ids);
         while (list($kk, $vv) = each($ids)) {
-            $q = 'select h.*, u.egold_account, u.evocash_account, u.intgold_account, u.ebullion_account, u.eeecurrency_account, u.username, u.name, u.email from hm2_history as h, hm2_users as u where h.id = '.$kk.' and u.id = h.user_id and h.ec in (0, 1, 2, 5, 8, 9)';
+            $q = 'select h.*, u.egold_account, u.evocash_account, u.intgold_account, u.ebullion_account, u.eeecurrency_account, u.username, u.name, u.email from history as h, users as u where h.id = '.$kk.' and u.id = h.user_id and h.ec in (0, 1, 2, 5, 8, 9)';
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $amount = abs($row['actual_amount']);
@@ -564,7 +564,7 @@ if (app('data')->frm['a'] == 'mass') {
                 }
 
                 if ($res == 1) {
-                    $q = 'delete from hm2_history where id = '.$kk;
+                    $q = 'delete from history where id = '.$kk;
                     db_query($q);
                     $d_account = [
                         $row[egold_account],
@@ -577,7 +577,7 @@ if (app('data')->frm['a'] == 'mass') {
                         $row[goldmoney_account],
                         $row[eeecurrency_account],
                     ];
-                    $q = 'insert into hm2_history set
+                    $q = 'insert into history set
               user_id = '.$row['user_id'].(',
               amount = -'.$amount.',
               actual_amount = -'.$amount.',
@@ -622,51 +622,51 @@ if ((app('data')->frm['a'] == 'auto-pay-settings' and app('data')->frm['action']
         app('data')->settings['evocash_username'] = app('data')->frm['evocash_username'];
         if (app('data')->frm['evocash_account_password'] != '') {
             $evo_pass = quote(encode_pass_for_mysql(app('data')->frm['evocash_account_password']));
-            $q = 'delete from hm2_pay_settings where n=\'evocash_account_password\'';
+            $q = 'delete from pay_settings where n=\'evocash_account_password\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'evocash_account_password\', v=\''.$evo_pass.'\'';
+            $q = 'insert into pay_settings set n=\'evocash_account_password\', v=\''.$evo_pass.'\'';
             db_query($q);
         }
 
         if (app('data')->frm['evocash_transaction_code'] != '') {
             $evo_code = quote(encode_pass_for_mysql(app('data')->frm['evocash_transaction_code']));
-            $q = 'delete from hm2_pay_settings where n=\'evocash_transaction_code\'';
+            $q = 'delete from pay_settings where n=\'evocash_transaction_code\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'evocash_transaction_code\', v=\''.$evo_code.'\'';
+            $q = 'insert into pay_settings set n=\'evocash_transaction_code\', v=\''.$evo_code.'\'';
             db_query($q);
         }
 
         app('data')->settings['intgold_from_account'] = app('data')->frm['intgold_from_account'];
         if (app('data')->frm['intgold_password'] != '') {
             $intgold_pass = quote(encode_pass_for_mysql(app('data')->frm['intgold_password']));
-            $q = 'delete from hm2_pay_settings where n=\'intgold_password\'';
+            $q = 'delete from pay_settings where n=\'intgold_password\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'intgold_password\', v=\''.$intgold_pass.'\'';
+            $q = 'insert into pay_settings set n=\'intgold_password\', v=\''.$intgold_pass.'\'';
             db_query($q);
         }
 
         if (app('data')->frm['intgold_transaction_code'] != '') {
             $intgold_code = quote(encode_pass_for_mysql(app('data')->frm['intgold_transaction_code']));
-            $q = 'delete from hm2_pay_settings where n=\'intgold_transaction_code\'';
+            $q = 'delete from pay_settings where n=\'intgold_transaction_code\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'intgold_transaction_code\', v=\''.$intgold_code.'\'';
+            $q = 'insert into pay_settings set n=\'intgold_transaction_code\', v=\''.$intgold_code.'\'';
             db_query($q);
         }
 
         app('data')->settings['eeecurrency_from_account'] = app('data')->frm['eeecurrency_from_account'];
         if (app('data')->frm['eeecurrency_password'] != '') {
             $eeecurrency_pass = quote(encode_pass_for_mysql(app('data')->frm['eeecurrency_password']));
-            $q = 'delete from hm2_pay_settings where n=\'eeecurrency_password\'';
+            $q = 'delete from pay_settings where n=\'eeecurrency_password\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'eeecurrency_password\', v=\''.$eeecurrency_pass.'\'';
+            $q = 'insert into pay_settings set n=\'eeecurrency_password\', v=\''.$eeecurrency_pass.'\'';
             db_query($q);
         }
 
         if (app('data')->frm['eeecurrency_transaction_code'] != '') {
             $eeecurrency_code = quote(encode_pass_for_mysql(app('data')->frm['eeecurrency_transaction_code']));
-            $q = 'delete from hm2_pay_settings where n=\'eeecurrency_transaction_code\'';
+            $q = 'delete from pay_settings where n=\'eeecurrency_transaction_code\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'eeecurrency_transaction_code\', v=\''.$eeecurrency_code.'\'';
+            $q = 'insert into pay_settings set n=\'eeecurrency_transaction_code\', v=\''.$eeecurrency_code.'\'';
             db_query($q);
         }
 
@@ -676,9 +676,9 @@ if ((app('data')->frm['a'] == 'auto-pay-settings' and app('data')->frm['action']
         save_settings();
         if (app('data')->frm['egold_account_password'] != '') {
             $e_pass = quote(encode_pass_for_mysql(app('data')->frm['egold_account_password']));
-            $q = 'delete from hm2_pay_settings where n=\'egold_account_password\'';
+            $q = 'delete from pay_settings where n=\'egold_account_password\'';
             db_query($q);
-            $q = 'insert into hm2_pay_settings set n=\'egold_account_password\', v=\''.$e_pass.'\'';
+            $q = 'insert into pay_settings set n=\'egold_account_password\', v=\''.$e_pass.'\'';
             db_query($q);
         }
     }
@@ -692,7 +692,7 @@ if ((app('data')->frm['a'] == 'auto-pay-settings' and app('data')->frm['action']
 if ((app('data')->frm['a'] == 'referal' and app('data')->frm['action'] == 'change')) {
     if (app('data')->settings['demomode'] == 1) {
     } else {
-        $q = 'delete from hm2_referal where level = 1';
+        $q = 'delete from referal where level = 1';
         db_query($q);
         for ($i = 0; $i < 300; ++$i) {
             if (app('data')->frm['active'][$i] == 1) {
@@ -703,7 +703,7 @@ if ((app('data')->frm['a'] == 'referal' and app('data')->frm['action'] == 'chang
                 $percent_daily = sprintf('%0.2f', app('data')->frm['ref_percent_daily'][$i]);
                 $percent_weekly = sprintf('%0.2f', app('data')->frm['ref_percent_weekly'][$i]);
                 $percent_monthly = sprintf('%0.2f', app('data')->frm['ref_percent_monthly'][$i]);
-                $q = 'insert into hm2_referal set
+                $q = 'insert into referal set
   	level = 1,
   	name= \''.$qname.'\',
   	from_value = '.$from.',
@@ -748,9 +748,9 @@ if (app('data')->frm['a'] == 'deleterate') {
     $id = sprintf('%d', app('data')->frm['id']);
     if (($id < 3 and app('data')->settings['demomode'] == 1)) {
     } else {
-        $q = 'delete from hm2_types where id = '.$id;
+        $q = 'delete from types where id = '.$id;
         db_query($q);
-        $q = 'delete from hm2_plans where parent = '.$id;
+        $q = 'delete from plans where parent = '.$id;
         db_query($q);
     }
 
@@ -762,16 +762,16 @@ if (app('data')->frm['a'] == 'deleterate') {
  */
 if ((app('data')->frm['a'] == 'newsletter' and app('data')->frm['action'] == 'newsletter')) {
     if (app('data')->frm['to'] == 'user') {
-        $q = 'select * from hm2_users where username = \''.quote(app('data')->frm['username']).'\'';
+        $q = 'select * from users where username = \''.quote(app('data')->frm['username']).'\'';
     } else {
         if (app('data')->frm['to'] == 'all') {
-            $q = 'select * from hm2_users where id > 1';
+            $q = 'select * from users where id > 1';
         } else {
             if (app('data')->frm['to'] == 'active') {
-                $q = 'select hm2_users.* from hm2_users, hm2_deposits where hm2_users.id > 1 and hm2_deposits.user_id = hm2_users.id group by hm2_users.id';
+                $q = 'select users.* from users, deposits where users.id > 1 and deposits.user_id = users.id group by users.id';
             } else {
                 if (app('data')->frm['to'] == 'passive') {
-                    $q = 'select u.* from hm2_users as u left outer join hm2_deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
+                    $q = 'select u.* from users as u left outer join deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
                 } else {
                     throw new RedirectException($admin_url.'?a=newsletter&say=someerror');
                 }
@@ -828,12 +828,12 @@ obj.appendChild(menu);
  * @action edit_emails_update_statuses
  */
 if ((app('data')->frm['a'] == 'edit_emails' and app('data')->frm['action'] == 'update_statuses')) {
-    $q = 'update hm2_emails set status = 0';
+    $q = 'update emails set status = 0';
     db_query($q);
     $update_emails = app('data')->frm['emails'];
     if (is_array($update_emails)) {
         foreach ($update_emails as $email_id => $tmp) {
-            $q = 'update hm2_emails set status = 1 where id = \''.$email_id.'\'';
+            $q = 'update emails set status = 1 where id = \''.$email_id.'\'';
             db_query($q);
         }
     }
@@ -853,7 +853,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
     $deposit = intval(app('data')->frm['deposit']);
     $hyip_id = intval(app('data')->frm['hyip_id']);
     if ($deposit == 1) {
-        $q = 'select * from hm2_types where id = '.$hyip_id.' and status = \'on\'';
+        $q = 'select * from types where id = '.$hyip_id.' and status = \'on\'';
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         if (! $type) {
@@ -863,16 +863,16 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
 
     $ec = sprintf('%d', app('data')->frm['ec']);
     if (app('data')->frm['to'] == 'user') {
-        $q = 'select * from hm2_users where username = \''.quote(app('data')->frm['username']).'\'';
+        $q = 'select * from users where username = \''.quote(app('data')->frm['username']).'\'';
     } else {
         if (app('data')->frm['to'] == 'all') {
-            $q = 'select * from hm2_users where id > 1';
+            $q = 'select * from users where id > 1';
         } else {
             if (app('data')->frm['to'] == 'active') {
-                $q = 'select hm2_users.* from hm2_users, hm2_deposits where hm2_users.id > 1 and hm2_deposits.user_id = hm2_users.id group by hm2_users.id';
+                $q = 'select users.* from users, deposits where users.id > 1 and deposits.user_id = users.id group by users.id';
             } else {
                 if (app('data')->frm['to'] == 'passive') {
-                    $q = 'select u.* from hm2_users as u left outer join hm2_deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
+                    $q = 'select u.* from users as u left outer join deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
                 } else {
                     throw new RedirectException($admin_url.'?a=send_bonuce&say=someerror');
                 }
@@ -890,7 +890,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
             while ($row = mysql_fetch_array($sth)) {
                 $flag = 1;
                 $total += $amount;
-                $q = 'insert into hm2_history set
+                $q = 'insert into history set
     	user_id = '.$row['id'].(',
     	amount = '.$amount.',
     	description = \''.$description.'\',
@@ -906,7 +906,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
                     }
 
                     $user_id = $row['id'];
-                    $q = 'insert into hm2_deposits set
+                    $q = 'insert into deposits set
                user_id = '.$user_id.',
                type_id = '.$hyip_id.',
                deposit_date = now(),
@@ -919,7 +919,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
                ';
                     db_query($q);
                     $deposit_id = mysql_insert_id();
-                    $q = 'insert into hm2_history set
+                    $q = 'insert into history set
                user_id = '.$user_id.',
                amount = \'-'.$amount.'\',
                type = \'deposit\',
@@ -937,7 +937,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
                         }
 
                         if (0 < $imps) {
-                            $q = 'update hm2_users set imps = imps + '.$imps.' where id = '.$user_id;
+                            $q = 'update users set imps = imps + '.$imps.' where id = '.$user_id;
                             db_query($q);
                             continue;
                         }
@@ -984,16 +984,16 @@ if ((app('data')->frm['a'] == 'send_penality' and app('data')->frm['action'] == 
 
     $ec = sprintf('%d', app('data')->frm['ec']);
     if (app('data')->frm['to'] == 'user') {
-        $q = 'select * from hm2_users where username = \''.quote(app('data')->frm['username']).'\'';
+        $q = 'select * from users where username = \''.quote(app('data')->frm['username']).'\'';
     } else {
         if (app('data')->frm['to'] == 'all') {
-            $q = 'select * from hm2_users where id > 1';
+            $q = 'select * from users where id > 1';
         } else {
             if (app('data')->frm['to'] == 'active') {
-                $q = 'select hm2_users.* from hm2_users, hm2_deposits where hm2_users.id > 1 and hm2_deposits.user_id = hm2_users.id group by hm2_users.id';
+                $q = 'select users.* from users, deposits where users.id > 1 and deposits.user_id = users.id group by users.id';
             } else {
                 if (app('data')->frm['to'] == 'passive') {
-                    $q = 'select u.* from hm2_users as u left outer join hm2_deposits as d on u.id = d.user_id where u.user_id > 1 and d.user_id is NULL';
+                    $q = 'select u.* from users as u left outer join deposits as d on u.id = d.user_id where u.user_id > 1 and d.user_id is NULL';
                 } else {
                     throw new RedirectException($admin_url.'?a=send_penality&say=someerror');
                 }
@@ -1008,7 +1008,7 @@ if ((app('data')->frm['a'] == 'send_penality' and app('data')->frm['action'] == 
     while ($row = mysql_fetch_array($sth)) {
         $flag = 1;
         $total += $amount;
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
 	user_id = '.$row['id'].(',
 	amount = -'.$amount.',
 	description = \''.$description.'\',
@@ -1071,12 +1071,12 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         }
 
         if (app('data')->frm['admin_stat_password'] == '') {
-            $q = 'update hm2_users set stat_password = \'\' where id = 1';
+            $q = 'update users set stat_password = \'\' where id = 1';
             db_query($q);
         } else {
             if (app('data')->frm['admin_stat_password'] != '*****') {
                 $sp = md5(app('data')->frm['admin_stat_password']);
-                $q = 'update hm2_users set stat_password = \''.$sp.'\' where id = 1';
+                $q = 'update users set stat_password = \''.$sp.'\' where id = 1';
                 db_query($q);
             }
         }
@@ -1229,24 +1229,24 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         $email = quote(app('data')->frm['admin_email']);
 
         if (($login != '' and $email != '')) {
-            $q = 'update hm2_users set email=\''.$email.'\', username=\''.$login.'\' where id = 1';
+            $q = 'update users set email=\''.$email.'\', username=\''.$login.'\' where id = 1';
             db_query($q);
         }
 
         if ($pass != '') {
             $md_pass = md5($pass);
-            $q = 'update hm2_users set password = \''.$md_pass.'\' where id = 1';
+            $q = 'update users set password = \''.$md_pass.'\' where id = 1';
             db_query($q);
         }
 
         if ((app('data')->frm['use_alternative_passphrase'] == 1 and app('data')->frm['new_alternative_passphrase'] != '')) {
             $altpass = quote(app('data')->frm['new_alternative_passphrase']);
-            $q = 'update hm2_users set transaction_code = \''.$altpass.'\' where id = 1';
+            $q = 'update users set transaction_code = \''.$altpass.'\' where id = 1';
             db_query($q);
         }
 
         if (app('data')->frm['use_alternative_passphrase'] == 0) {
-            $q = 'update hm2_users set transaction_code = \'\' where id = 1';
+            $q = 'update users set transaction_code = \'\' where id = 1';
             db_query($q);
         }
 
@@ -1261,7 +1261,7 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
  */
 if (app('data')->frm['a'] == 'rm_withdraw') {
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'delete from hm2_history where id = '.$id;
+    $q = 'delete from history where id = '.$id;
     db_query($q);
     throw new RedirectException($admin_url.'?a=thistory&ttype=withdraw_pending');
 }
@@ -1275,12 +1275,12 @@ if ((app('data')->frm['a'] == 'releasedeposits' and app('data')->frm['action'] =
     while (list($kk, $vv) = each($type_ids)) {
         $kk = intval($kk);
         $vv = intval($vv);
-        $q = 'select compound, actual_amount from hm2_deposits where id = '.$kk;
+        $q = 'select compound, actual_amount from deposits where id = '.$kk;
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         $compound = $row['compound'];
         $amount = $row['actual_amount'];
-        $q = 'select * from hm2_types where id = '.$vv;
+        $q = 'select * from types where id = '.$vv;
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         if ($type['use_compound'] == 0) {
@@ -1310,7 +1310,7 @@ if ((app('data')->frm['a'] == 'releasedeposits' and app('data')->frm['action'] =
             }
         }
 
-        $q = 'update hm2_deposits set type_id = '.$vv.', compound = '.$compound.' where id = '.$kk;
+        $q = 'update deposits set type_id = '.$vv.', compound = '.$compound.' where id = '.$kk;
         db_query($q);
     }
 
@@ -1320,12 +1320,12 @@ if ((app('data')->frm['a'] == 'releasedeposits' and app('data')->frm['action'] =
             continue;
         }
 
-        $q = 'select actual_amount, ec from hm2_deposits where id = '.$kk;
+        $q = 'select actual_amount, ec from deposits where id = '.$kk;
         $sth = db_query($q);
         if ($row = mysql_fetch_array($sth)) {
             $release_deposit = sprintf('%-.2f', $vv);
             if ($release_deposit <= $row['actual_amount']) {
-                $q = 'insert into hm2_history set
+                $q = 'insert into history set
     		user_id = '.$u_id.',
 	    	amount = '.$release_deposit.',
     		type = \'early_deposit_release\',
@@ -1335,9 +1335,9 @@ if ((app('data')->frm['a'] == 'releasedeposits' and app('data')->frm['action'] =
                 db_query($q);
                 $dif = floor(($row['actual_amount'] - $release_deposit) * 100) / 100;
                 if ($dif == 0) {
-                    $q = 'update hm2_deposits set actual_amount = 0, amount = 0, status = \'off\' where id = '.$kk;
+                    $q = 'update deposits set actual_amount = 0, amount = 0, status = \'off\' where id = '.$kk;
                 } else {
-                    $q = 'update hm2_deposits set actual_amount = actual_amount - '.$release_deposit.' where id = '.$kk;
+                    $q = 'update deposits set actual_amount = actual_amount - '.$release_deposit.' where id = '.$kk;
                 }
 
                 db_query($q);
@@ -1358,7 +1358,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
     $deposit = intval(app('data')->frm['deposit']);
     $hyip_id = intval(app('data')->frm['hyip_id']);
     if ($deposit == 1) {
-        $q = 'select * from hm2_types where id = '.$hyip_id.' and status = \'on\'';
+        $q = 'select * from types where id = '.$hyip_id.' and status = \'on\'';
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         if (! $type) {
@@ -1373,7 +1373,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
             $amount = sprintf('%f', app('data')->frm['amount']);
             $description = quote(app('data')->frm['desc']);
             $ec = sprintf('%d', app('data')->frm['ec']);
-            $q = 'insert into hm2_history set
+            $q = 'insert into history set
               user_id = '.$id.',
               amount = '.$amount.',
               ec = '.$ec.',
@@ -1391,7 +1391,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
                 }
 
                 $user_id = $id;
-                $q = 'insert into hm2_deposits set
+                $q = 'insert into deposits set
              user_id = '.$user_id.',
              type_id = '.$hyip_id.',
              deposit_date = now(),
@@ -1404,7 +1404,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
              ';
                 db_query($q);
                 $deposit_id = mysql_insert_id();
-                $q = 'insert into hm2_history set
+                $q = 'insert into history set
              user_id = '.$user_id.',
              amount = \'-'.$amount.'\',
              type = \'deposit\',
@@ -1422,14 +1422,14 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
                     }
 
                     if (0 < $imps) {
-                        $q = 'update hm2_users set imps = imps + '.$imps.' where id = '.$user_id;
+                        $q = 'update users set imps = imps + '.$imps.' where id = '.$user_id;
                         db_query($q);
                     }
                 }
             }
 
             if (app('data')->frm['inform'] == 1) {
-                $q = 'select * from hm2_users where id = '.$id;
+                $q = 'select * from users where id = '.$id;
                 $sth = db_query($q);
                 $row = mysql_fetch_array($sth);
                 $info = [];
@@ -1466,7 +1466,7 @@ if ((app('data')->frm['a'] == 'addpenality' and app('data')->frm['action'] == 'a
     $amount = sprintf('%f', abs(app('data')->frm['amount']));
     $description = quote(app('data')->frm['desc']);
     $ec = sprintf('%d', app('data')->frm['ec']);
-    $q = 'insert into hm2_history set
+    $q = 'insert into history set
 	user_id = '.$id.',
 	amount = -'.$amount.',
 	actual_amount = -'.$amount.',
@@ -1478,7 +1478,7 @@ if ((app('data')->frm['a'] == 'addpenality' and app('data')->frm['action'] == 'a
     }
 
     if (app('data')->frm['inform'] == 1) {
-        $q = 'select * from hm2_users where id = '.$id;
+        $q = 'select * from users where id = '.$id;
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         $info = [];
@@ -1495,7 +1495,7 @@ if ((app('data')->frm['a'] == 'addpenality' and app('data')->frm['action'] == 'a
  */
 if (app('data')->frm['a'] == 'deleteaccount') {
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'delete from hm2_users where id = '.$id.' and id <> 1';
+    $q = 'delete from users where id = '.$id.' and id <> 1';
     db_query($q);
     throw new RedirectException($admin_url.'?a=members&q='.app('data')->frm['q'].'&p='.app('data')->frm['p'].'&status='.app('data')->frm['status']);
 }
@@ -1510,7 +1510,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
     }
 
     $username = quote(app('data')->frm['username']);
-    $q = 'select * from hm2_users where id <> '.$id.' and username = \''.$username.'\'';
+    $q = 'select * from users where id <> '.$id.' and username = \''.$username.'\'';
     $sth = db_query($q);
     ($row = mysql_fetch_array($sth));
     if ($row) {
@@ -1547,7 +1547,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
             $pswd = quote(app('data')->frm['password']);
         }
 
-        $q = 'insert into hm2_users set
+        $q = 'insert into users set
   	name = \''.$name.'\',
   	username = \''.$username.'\',
 	password = \''.$password.'\',
@@ -1570,7 +1570,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         db_query($q);
         app('data')->frm['id'] = mysql_insert_id();
     } else {
-        $q = 'select * from hm2_users where id = '.$id;
+        $q = 'select * from users where id = '.$id;
         $sth = db_query($q);
         ($row = mysql_fetch_array($sth));
         $name = quote(app('data')->frm['fullname']);
@@ -1609,7 +1609,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
             $user_auto_pay_earning = 1;
         }
 
-        $q = 'update hm2_users set
+        $q = 'update users set
   	name = \''.$name.'\',
     '.$edit_location.'
   	username = \''.$username.'\',
@@ -1631,10 +1631,10 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         if ($password != '') {
             $pswd = quote($password);
             $password = md5($password);
-            $q = 'update hm2_users set password = \''.$password.'\' where id = '.$id.' and id <> 1';
+            $q = 'update users set password = \''.$password.'\' where id = '.$id.' and id <> 1';
             db_query($q);
             if (app('data')->settings['store_uncrypted_password'] == 1) {
-                $q = 'update hm2_users set pswd = \''.$pswd.'\' where id = '.$id.' and id <> 1';
+                $q = 'update users set pswd = \''.$pswd.'\' where id = '.$id.' and id <> 1';
                 db_query($q);
             }
         }
@@ -1642,12 +1642,12 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         if ($transaction_code != '') {
             $pswd = quote($password);
             $password = md5($password);
-            $q = 'update hm2_users set transaction_code = \''.$transaction_code.'\' where id = '.$id.' and id <> 1';
+            $q = 'update users set transaction_code = \''.$transaction_code.'\' where id = '.$id.' and id <> 1';
             db_query($q);
         }
 
         if (app('data')->frm['activate']) {
-            $q = 'update hm2_users set activation_code = \'\', bf_counter = 0 where id = '.$id.' and id <> 1';
+            $q = 'update users set activation_code = \'\', bf_counter = 0 where id = '.$id.' and id <> 1';
             db_query($q);
         }
     }
@@ -1663,7 +1663,7 @@ if ((app('data')->frm['a'] == 'members' and app('data')->frm['action'] == 'modif
         $active = app('data')->frm['active'];
         while (list($id, $status) = each($active)) {
             $qstatus = quote($status);
-            $q = 'update hm2_users set status = \''.$qstatus.'\' where id = '.$id;
+            $q = 'update users set status = \''.$qstatus.'\' where id = '.$id;
             db_query($q);
         }
     }
@@ -1677,7 +1677,7 @@ if ((app('data')->frm['a'] == 'members' and app('data')->frm['action'] == 'modif
 if ((app('data')->frm['a'] == 'members' and app('data')->frm['action'] == 'activate')) {
     $active = app('data')->frm['activate'];
     while (list($id, $status) = each($active)) {
-        $q = 'update hm2_users set activation_code = \'\', bf_counter = 0 where id = '.$id;
+        $q = 'update users set activation_code = \'\', bf_counter = 0 where id = '.$id;
         db_query($q);
     }
 
@@ -1733,7 +1733,7 @@ if (app('data')->frm['action'] == 'add_hyip') {
     $compound_percents = implode(',', $cps1);
     $hold = sprintf('%d', app('data')->frm[hold]);
     $delay = sprintf('%d', app('data')->frm[delay]);
-    $q = 'insert into hm2_types set
+    $q = 'insert into types set
 	name=\''.quote(app('data')->frm['hname']).('\',
 	q_days = '.$q_days.',
 	period = \'').quote(app('data')->frm['hperiod']).'\',
@@ -1769,7 +1769,7 @@ if (app('data')->frm['action'] == 'add_hyip') {
             $min_amount = sprintf('%0.2f', app('data')->frm['rate_min_amount'][$i]);
             $max_amount = sprintf('%0.2f', app('data')->frm['rate_max_amount'][$i]);
             $percent = sprintf('%0.2f', app('data')->frm['rate_percent'][$i]);
-            $q = 'insert into hm2_plans set
+            $q = 'insert into plans set
 		parent='.$parent.',
 		name=\''.$name.'\',
 		min_deposit = '.$min_amount.',
@@ -1840,7 +1840,7 @@ if (app('data')->frm['action'] == 'edit_hyip') {
     $closed = (app('data')->frm['closed'] ? 1 : 0);
     $hold = sprintf('%d', app('data')->frm[hold]);
     $delay = sprintf('%d', app('data')->frm[delay]);
-    $q = 'update hm2_types set
+    $q = 'update types set
 	name=\''.quote(app('data')->frm['hname']).('\',
 	q_days = '.$q_days.',
 	period = \'').quote(app('data')->frm['hperiod']).'\',
@@ -1873,7 +1873,7 @@ if (app('data')->frm['action'] == 'edit_hyip') {
     }
 
     $parent = $id;
-    $q = 'delete from hm2_plans where parent = '.$id;
+    $q = 'delete from plans where parent = '.$id;
     if (! (db_query($q))) {
     }
 
@@ -1884,7 +1884,7 @@ if (app('data')->frm['action'] == 'edit_hyip') {
             $min_amount = sprintf('%0.2f', app('data')->frm['rate_min_amount'][$i]);
             $max_amount = sprintf('%0.2f', app('data')->frm['rate_max_amount'][$i]);
             $percent = sprintf('%0.2f', app('data')->frm['rate_percent'][$i]);
-            $q = 'insert into hm2_plans set
+            $q = 'insert into plans set
 		parent='.$parent.',
 		name=\''.$name.'\',
 		min_deposit = '.$min_amount.',
@@ -1943,11 +1943,11 @@ if ((app('data')->frm['a'] == 'thistory' and app('data')->frm['action2'] == 'dow
         $ecwhere = ' and ec = '.$ec;
     }
 
-    $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(' hour, \'%b-%e-%Y %r\') as d from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date desc, id desc');
+    $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(' hour, \'%b-%e-%Y %r\') as d from history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date desc, id desc');
     $sth = db_query($q);
     $trans = [];
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'select username from hm2_users where id = '.$row['user_id'];
+        $q = 'select username from users where id = '.$row['user_id'];
         $sth1 = db_query($q);
         $row1 = mysql_fetch_array($sth1);
         if ($row1) {
@@ -1993,7 +1993,7 @@ if ((app('data')->frm['a'] == 'add_processing' and app('data')->frm[action] == '
         }
 
         $qfields = serialize($fields);
-        $q = 'select max(id) as max_id from hm2_processings';
+        $q = 'select max(id) as max_id from processings';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         $max_id = $row['max_id'];
@@ -2002,7 +2002,7 @@ if ((app('data')->frm['a'] == 'add_processing' and app('data')->frm[action] == '
         }
 
         ++$max_id;
-        $q = 'insert into hm2_processings set
+        $q = 'insert into processings set
              id = '.$max_id.',
              status = '.$status.',
              name = \''.$name.'\',
@@ -2039,7 +2039,7 @@ if ((app('data')->frm['a'] == 'edit_processing' and app('data')->frm[action] == 
         }
 
         $qfields = serialize($fields);
-        $q = 'update hm2_processings set
+        $q = 'update processings set
              status = '.$status.',
              name = \''.$name.'\',
              description = \''.$description.'\',
@@ -2057,12 +2057,12 @@ if ((app('data')->frm['a'] == 'edit_processing' and app('data')->frm[action] == 
  */
 if (app('data')->frm['a'] == 'update_processings') {
     if (! app('data')->settings['demomode']) {
-        $q = 'update hm2_processings set status = 0';
+        $q = 'update processings set status = 0';
         db_query($q);
         $status = app('data')->frm['status'];
         if ($status) {
             foreach ($status as $id => $v) {
-                $q = 'update hm2_processings set status = 1 where id = '.$id;
+                $q = 'update processings set status = 1 where id = '.$id;
                 db_query($q);
             }
         }
@@ -2077,7 +2077,7 @@ if (app('data')->frm['a'] == 'update_processings') {
 if (app('data')->frm['a'] == 'delete_processing') {
     if (! app('data')->settings['demomode']) {
         $pid = intval(app('data')->frm['pid']);
-        $q = 'delete from hm2_processings where id = '.$pid;
+        $q = 'delete from processings where id = '.$pid;
         db_query($q);
     }
 

@@ -48,7 +48,7 @@ app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
       $ecwhere = ' and ec = '.$ec;
   }
 
-  $q = 'select count(*) as col from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere;
+  $q = 'select count(*) as col from history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['col'];
@@ -66,11 +66,11 @@ app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
   $from = ($page - 1) * $onpage;
   $order = (app('data')->settings['use_history_balance_mode'] ? 'asc' : 'desc');
   $dformat = (app('data')->settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
-  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date '.$order.', id '.$order.' limit '.$from.', '.$onpage);
+  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere.' order by date '.$order.', id '.$order.' limit '.$from.', '.$onpage);
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
-      $q = 'select username from hm2_users where id = '.$row['user_id'];
+      $q = 'select username from users where id = '.$row['user_id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       if ($row1) {
@@ -81,7 +81,7 @@ app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
 
       $row['debitcredit'] = ($row['actual_amount'] < 0 ? 1 : 0);
       if (app('data')->settings['use_history_balance_mode']) {
-          $q = 'select sum(actual_amount) as balance from hm2_history where id < '.$row['id'].(''.' '.$userwhere);
+          $q = 'select sum(actual_amount) as balance from history where id < '.$row['id'].(''.' '.$userwhere);
           $sth1 = db_query($q);
           $row1 = mysql_fetch_array($sth1);
           $start_balance = $row1['balance'];
@@ -97,7 +97,7 @@ app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
             sum(actual_amount * (actual_amount > 0)) as credit,
             sum(actual_amount) as balance
           from
-            hm2_history where '.$datewhere.' '.$typewhere.' '.$userwhere.' '.$ecwhere;
+            history where '.$datewhere.' '.$typewhere.' '.$userwhere.' '.$ecwhere;
       $sth = db_query($q);
       $period_stats = mysql_fetch_array($sth);
       $q = 'select
@@ -105,17 +105,17 @@ app('data')->frm['day_to'] = sprintf('%d', app('data')->frm['day_to']);
             sum(actual_amount * (actual_amount > 0)) as credit,
             sum(actual_amount) as balance
           from
-            hm2_history where 1=1 '.$typewhere.' '.$userwhere.' '.$ecwhere;
+            history where 1=1 '.$typewhere.' '.$userwhere.' '.$ecwhere;
       $sth = db_query($q);
       $total_stats = mysql_fetch_array($sth);
   }
 
   $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  $q = 'select sum(actual_amount) as periodsum from hm2_history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere;
+  $q = 'select sum(actual_amount) as periodsum from history where '.$datewhere.' '.$userwhere.' '.$typewhere.' '.$ecwhere;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $periodsum = $row['periodsum'];
-  $q = 'select sum(actual_amount) as sum from hm2_history where 1=1 '.$userwhere.' '.$typewhere.' '.$ecwhere;
+  $q = 'select sum(actual_amount) as sum from history where 1=1 '.$userwhere.' '.$typewhere.' '.$ecwhere;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $allsum = $row['sum'];

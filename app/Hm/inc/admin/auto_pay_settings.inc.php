@@ -9,37 +9,37 @@
  * with this source code in the file LICENSE.
  */
 
-$q = 'select * from hm2_pay_settings where n=\'egold_account_password\'';
+$q = 'select * from pay_settings where n=\'egold_account_password\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $egold_password = $row['v'];
   }
 
-  $q = 'select * from hm2_pay_settings where n=\'intgold_password\'';
+  $q = 'select * from pay_settings where n=\'intgold_password\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $intgold_password = $row['v'];
   }
 
-  $q = 'select * from hm2_pay_settings where n=\'intgold_transaction_code\'';
+  $q = 'select * from pay_settings where n=\'intgold_transaction_code\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $intgold_transaction_code = $row['v'];
   }
 
-  $q = 'select * from hm2_pay_settings where n=\'eeecurrency_password\'';
+  $q = 'select * from pay_settings where n=\'eeecurrency_password\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $eeecurrency_password = $row['v'];
   }
 
-  $q = 'select * from hm2_pay_settings where n=\'eeecurrency_transaction_code\'';
+  $q = 'select * from pay_settings where n=\'eeecurrency_transaction_code\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $eeecurrency_transaction_code = $row['v'];
   }
 
-  $q = 'select * from hm2_pay_settings where n=\'pecunix_password\'';
+  $q = 'select * from pay_settings where n=\'pecunix_password\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $pecunix_password = $row['v'];
@@ -424,7 +424,7 @@ function test_pecunix() {';
 
 <input type="hidden" name="_token" value="'.csrf_token().'"></form>
 ';
-  $q = 'select * from hm2_pay_errors limit 1';
+  $q = 'select * from pay_errors limit 1';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       echo '<a href=?a=error_pay_log>Check error transactions</a>

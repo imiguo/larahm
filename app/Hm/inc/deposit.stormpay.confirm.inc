@@ -19,7 +19,7 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
           view_execute('deposit.stormpay.confirm.blade.php');
       }
   } else {
-      $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
+      $q = 'select * from types where id = '.$h_id.' and closed = 0';
       $sth = db_query($q);
       $type = mysql_fetch_array($sth);
       if (!$type) {
@@ -59,7 +59,7 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
       }
 
       view_assign('use_compound', $use_compound);
-      $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
+      $q = 'select count(*) as col, min(min_deposit) as min from plans where parent = '.$h_id;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row) {
@@ -74,13 +74,13 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
           view_assign('false_data', 1);
       }
 
-      $q = 'select count(*) as col from hm2_plans where parent = '.$h_id.' and max_deposit = 0';
+      $q = 'select count(*) as col from plans where parent = '.$h_id.' and max_deposit = 0';
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row) {
           if (0 < $row['col']) {
           } else {
-              $q = 'select count(*) as col, max(max_deposit) as max from hm2_plans where parent = '.$h_id;
+              $q = 'select count(*) as col, max(max_deposit) as max from plans where parent = '.$h_id;
               $sth = db_query($q);
               $row = mysql_fetch_array($sth);
               if ($row) {

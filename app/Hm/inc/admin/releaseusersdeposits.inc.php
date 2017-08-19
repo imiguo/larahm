@@ -10,7 +10,7 @@
  */
 
 $user_id = sprintf('%d', app('data')->frm['u_id']);
-  $q = 'select * from hm2_types where status = \'on\'';
+  $q = 'select * from types where status = \'on\'';
   $sth = db_query($q);
   $plans = [];
   $deposits_cnt = 0;
@@ -22,7 +22,7 @@ $user_id = sprintf('%d', app('data')->frm['u_id']);
                 (to_days(now()) - to_days(deposit_date)) as duration,
                 (to_days(now()) - to_days(deposit_date) - '.$row['withdraw_principal_duration'].(''.') as pending_duration
           from
-                hm2_deposits
+                deposits
           where
                 user_id = '.$user_id.' and
                 status=\'on\' and
@@ -55,42 +55,42 @@ $user_id = sprintf('%d', app('data')->frm['u_id']);
       }
 
       $q = 'select
-            sum(hm2_history.actual_amount) as sm
+            sum(history.actual_amount) as sm
           from
-            hm2_history, hm2_deposits
+            history, deposits
           where
-            hm2_history.deposit_id = hm2_deposits.id and
-            hm2_history.user_id = '.$user_id.' and
-            hm2_deposits.user_id = '.$user_id.' and
-            hm2_history.type=\'deposit\' and
-            hm2_deposits.type_id = '.$row['id'];
+            history.deposit_id = deposits.id and
+            history.user_id = '.$user_id.' and
+            deposits.user_id = '.$user_id.' and
+            history.type=\'deposit\' and
+            deposits.type_id = '.$row['id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       $row['total_deposit'] = number_format(abs($row1['sm']), 2);
       $q = 'select
-            sum(hm2_history.actual_amount) as sm
+            sum(history.actual_amount) as sm
           from
-            hm2_history, hm2_deposits
+            history, deposits
           where
-            hm2_history.deposit_id = hm2_deposits.id and
-            hm2_history.user_id = '.$user_id.' and
-            hm2_deposits.user_id = '.$user_id.' and
-            hm2_history.type=\'earning\' and
-            to_days(hm2_history.date + interval '.app('data')->settings['time_dif'].' hour) = to_days(now()) and
-            hm2_deposits.type_id = '.$row['id'];
+            history.deposit_id = deposits.id and
+            history.user_id = '.$user_id.' and
+            deposits.user_id = '.$user_id.' and
+            history.type=\'earning\' and
+            to_days(history.date + interval '.app('data')->settings['time_dif'].' hour) = to_days(now()) and
+            deposits.type_id = '.$row['id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       $row['today_profit'] = number_format(abs($row1['sm']), 2);
       $q = 'select
-            sum(hm2_history.actual_amount) as sm
+            sum(history.actual_amount) as sm
           from
-            hm2_history, hm2_deposits
+            history, deposits
           where
-            hm2_history.deposit_id = hm2_deposits.id and
-            hm2_history.user_id = '.$user_id.' and
-            hm2_deposits.user_id = '.$user_id.' and
-            hm2_history.type=\'earning\' and
-            hm2_deposits.type_id = '.$row['id'];
+            history.deposit_id = deposits.id and
+            history.user_id = '.$user_id.' and
+            deposits.user_id = '.$user_id.' and
+            history.type=\'earning\' and
+            deposits.type_id = '.$row['id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       $row['total_profit'] = number_format(abs($row1['sm']), 2);

@@ -9,14 +9,14 @@
  * with this source code in the file LICENSE.
  */
 
-$q = 'select * from hm2_types order by id';
+$q = 'select * from types order by id';
   if (! ($sth = db_query($q))) {
   }
 
   $plans = [];
   $periods = ['d' => 'daily', 'w' => 'weekly', 'b-w' => 'bi-weekly', 'm' => 'monthly', '2m' => 'every 2 month', '3m' => 'every 3 month', '6m' => 'every 6 month', 'y' => 'yearly'];
   while ($row = mysql_fetch_array($sth)) {
-      $q = 'select min(min_deposit) as min_amount, max(max_deposit) as max_amount, sum(max_deposit = 0) as nomax, min(percent) as min_percent, max(percent) as max_percent from hm2_plans where parent='.$row['id'].' group by parent';
+      $q = 'select min(min_deposit) as min_amount, max(max_deposit) as max_amount, sum(max_deposit = 0) as nomax, min(percent) as min_percent, max(percent) as max_percent from plans where parent='.$row['id'].' group by parent';
       if (! ($sth1 = db_query($q))) {
       }
 
@@ -38,7 +38,7 @@ $q = 'select * from hm2_types order by id';
           $row['percent'] = $percent.'%';
       }
 
-      $q = 'select * from hm2_plans where parent='.$row['id'].' order by id';
+      $q = 'select * from plans where parent='.$row['id'].' order by id';
       $sth1 = db_query($q);
       $row['plans'] = [];
       while ($row1 = mysql_fetch_array($sth1)) {

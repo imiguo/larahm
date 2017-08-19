@@ -18,7 +18,7 @@ echo '<html>
       $typewhere = ' and type=\'withdraw_pending\' ';
   }
 
-  $q = 'select count(*) as col from hm2_history where type=\'withdraw_pending\'';
+  $q = 'select count(*) as col from history where type=\'withdraw_pending\'';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['col'];
@@ -34,11 +34,11 @@ echo '<html>
   }
 
   $from = ($page - 1) * $onpage;
-  $q = 'select *, date_format(date, \'%b-%e-%Y %r\') as d from hm2_history where type=\'withdraw_pending\' order by date desc, id desc limit '.$from.', '.$onpage;
+  $q = 'select *, date_format(date, \'%b-%e-%Y %r\') as d from history where type=\'withdraw_pending\' order by date desc, id desc limit '.$from.', '.$onpage;
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
-      $q = 'select username from hm2_users where id = '.$row['user_id'];
+      $q = 'select username from users where id = '.$row['user_id'];
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       if ($row1) {
@@ -51,11 +51,11 @@ echo '<html>
   }
 
   $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  $q = 'select sum(actual_amount) as periodsum from hm2_history where type=\'withdraw_pending\'';
+  $q = 'select sum(actual_amount) as periodsum from history where type=\'withdraw_pending\'';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $periodsum = $row['periodsum'];
-  $q = 'select sum(actual_amount) as sum from hm2_history where type=\'withdraw_pending\'';
+  $q = 'select sum(actual_amount) as sum from history where type=\'withdraw_pending\'';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $allsum = $row['sum'];

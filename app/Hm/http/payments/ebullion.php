@@ -21,12 +21,12 @@ if (app('data')->frm['a'] == 'pay_withdraw') {
     }
 
     $str = quote($str);
-    $q = 'select * from hm2_history where id = '.$id.' and str = \''.$str.'\' and type=\'withdraw_pending\'';
+    $q = 'select * from history where id = '.$id.' and str = \''.$str.'\' and type=\'withdraw_pending\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'delete from hm2_history where id = '.$id;
+        $q = 'delete from history where id = '.$id;
         db_query($q);
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
           	user_id = '.$row['user_id'].',
           	amount = -'.abs($row['amount']).(''.',
           	type = \'withdrawal\',
@@ -36,7 +36,7 @@ if (app('data')->frm['a'] == 'pay_withdraw') {
           	date = now()
   	';
         db_query($q);
-        $q = 'select * from hm2_users where id = '.$row['user_id'];
+        $q = 'select * from users where id = '.$row['user_id'];
         $sth = db_query($q);
         $userinfo = mysql_fetch_array($sth);
         if (app('data')->settings['withdraw_user_notification']) {
@@ -51,7 +51,7 @@ if (app('data')->frm['a'] == 'pay_withdraw') {
         }
 
         if (app('data')->settings['withdraw_admin_notification']) {
-            $q = 'select email from hm2_users where id = 1';
+            $q = 'select email from users where id = 1';
             $sth = db_query($q);
             $admin_row = mysql_fetch_array($sth);
             $info = [];

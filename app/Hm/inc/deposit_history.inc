@@ -29,7 +29,7 @@ $id = $userinfo['id'];
   $typewhere = ' and type in (\'deposit\', \'early_deposit_release\', \'release_deposit\', \'early_deposit_charge\')';
   $order = (app('data')->settings['use_history_balance_mode'] ? 'asc' : 'desc');
   $dformat = (app('data')->settings['use_history_balance_mode'] ? '%b-%e-%Y<br>%r' : '%b-%e-%Y %r');
-  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from hm2_history where '.$datewhere.' '.$typewhere.' and user_id = '.$id.' order by date '.$order.', id '.$order);
+  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \''.$dformat.'\') as d from history where '.$datewhere.' '.$typewhere.' and user_id = '.$id.' order by date '.$order.', id '.$order);
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
@@ -45,7 +45,7 @@ $id = $userinfo['id'];
       $periodcredit = 0;
       for ($i = 0; $i < sizeof($trans); ++$i) {
           $start_id = $trans[$i]['id'];
-          $q = 'select sum(actual_amount) as balance from hm2_history where id < '.$start_id.' and user_id = '.$userinfo['id'];
+          $q = 'select sum(actual_amount) as balance from history where id < '.$start_id.' and user_id = '.$userinfo['id'];
           $sth = db_query($q);
           $row = mysql_fetch_array($sth);
           $start_balance = $row['balance'];
@@ -57,7 +57,7 @@ $id = $userinfo['id'];
             sum(actual_amount * (actual_amount > 0)) as credit,
             sum(actual_amount) as balance
           from
-            hm2_history where '.$datewhere.' '.$typewhere.' and user_id = '.$userinfo['id'];
+            history where '.$datewhere.' '.$typewhere.' and user_id = '.$userinfo['id'];
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $start_balance = $row['balance'];
@@ -72,7 +72,7 @@ $id = $userinfo['id'];
             sum(actual_amount * (actual_amount > 0)) as credit,
             sum(actual_amount) as balance
           from
-            hm2_history where 1=1 '.$typewhere.' and user_id = '.$userinfo['id'];
+            history where 1=1 '.$typewhere.' and user_id = '.$userinfo['id'];
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $start_balance = $row['balance'];
@@ -84,12 +84,12 @@ $id = $userinfo['id'];
       view_assign('allbalance', number_format($periodbalance, 2));
   }
 
-  $q = 'select sum(actual_amount) as periodsum from hm2_history where '.$datewhere.' and user_id = '.$id.' and type in (\'deposit\', \'early_deposit_release\', \'release_deposit\', \'early_deposit_charge\')';
+  $q = 'select sum(actual_amount) as periodsum from history where '.$datewhere.' and user_id = '.$id.' and type in (\'deposit\', \'early_deposit_release\', \'release_deposit\', \'early_deposit_charge\')';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $periodsum = $row['periodsum'];
   view_assign('periodsum', number_format(0 - $periodsum, 2));
-  $q = 'select sum(actual_amount) as sum from hm2_history where 1=1 '.$userwhere.' and user_id = '.$id.' and type in (\'deposit\', \'early_deposit_release\', \'release_deposit\', \'early_deposit_charge\')';
+  $q = 'select sum(actual_amount) as sum from history where 1=1 '.$userwhere.' and user_id = '.$id.' and type in (\'deposit\', \'early_deposit_release\', \'release_deposit\', \'early_deposit_charge\')';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $allsum = $row['sum'];

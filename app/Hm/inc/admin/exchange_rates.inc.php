@@ -17,7 +17,7 @@ You cannot change the exchange rates!';
 }
 
   $exch = [];
-  $q = 'select * from hm2_exchange_rates';
+  $q = 'select * from exchange_rates';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $exch[$row['sfrom']][$row['sto']] = $row['percent'];

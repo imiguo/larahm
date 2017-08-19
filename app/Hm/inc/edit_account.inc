@@ -138,48 +138,48 @@ if (app('data')->frm['action'] == 'edit_account') {
         $transaction_code = quote(app('data')->frm['transaction_code']);
 
         if (($userinfo['email'] != app('data')->frm['email'] and app('data')->settings['usercanchangeemail'] == 1)) {
-            $q = 'update hm2_users set email = \''.$email.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set email = \''.$email.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         if (($userinfo['egold_account'] != app('data')->frm['egold_account'] and app('data')->settings['usercanchangeegoldacc'])) {
-            $q = 'update hm2_users set egold_account = \''.$egold.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set egold_account = \''.$egold.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         if (($userinfo['perfectmoney_account'] != app('data')->frm['perfectmoney_account'] and app('data')->settings['usercanchangeperfectmoneyacc'])) {
-            $q = 'update hm2_users set perfectmoney_account = \''.$perfectmoney.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set perfectmoney_account = \''.$perfectmoney.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         if (($userinfo['payeer_account'] != app('data')->frm['payeer_account'] and app('data')->settings['usercanchangepayeeracc'])) {
-            $q = 'update hm2_users set payeer_account = \''.$payeer.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set payeer_account = \''.$payeer.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         if (($userinfo['bitcoin_account'] != app('data')->frm['bitcoin_account'] and app('data')->settings['usercanchangebitcoinacc'])) {
-            $q = 'update hm2_users set bitcoin_account = \''.$bitcoin.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set bitcoin_account = \''.$bitcoin.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         if (app('data')->frm['password'] != '') {
-            $q = 'update hm2_users set password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
             if (app('data')->settings['store_uncrypted_password'] == 1) {
                 $pswd = quote(app('data')->frm['password']);
-                $q = 'update hm2_users set pswd = \''.$pswd.'\' where id > 1 and id = '.$userinfo['id'];
+                $q = 'update users set pswd = \''.$pswd.'\' where id > 1 and id = '.$userinfo['id'];
                 db_query($q);
             }
         }
 
         if (app('data')->frm['transaction_code'] != '') {
-            $q = 'update hm2_users set transaction_code = \''.$transaction_code.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set transaction_code = \''.$transaction_code.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
         if (app('data')->frm['wappassword'] != '') {
             $enc_password = quote(md5(app('data')->frm['wappassword']));
-            $q = 'update hm2_users set stat_password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
+            $q = 'update users set stat_password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
@@ -194,7 +194,7 @@ if (app('data')->frm['action'] == 'edit_account') {
         }
 
         $user_auto_pay_earning = sprintf('%d', app('data')->frm['user_auto_pay_earning']);
-        $q = 'update hm2_users set name = \''.$fullname.'\',
+        $q = 'update users set name = \''.$fullname.'\',
                                  '.$edit_location.'
     	                         evocash_account = \''.$evocash.'\',
                                  intgold_account = \''.$intgold.'\',
@@ -206,7 +206,7 @@ if (app('data')->frm['action'] == 'edit_account') {
                                  user_auto_pay_earning = '.$user_auto_pay_earning.'
             where id > 1 and id = '.$userinfo['id'];
         db_query($q);
-        $q = 'select * from hm2_users where id ='.$userinfo['id'];
+        $q = 'select * from users where id ='.$userinfo['id'];
         $sth = db_query($q);
         $userinfo = mysql_fetch_array($sth);
         $userinfo['logged'] = 1;

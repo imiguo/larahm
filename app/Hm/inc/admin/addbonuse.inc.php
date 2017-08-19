@@ -10,12 +10,12 @@
  */
 
 $id = sprintf('%d', app('data')->frm['id']);
-  $q = 'select * from hm2_users where id = '.$id;
+  $q = 'select * from users where id = '.$id;
   $sth = db_query($q);
   $userinfo = mysql_fetch_array($sth);
   app('data')->env['HTTP_HOST'] = preg_replace('/www\\./', '', app('data')->env['HTTP_HOST']);
   $types = [];
-  $q = 'select * from hm2_types where status = \'on\'';
+  $q = 'select * from types where status = \'on\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $types[$row['id']] = $row['name'];

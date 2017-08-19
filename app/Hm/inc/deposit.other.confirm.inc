@@ -24,7 +24,7 @@ $ok = 1;
 
       $plan_name = 'Deposit to Account';
   } else {
-      $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
+      $q = 'select * from types where id = '.$h_id.' and closed = 0';
       $sth = db_query($q);
       $type = mysql_fetch_array($sth);
       if (!$type) {
@@ -64,7 +64,7 @@ $ok = 1;
       }
 
       view_assign('use_compound', $use_compound);
-      $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
+      $q = 'select count(*) as col, min(min_deposit) as min from plans where parent = '.$h_id;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row) {
@@ -84,7 +84,7 @@ $ok = 1;
       }
 
       $max_deposit = 0;
-      $q = 'select min(max_deposit) as min, max(max_deposit) as max from hm2_plans where parent = '.$h_id;
+      $q = 'select min(max_deposit) as min, max(max_deposit) as max from plans where parent = '.$h_id;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       if ($row) {
@@ -102,7 +102,7 @@ $ok = 1;
       }
   }
 
-  $q = 'select * from hm2_processings where id = '.$ps;
+  $q = 'select * from processings where id = '.$ps;
   $sth = db_query($q);
   $processing = mysql_fetch_array($sth);
   if (($ok == 1 and app('data')->frm['action'] == 'confirm')) {
@@ -130,7 +130,7 @@ $ok = 1;
           $h_id = 0;
       }
 
-      $q = 'insert into hm2_pending_deposits set
+      $q = 'insert into pending_deposits set
             user_id = \''.$userinfo['id'].'\',
             `fields` = \''.quote($fields).(''.'\',
             ec = '.$ps.',
@@ -158,7 +158,7 @@ $ok = 1;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $info['date'] = $row['date'];
-      $q = 'select email from hm2_users where id = 1';
+      $q = 'select email from users where id = 1';
       $sth = db_query($q);
       $admin_row = mysql_fetch_array($sth);
       send_template_mail('pending_deposit_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);

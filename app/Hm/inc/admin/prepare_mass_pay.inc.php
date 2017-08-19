@@ -17,7 +17,7 @@ if (! is_array(app('data')->frm['pend'])) {
 }
     $ids = implode(', ', array_keys(app('data')->frm['pend']));
     $sum = 0;
-    $q = 'select actual_amount from hm2_history where id in ('.$ids.') and ec in (0, 1, 2, 5, 8, 9)';
+    $q = 'select actual_amount from history where id in ('.$ids.') and ec in (0, 1, 2, 5, 8, 9)';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
         $amount = abs($row['actual_amount']);

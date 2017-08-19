@@ -18,11 +18,11 @@ function bind_ref()
     Cookie::queue('referer', app('data')->frm['ref'], 43200);
     if (Cookie::get('referer') == '') {
         $ref = quote(app('data')->frm['ref']);
-        $q = 'select id from hm2_users where username = \''.$ref.'\'';
+        $q = 'select id from users where username = \''.$ref.'\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $ref_id = $row['id'];
-            $q = 'select * from hm2_referal_stats where date = current_date() and user_id = '.$ref_id;
+            $q = 'select * from referal_stats where date = current_date() and user_id = '.$ref_id;
             $sth = db_query($q);
             $f = 0;
             while ($row = mysql_fetch_array($sth)) {
@@ -30,10 +30,10 @@ function bind_ref()
             }
 
             if ($f == 0) {
-                $q = 'insert into hm2_referal_stats set date = current_date(), user_id = '.$ref_id.', income = 1, reg = 0';
+                $q = 'insert into referal_stats set date = current_date(), user_id = '.$ref_id.', income = 1, reg = 0';
                 db_query($q);
             } else {
-                $q = 'update hm2_referal_stats set income = income+1 where date = current_date() and user_id = '.$ref_id.' ';
+                $q = 'update referal_stats set income = income+1 where date = current_date() and user_id = '.$ref_id.' ';
                 db_query($q);
             }
 
@@ -52,12 +52,12 @@ function custom2_pay_withdraw_eeecurrency()
     }
 
     $str = quote($str);
-    $q = 'select * from hm2_history where id = '.$id.' and str = \''.$str.'\'';
+    $q = 'select * from history where id = '.$id.' and str = \''.$str.'\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'delete from hm2_history where id = '.$id;
+        $q = 'delete from history where id = '.$id;
         db_query($q);
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
             user_id = '.$row['user_id'].',
             amount = -'.abs($row['amount']).(',
             type = \'withdrawal\',
@@ -66,7 +66,7 @@ function custom2_pay_withdraw_eeecurrency()
             ec = 8,
             date = now()';
         db_query($q);
-        $q = 'select * from hm2_users where id = '.$row['user_id'];
+        $q = 'select * from users where id = '.$row['user_id'];
         $sth = db_query($q);
         $userinfo = mysql_fetch_array($sth);
         $info = [];
@@ -92,12 +92,12 @@ function custom2_pay_withdraw()
     }
 
     $str = quote($str);
-    $q = 'select * from hm2_history where id = '.$id.' and str = \''.$str.'\'';
+    $q = 'select * from history where id = '.$id.' and str = \''.$str.'\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'delete from hm2_history where id = '.$id;
+        $q = 'delete from history where id = '.$id;
         db_query($q);
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
             user_id = '.$row['user_id'].',
             amount = -'.abs($row['amount']).(',
             type = \'withdrawal\',
@@ -106,7 +106,7 @@ function custom2_pay_withdraw()
             ec = 2,
             date = now()';
         db_query($q);
-        $q = 'select * from hm2_users where id = '.$row['user_id'];
+        $q = 'select * from users where id = '.$row['user_id'];
         $sth = db_query($q);
         $userinfo = mysql_fetch_array($sth);
         $info = [];
@@ -132,12 +132,12 @@ function user3_pay_withdraw_payment()
     }
 
     $str = quote($str);
-    $q = 'select * from hm2_history where id = '.$id.' and str = \''.$str.'\'';
+    $q = 'select * from history where id = '.$id.' and str = \''.$str.'\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'delete from hm2_history where id = '.$id;
+        $q = 'delete from history where id = '.$id;
         db_query($q);
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
             user_id = '.$row['user_id'].',
             amount = -'.abs($row['amount']).(',
             type = \'withdrawal\',
@@ -146,7 +146,7 @@ function user3_pay_withdraw_payment()
             ec = 4,
             date = now()';
         db_query($q);
-        $q = 'select * from hm2_users where id = '.$row['user_id'];
+        $q = 'select * from users where id = '.$row['user_id'];
         $sth = db_query($q);
         $userinfo = mysql_fetch_array($sth);
         $info = [];
@@ -168,7 +168,7 @@ function show_info_box($stats)
         if (app('data')->settings['crontab_stats'] == 1) {
             app('data')->settings['show_info_box_members_online_generated'] = $stats['visitors'];
         } else {
-            $q = 'select count(*) as col from hm2_users where last_access_time + interval 30 minute > now()';
+            $q = 'select count(*) as col from users where last_access_time + interval 30 minute > now()';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             app('data')->settings['show_info_box_members_online_generated'] = $row['col'];
@@ -179,7 +179,7 @@ function show_info_box($stats)
         if (app('data')->settings['crontab_stats'] == 1) {
             app('data')->settings['info_box_total_accounts_generated'] = $stats['total_users'];
         } else {
-            $q = 'select count(*) as col from hm2_users where id > 1';
+            $q = 'select count(*) as col from users where id > 1';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             app('data')->settings['info_box_total_accounts_generated'] = $row['col'];
@@ -190,7 +190,7 @@ function show_info_box($stats)
         if (app('data')->settings['crontab_stats'] == 1) {
             app('data')->settings['info_box_total_active_accounts_generated'] = $stats['active_accounts'];
         } else {
-            $q = 'select count(distinct user_id) as col from hm2_deposits ';
+            $q = 'select count(distinct user_id) as col from deposits ';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             app('data')->settings['info_box_total_active_accounts_generated'] = $row['col'];
@@ -198,7 +198,7 @@ function show_info_box($stats)
     }
 
     if (app('data')->settings['show_info_box_vip_accounts'] == 1) {
-        $q = 'select count(distinct user_id) as col from hm2_deposits where actual_amount > '.sprintf('%.02f',
+        $q = 'select count(distinct user_id) as col from deposits where actual_amount > '.sprintf('%.02f',
                 app('data')->settings['vip_users_deposit_amount']);
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
@@ -209,7 +209,7 @@ function show_info_box($stats)
         if (app('data')->settings['crontab_stats'] == 1) {
             app('data')->settings['info_box_deposit_funds_generated'] = number_format($stats['total_deposited'], 2);
         } else {
-            $q = 'select sum(amount) as sum from hm2_deposits';
+            $q = 'select sum(amount) as sum from deposits';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             app('data')->settings['info_box_deposit_funds_generated'] = number_format($row['sum'], 2);
@@ -217,7 +217,7 @@ function show_info_box($stats)
     }
 
     if (app('data')->settings['show_info_box_today_deposit_funds'] == 1) {
-        $q = 'select sum(amount) as sum from hm2_deposits where to_days(deposit_date) = to_days(now() + interval '.app('data')->settings['time_dif'].' day)';
+        $q = 'select sum(amount) as sum from deposits where to_days(deposit_date) = to_days(now() + interval '.app('data')->settings['time_dif'].' day)';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         app('data')->settings['info_box_today_deposit_funds_generated'] = number_format($row['sum'], 2);
@@ -227,7 +227,7 @@ function show_info_box($stats)
         if (app('data')->settings['crontab_stats'] == 1) {
             app('data')->settings['info_box_withdraw_funds_generated'] = number_format(abs($stats['total_withdraw']), 2);
         } else {
-            $q = 'select sum(amount) as sum from hm2_history where type=\'withdrawal\'';
+            $q = 'select sum(amount) as sum from history where type=\'withdrawal\'';
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             app('data')->settings['info_box_withdraw_funds_generated'] = number_format(abs($row['sum']), 2);
@@ -235,14 +235,14 @@ function show_info_box($stats)
     }
 
     if (app('data')->settings['show_info_box_visitor_online'] == 1) {
-        $q = 'select count(*) as sum from hm2_online';
+        $q = 'select count(*) as sum from online';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         app('data')->settings['info_box_visitor_online_generated'] = $row['sum'];
     }
 
     if (app('data')->settings['show_info_box_newest_member'] == 1) {
-        $q = 'select username from hm2_users where status = \'on\' order by id desc limit 0,1';
+        $q = 'select username from users where status = \'on\' order by id desc limit 0,1';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         app('data')->settings['show_info_box_newest_member_generated'] = $row['username'];
@@ -263,7 +263,7 @@ function do_login(&$userinfo)
         $add_opt_in_check = ' and (confirm_string = "" or confirm_string is NULL)';
     }
 
-    $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from hm2_users where username = \''.$username.'\' and (status=\'on\' or status=\'suspended\') '.$add_opt_in_check;
+    $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from users where username = \''.$username.'\' and (status=\'on\' or status=\'suspended\') '.$add_opt_in_check;
     $sth = db_query($q);
     if ($row = mysql_fetch_array($sth)) {
         if (((extension_loaded('gd') and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars'])) {
@@ -278,7 +278,7 @@ function do_login(&$userinfo)
 
         if ((app('data')->settings['brute_force_handler'] == 1 and $row['bf_counter'] == app('data')->settings['brute_force_max_tries'])) {
             $activation_code = get_rand_md5(50);
-            $q = 'update hm2_users set bf_counter = bf_counter + 1, activation_code = \''.$activation_code.'\' where id = '.$row['id'];
+            $q = 'update users set bf_counter = bf_counter + 1, activation_code = \''.$activation_code.'\' where id = '.$row['id'];
             db_query($q);
             $info = [];
             $info['activation_code'] = $activation_code;
@@ -290,7 +290,7 @@ function do_login(&$userinfo)
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
         if ($row['password'] != $password) {
-            $q = 'update hm2_users set bf_counter = bf_counter + 1 where id = '.$row['id'];
+            $q = 'update users set bf_counter = bf_counter + 1 where id = '.$row['id'];
             db_query($q);
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
@@ -298,9 +298,9 @@ function do_login(&$userinfo)
         $userinfo = $row;
         $userinfo['logged'] = 1;
         $ip = app('data')->env['REMOTE_ADDR'];
-        $q = 'update hm2_users set bf_counter = 0, last_access_time = now(), last_access_ip = \''.$ip.'\' where id = '.$row['id'];
+        $q = 'update users set bf_counter = 0, last_access_time = now(), last_access_ip = \''.$ip.'\' where id = '.$row['id'];
         db_query($q);
-        $q = 'insert into hm2_user_access_log set user_id = '.$userinfo['id'].(', date = now(), ip = \''.$ip.'\'');
+        $q = 'insert into user_access_log set user_id = '.$userinfo['id'].(', date = now(), ip = \''.$ip.'\'');
         db_query($q);
     }
 
@@ -313,10 +313,10 @@ function do_login_else(&$userinfo)
 {
     if (Auth::check()) {
         $user_id = Auth::id();
-        $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from hm2_users where id = '.$user_id.' and (status=\'on\' or status=\'suspended\')';
+        $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from users where id = '.$user_id.' and (status=\'on\' or status=\'suspended\')';
         $sth = db_query($q);
         if ($row = mysql_fetch_array($sth)) {
-            $q = 'update hm2_users set last_access_time = now() where username=\''.$row['username'].'\'';
+            $q = 'update users set last_access_time = now() where username=\''.$row['username'].'\'';
             $userinfo = $row;
             $userinfo['logged'] = 1;
             db_query($q);

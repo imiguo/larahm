@@ -16,7 +16,7 @@ if (app('data')->settings['demomode'] != 1) {
         $small_text = preg_replace('/\\r/', '', $small_text);
         $full_text = quote(app('data')->frm['full_text']);
         $full_text = preg_replace('/\\r/', '', $full_text);
-        $q = 'insert into hm2_news set date=now(), title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\'';
+        $q = 'insert into news set date=now(), title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\'';
         db_query($q);
     }
 
@@ -27,14 +27,14 @@ if (app('data')->settings['demomode'] != 1) {
         $small_text = preg_replace('/\\r/', '', $small_text);
         $full_text = quote(app('data')->frm['full_text']);
         $full_text = preg_replace('/\\r/', '', $full_text);
-        $q = 'update hm2_news set title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\' where id = '.$id;
+        $q = 'update news set title=\''.$title.'\', small_text=\''.$small_text.'\', full_text=\''.$full_text.'\' where id = '.$id;
         db_query($q);
         app('data')->frm['action'] = '';
     }
 
     if (app('data')->frm['action'] == 'delete') {
         $id = intval(app('data')->frm['id']);
-        $q = 'delete from hm2_news where id = '.$id;
+        $q = 'delete from news where id = '.$id;
         db_query($q);
     }
 }
@@ -53,7 +53,7 @@ You cannot add/edit news!';
 <b>Add/Edit News:</b><br><br>
 
 ';
-  $q = 'select count(*) as call from hm2_news';
+  $q = 'select count(*) as call from news';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['call'];
@@ -73,7 +73,7 @@ You cannot add/edit news!';
 
       $from = ($page - 1) * $onpage;
       $edit_row = [];
-      $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d from hm2_news order by date desc limit '.$from.', '.$onpage);
+      $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d from news order by date desc limit '.$from.', '.$onpage);
       $sth = db_query($q);
       while ($row = mysql_fetch_array($sth)) {
           if ((app('data')->frm['action'] == 'edit' and $row['id'] == app('data')->frm['id'])) {

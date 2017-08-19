@@ -24,7 +24,7 @@ if (app('data')->frm['complete']) {
                *,
                (to_days(now()) - to_days(deposit_date)) as deposit_duration
          from
-               hm2_deposits
+               deposits
          where
                user_id = '.$user_id.' and
                id = '.$deposit_id.'
@@ -37,7 +37,7 @@ if (app('data')->frm['complete']) {
       throw new EmptyException();
   }
 
-  $q = 'select * from hm2_types where id = '.$deposit['type_id'];
+  $q = 'select * from types where id = '.$deposit['type_id'];
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   if (!$type['use_compound']) {
@@ -99,7 +99,7 @@ if (app('data')->frm['complete']) {
           $c_percent = 0;
       }
 
-      $q = 'update hm2_deposits set compound = '.$c_percent.' where user_id = '.$user_id.' and id = '.$deposit_id;
+      $q = 'update deposits set compound = '.$c_percent.' where user_id = '.$user_id.' and id = '.$deposit_id;
       db_query($q);
       throw new RedirectException('/?a=change_compound&complete=1');
   }

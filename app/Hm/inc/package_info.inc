@@ -10,7 +10,7 @@
  */
 
 $id = sprintf('%d', app('data')->frm['id']);
-  $q = 'select * from hm2_types where id = '.$id;
+  $q = 'select * from types where id = '.$id;
   $sth = db_query($q);
   $flag = 0;
   while ($row = mysql_fetch_array($sth)) {

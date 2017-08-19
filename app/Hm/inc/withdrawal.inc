@@ -17,7 +17,7 @@ if (app('data')->frm['action'] == 'preview') {
     $description = quote(app('data')->frm['comment']);
     $ec = sprintf('%d', app('data')->frm['ec']);
     if (0 < app('data')->settings['forbid_withdraw_before_deposit']) {
-        $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$userinfo['id'];
+        $q = 'select count(*) as cnt from deposits where user_id = '.$userinfo['id'];
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         if ($row['cnt'] < 1) {
@@ -31,7 +31,7 @@ if (app('data')->frm['action'] == 'preview') {
 
     $on_hold = 0;
     if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
-        $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
+        $q = 'select id from deposits where user_id = '.$userinfo['id'];
         $sth = db_query($q);
         $deps = [];
         $deps[0] = 0;
@@ -39,7 +39,7 @@ if (app('data')->frm['action'] == 'preview') {
             array_push($deps, $row[id]);
         }
 
-        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
+        $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 	deposit_id in (').join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));';
@@ -50,16 +50,16 @@ if (app('data')->frm['action'] == 'preview') {
     }
 
     if (app('data')->settings['hold_only_first_days'] == 1) {
-        $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
+        $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and ec='.$ec.' and deposits.deposit_date + interval types.hold day > now()';
     } else {
-        $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
+        $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and ec='.$ec;
     }
 
     $sth = db_query($q);
     $deps = [];
     $deps[0] = 0;
     while ($row = mysql_fetch_array($sth)) {
-        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
+        $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 		deposit_id = '.$row[id].' and date > now() - interval '.$row[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -69,7 +69,7 @@ if (app('data')->frm['action'] == 'preview') {
         }
     }
 
-    $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec);
+    $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(' and ec = '.$ec);
     $sth = db_query($q);
     $ab['total'] = 0;
     while ($row = mysql_fetch_array($sth)) {
@@ -90,7 +90,7 @@ if (app('data')->frm['action'] == 'preview') {
     }
 
     if (0 < app('data')->settings[max_daily_withdraw]) {
-        $q = 'select sum(actual_amount) as am from hm2_history where type in (\'withdraw\', \'withdraw_pending\') and user_id = '.$userinfo[id];
+        $q = 'select sum(actual_amount) as am from history where type in (\'withdraw\', \'withdraw_pending\') and user_id = '.$userinfo[id];
         $sth = db_query($q);
         $dw = 0;
         while ($row = mysql_fetch_array($sth)) {
@@ -174,7 +174,7 @@ if (app('data')->frm['action'] == 'preview') {
         }
 
         if (0 < app('data')->settings['forbid_withdraw_before_deposit']) {
-            $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$userinfo['id'];
+            $q = 'select count(*) as cnt from deposits where user_id = '.$userinfo['id'];
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             if ($row['cnt'] < 1) {
@@ -184,7 +184,7 @@ if (app('data')->frm['action'] == 'preview') {
 
         $on_hold = 0;
         if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
-            $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
+            $q = 'select id from deposits where user_id = '.$userinfo['id'];
             $sth = db_query($q);
             $deps = [];
             $deps[0] = 0;
@@ -192,7 +192,7 @@ if (app('data')->frm['action'] == 'preview') {
                 array_push($deps, $row[id]);
             }
 
-            $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
+            $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 	deposit_id in (').join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));';
@@ -203,16 +203,16 @@ if (app('data')->frm['action'] == 'preview') {
         }
 
         if (app('data')->settings['hold_only_first_days'] == 1) {
-            $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
+            $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and ec='.$ec.' and deposits.deposit_date + interval types.hold day > now()';
         } else {
-            $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
+            $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and ec='.$ec;
         }
 
         $sth = db_query($q);
         $deps = [];
         $deps[0] = 0;
         while ($row = mysql_fetch_array($sth)) {
-            $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
+            $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(' and ec = '.$ec.' and
 		deposit_id = '.$row[id].' and date > now() - interval '.$row[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -222,7 +222,7 @@ if (app('data')->frm['action'] == 'preview') {
             }
         }
 
-        $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(' and ec = '.$ec);
+        $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(' and ec = '.$ec);
         $sth = db_query($q);
         $ab['total'] = 0;
         while ($row = mysql_fetch_array($sth)) {
@@ -239,7 +239,7 @@ if (app('data')->frm['action'] == 'preview') {
         }
 
         if (0 < app('data')->settings[max_daily_withdraw]) {
-            $q = 'select sum(actual_amount) as am from hm2_history where type in (\'withdraw\', \'withdraw_pending\') and user_id = '.$userinfo[id];
+            $q = 'select sum(actual_amount) as am from history where type in (\'withdraw\', \'withdraw_pending\') and user_id = '.$userinfo[id];
             $sth = db_query($q);
             $dw = 0;
             while ($row = mysql_fetch_array($sth)) {
@@ -256,7 +256,7 @@ if (app('data')->frm['action'] == 'preview') {
                 throw new RedirectException('/?a=withdraw&say=less_min');
             }
 
-            $q = 'insert into hm2_history set
+            $q = 'insert into history set
   	user_id = '.$userinfo['id'].(',
   	amount = -'.$amount.',
   	actual_amount = -'.$amount.',
@@ -275,7 +275,7 @@ if (app('data')->frm['action'] == 'preview') {
             send_template_mail('withdraw_request_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
             if ((app('data')->settings['use_auto_payment'] == 1 and ((((($ec == 0 or $ec == 1) or $ec == 2) or $ec == 5) or $ec == 8) or $ec == 9))) {
                 if ((app('data')->settings['min_auto_withdraw'] <= $amount and $amount <= app('data')->settings['max_auto_withdraw'])) {
-                    $q = 'select sum(amount) as sum from hm2_history where type=\'withdrawal\' and date + interval 24 hour > now() and user_id = '.$userinfo['id'];
+                    $q = 'select sum(amount) as sum from history where type=\'withdrawal\' and date + interval 24 hour > now() and user_id = '.$userinfo['id'];
                     $sth = db_query($q);
                     if ($row = mysql_fetch_array($sth)) {
                         if ((abs($row['sum']) + $amount <= app('data')->settings['max_auto_withdraw_user'] and $userinfo['auto_withdraw'] == 1)) {
@@ -327,10 +327,10 @@ if (app('data')->frm['action'] == 'preview') {
                             }
 
                             if ($res == 1) {
-                                $q = 'delete from hm2_history where id = '.$last_id;
+                                $q = 'delete from history where id = '.$last_id;
                                 db_query($q);
                                 $d_account = [$userinfo['egold_account'], $userinfo['evocash_account'], $userinfo['intgold_account'], '', $userinfo['stormpay_account'], $userinfo['ebullion_account'], $userinfo['paypal_account'], $userinfo['goldmoney_account'], $userinfo['eeecurrency_account'], $userinfo['pecunix_account']];
-                                $q = 'insert into hm2_history set
+                                $q = 'insert into history set
   		user_id = '.$userinfo['id'].(',
   		amount = -'.$amount.',
   		actual_amount = -'.$amount.',
@@ -375,7 +375,7 @@ if (app('data')->frm['action'] == 'preview') {
         view_assign('say', app('data')->frm['say']);
         view_assign('batch', app('data')->frm['batch']);
         $format = (app('data')->settings['show_full_sum'] ? 5 : 2);
-        $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
+        $q = 'select sum(actual_amount) as sm, ec from history where user_id = '.$userinfo['id'].' group by ec';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             if ($format == 2) {
@@ -397,7 +397,7 @@ if (app('data')->frm['action'] == 'preview') {
 
         $hold = [];
         if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
-            $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'].' and status=\'on\'';
+            $q = 'select id from deposits where user_id = '.$userinfo['id'].' and status=\'on\'';
             $sth = db_query($q);
             $deps = [];
             $deps[0] = 0;
@@ -405,7 +405,7 @@ if (app('data')->frm['action'] == 'preview') {
                 array_push($deps, $row[id]);
             }
 
-            $q = 'select sum(actual_amount) as amount, ec from hm2_history where user_id = '.$userinfo['id'].' and
+            $q = 'select sum(actual_amount) as amount, ec from history where user_id = '.$userinfo['id'].' and
 	deposit_id in ('.join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\'))) group by ec';
@@ -417,38 +417,38 @@ if (app('data')->frm['action'] == 'preview') {
 
         if (app('data')->settings['hold_only_first_days'] == 1) {
             $q = 'select
-              sum(hm2_history.actual_amount) as am,
-	      hm2_history.ec
+              sum(history.actual_amount) as am,
+	      history.ec
             from
-              hm2_history,
-              hm2_deposits,
-              hm2_types
+              history,
+              deposits,
+              types
             where
-              hm2_history.user_id = '.$userinfo[id].' and
-	      hm2_history.deposit_id = hm2_deposits.id and
-              hm2_types.id = hm2_deposits.type_id and
-              now() - interval hm2_types.hold day < hm2_history.date and
-	      hm2_deposits.deposit_date + interval hm2_types.hold day > now() and
-	      (hm2_history.type=\'earning\' or
-		(hm2_history.type=\'deposit\' and (hm2_history.description like \'Compou%\' or hm2_history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
-	    group by hm2_history.ec
+              history.user_id = '.$userinfo[id].' and
+	      history.deposit_id = deposits.id and
+              types.id = deposits.type_id and
+              now() - interval types.hold day < history.date and
+	      deposits.deposit_date + interval types.hold day > now() and
+	      (history.type=\'earning\' or
+		(history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
+	    group by history.ec
           ';
         } else {
             $q = 'select
-              sum(hm2_history.actual_amount) as am,
-	      hm2_history.ec
+              sum(history.actual_amount) as am,
+	      history.ec
             from
-              hm2_history,
-              hm2_deposits,
-              hm2_types
+              history,
+              deposits,
+              types
             where
-              hm2_history.user_id = '.$userinfo[id].' and
-	      hm2_history.deposit_id = hm2_deposits.id and
-              hm2_types.id = hm2_deposits.type_id and
-              now() - interval hm2_types.hold day < hm2_history.date and
-	      (hm2_history.type=\'earning\' or
-		(hm2_history.type=\'deposit\' and (hm2_history.description like \'Compou%\' or hm2_history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
-	    group by hm2_history.ec
+              history.user_id = '.$userinfo[id].' and
+	      history.deposit_id = deposits.id and
+              types.id = deposits.type_id and
+              now() - interval types.hold day < history.date and
+	      (history.type=\'earning\' or
+		(history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
+	    group by history.ec
           ';
         }
 

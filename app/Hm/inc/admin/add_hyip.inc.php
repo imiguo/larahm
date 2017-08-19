@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$q = 'select * from hm2_types where status = \'on\'';
+$q = 'select * from types where status = \'on\'';
   if (! ($sth = db_query($q))) {
   }
 

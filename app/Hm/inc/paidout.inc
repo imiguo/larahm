@@ -34,7 +34,7 @@ app('data')->frm['month'] = intval(app('data')->frm['month']);
         select
               count(*) as cnt
         from
-              hm2_history
+              history
         where
               '.$datewhere.' and type = \''.$type.'\' and user_id != 1
        ';
@@ -59,7 +59,7 @@ app('data')->frm['month'] = intval(app('data')->frm['month']);
               h.actual_amount,
               date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as dd
         from
-              hm2_users as u left outer join hm2_history as h
+              users as u left outer join history as h
                 on u.id = h.user_id
         where '.$datewhere.' and h.type = \''.$type.'\' and user_id != 1
         order by h.id desc

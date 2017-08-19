@@ -66,7 +66,7 @@ use App\Exceptions\RedirectException;
 
       $message .= 'IP Address: '.$_SERVER['REMOTE_ADDR'].'';
       $message .= 'Language  : '.$_SERVER['HTTP_ACCEPT_LANGUAGE'].'';
-      $q = 'select * from hm2_users where id = 1';
+      $q = 'select * from users where id = 1';
       $sth = db_query($q);
       $admin_email = '';
       while ($row = mysql_fetch_array($sth)) {

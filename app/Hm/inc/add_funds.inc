@@ -17,7 +17,7 @@ $ab = get_user_balance($userinfo['id']);
 
   view_assign('ab_formated', $ab_formated);
   view_assign('frm', app('data')->frm);
-  $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
+  $q = 'select sum(actual_amount) as sm, ec from history where user_id = '.$userinfo['id'].' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       app('data')->exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], 2);

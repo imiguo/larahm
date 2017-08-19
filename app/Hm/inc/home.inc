@@ -11,14 +11,14 @@
 
 include app_path('Hm').'/inc/index.plans.inc';
 
-$q = 'select max(percent) as percent from hm2_referal';
+$q = 'select max(percent) as percent from referal';
 $sth = db_query($q);
 while ($row = mysql_fetch_array($sth)) {
     view_assign('percent', $row['percent']);
 }
 
 $ref_plans = [];
-$q = 'select * from hm2_referal order by from_value';
+$q = 'select * from referal order by from_value';
 $sth = db_query($q);
 while ($row = mysql_fetch_array($sth)) {
     array_push($ref_plans, $row);

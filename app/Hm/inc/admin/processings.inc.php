@@ -10,7 +10,7 @@
  */
 
 $processings = [];
-  $q = 'select * from hm2_processings';
+  $q = 'select * from processings';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       array_push($processings, $row);

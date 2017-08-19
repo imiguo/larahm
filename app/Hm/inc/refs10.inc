@@ -14,7 +14,7 @@ $q = 'select
                u1.id,
                count(*) as col
          from
-               hm2_users as u1 left outer join hm2_users as u2
+               users as u1 left outer join users as u2
                  on u1.id = u2.ref
          where u2.date_register > \''.app('data')->settings[refs10_start_date].'\' + interval '.app('data')->settings['time_dif'].' hour
          group by
@@ -29,8 +29,8 @@ $q = 'select
       $q2 = 'select
                   count(distinct u.id) as col
             from
-                  hm2_users as u,
-                  hm2_deposits as d
+                  users as u,
+                  deposits as d
             where
                   u.ref = '.$row[id].' and
                   u.id = d.user_id

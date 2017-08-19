@@ -29,9 +29,9 @@ if (app('data')->frm['a'] == 'run_crontab') {
     throw new EmptyException();
 }
 
-$q = 'delete from hm2_online where ip=\''.app('data')->env['REMOTE_ADDR'].'\' or date + interval 30 minute < now()';
+$q = 'delete from online where ip=\''.app('data')->env['REMOTE_ADDR'].'\' or date + interval 30 minute < now()';
 db_query($q);
-$q = 'insert into hm2_online set ip=\''.app('data')->env['REMOTE_ADDR'].'\', date = now()';
+$q = 'insert into online set ip=\''.app('data')->env['REMOTE_ADDR'].'\', date = now()';
 db_query($q);
 
 $userinfo = [];
@@ -50,7 +50,7 @@ show_info_box($stats);
 
 $ref = Cookie::get('referer', '');
 if ($ref) {
-    $q = 'select * from hm2_users where username = \''.$ref.'\'';
+    $q = 'select * from users where username = \''.$ref.'\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
         view_assign('referer', $row);
@@ -84,7 +84,7 @@ if ($userinfo['id'] == 1) {
 }
 
 if ($userinfo['logged'] == 1) {
-    $q = 'select type, sum(actual_amount) as s from hm2_history where user_id = '.$userinfo['id'].' group by type';
+    $q = 'select type, sum(actual_amount) as s from history where user_id = '.$userinfo['id'].' group by type';
     $sth = db_query($q);
     $balance = 0;
     while ($row = mysql_fetch_array($sth)) {
@@ -119,7 +119,7 @@ if ((((((app('data')->frm['a'] != 'show_validation_image' and ! $userinfo['logge
 
 if ((app('data')->frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
     $id = sprintf('%d', app('data')->frm['id']);
-    $q = 'delete from hm2_history where id = '.$id.' and type=\'withdraw_pending\' and user_id = '.$userinfo['id'];
+    $q = 'delete from history where id = '.$id.' and type=\'withdraw_pending\' and user_id = '.$userinfo['id'];
     db_query($q);
     throw new RedirectException('/?a=withdraw_history');
 }

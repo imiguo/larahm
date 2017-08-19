@@ -41,7 +41,7 @@ echo '<form method=post name=nform>
  <th bgcolor=FFEA00>-</th>
 </tr>';
   $processings = [];
-  $q = 'select * from hm2_processings';
+  $q = 'select * from processings';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $processings[$row['id']] = unserialize($row['infofields']);
@@ -49,15 +49,15 @@ echo '<form method=post name=nform>
 
   $status = (app('data')->frm['type'] == 'problem' ? 'problem' : (app('data')->frm['type'] == 'processed' ? 'processed' : 'new'));
   $q = 'select
-          hm2_pending_deposits.*,
-          date_format(hm2_pending_deposits.date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
-          hm2_users.username
+          pending_deposits.*,
+          date_format(pending_deposits.date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
+          users.username
         from
-          hm2_pending_deposits,
-          hm2_users
+          pending_deposits,
+          users
         where
-          hm2_pending_deposits.status = \''.$status.'\' and
-          hm2_users.id = hm2_pending_deposits.user_id
+          pending_deposits.status = \''.$status.'\' and
+          users.id = pending_deposits.user_id
         order by date desc
        ');
   $sth = db_query($q);

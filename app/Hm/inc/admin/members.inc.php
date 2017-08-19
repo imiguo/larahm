@@ -26,7 +26,7 @@ $qonpage = 50;
       $where_status = 'activation_code != ""';
   }
 
-  $q = 'select count(*) from hm2_users where '.$where_status.' and id <> 1 '.$searchpart.' order by id desc';
+  $q = 'select count(*) from users where '.$where_status.' and id <> 1 '.$searchpart.' order by id desc';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $total = $row[0];
@@ -47,7 +47,7 @@ $qonpage = 50;
 
   $end = $page * $qonpage;
   $end = ($total < $end ? $total : $end);
-  $q = 'select *, date_format(date_register + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as dr from hm2_users where '.$where_status.' and id <> 1 '.$searchpart.' order by id desc limit ').(0 < $start ? $start : 0).(''.', '.$qonpage);
+  $q = 'select *, date_format(date_register + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as dr from users where '.$where_status.' and id <> 1 '.$searchpart.' order by id desc limit ').(0 < $start ? $start : 0).(''.', '.$qonpage);
   $sth = db_query($q);
   $members = [];
   while ($row = mysql_fetch_array($sth)) {

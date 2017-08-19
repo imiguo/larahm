@@ -10,14 +10,14 @@
  */
 
 view_assign('site_name', app('data')->settings['site_name']);
-  $q = 'select count(*) as col from hm2_users where status = \'on\' and ref='.$userinfo['id'];
+  $q = 'select count(*) as col from users where status = \'on\' and ref='.$userinfo['id'];
   $sth = db_query($q);
   view_assign('total_ref', 0);
   while ($row = mysql_fetch_array($sth)) {
       view_assign('total_ref', $row['col']);
   }
 
-  $q = 'select count(distinct user_id) as col from hm2_users, hm2_deposits where ref = '.$userinfo['id'].' and hm2_deposits.user_id = hm2_users.id';
+  $q = 'select count(distinct user_id) as col from users, deposits where ref = '.$userinfo['id'].' and deposits.user_id = users.id';
   $sth = db_query($q);
   view_assign('active_ref', 0);
   while ($row = mysql_fetch_array($sth)) {
@@ -57,7 +57,7 @@ view_assign('site_name', app('data')->settings['site_name']);
 
   view_assign('year', $year);
   view_assign('frm', app('data')->frm);
-  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as date from hm2_referal_stats where '.$datewhere.' user_id = ').$userinfo['id'];
+  $q = 'select *, date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y\') as date from referal_stats where '.$datewhere.' user_id = ').$userinfo['id'];
   $sth = db_query($q);
   $refstat = [];
   while ($row = mysql_fetch_array($sth)) {
@@ -68,11 +68,11 @@ view_assign('site_name', app('data')->settings['site_name']);
   view_assign('refstat', $refstat);
   $q_other_active = 0;
   $q_other = 0;
-  $q = 'select * from hm2_users where ref = '.$userinfo['id'].' order by id desc';
+  $q = 'select * from users where ref = '.$userinfo['id'].' order by id desc';
   $sth = db_query($q);
   $referals = [];
   while ($row = mysql_fetch_array($sth)) {
-      $q = 'select count(*) as col from hm2_deposits where user_id = '.$row['id'];
+      $q = 'select count(*) as col from deposits where user_id = '.$row['id'];
       ($sth2 = db_query($q));
       while ($row2 = mysql_fetch_array($sth2)) {
           $row[q_deposits] = $row2[col];
@@ -84,12 +84,12 @@ view_assign('site_name', app('data')->settings['site_name']);
       for ($i = 2; $i < 11; ++$i) {
           $parents_string = join(',', $parents);
           $q_active = 0;
-          $q = 'select id from hm2_users where ref in ('.$parents_string.')';
+          $q = 'select id from users where ref in ('.$parents_string.')';
           $sth1 = db_query($q);
           $parents = [];
           while ($row1 = mysql_fetch_array($sth1)) {
               array_push($parents, $row1['id']);
-              $q = 'select count(*) as col from hm2_deposits where user_id = '.$row1['id'];
+              $q = 'select count(*) as col from deposits where user_id = '.$row1['id'];
               ($sth2 = db_query($q));
               while ($row2 = mysql_fetch_array($sth2)) {
                   $q_deposits = $row2[col];
@@ -118,7 +118,7 @@ view_assign('site_name', app('data')->settings['site_name']);
   view_assign('referals', $referals);
   view_assign('cnt_other_active', $q_other_active);
   view_assign('cnt_other', $q_other);
-  $q = 'select * from hm2_users where id = '.$userinfo['ref'];
+  $q = 'select * from users where id = '.$userinfo['ref'];
   $sth = db_query($q);
   $row1 = mysql_fetch_array($sth);
   $upline = $row1;

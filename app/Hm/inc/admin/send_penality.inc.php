@@ -9,11 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-$q = 'select count(*) as col from hm2_users where id > 1';
+$q = 'select count(*) as col from users where id > 1';
   $sth = db_query($q);
   ($row = mysql_fetch_array($sth));
   $all_c = $row['col'];
-  $q = 'select count(*) as col from hm2_users, hm2_deposits where hm2_users.id > 1 and hm2_deposits.user_id = hm2_users.id group by hm2_users.id';
+  $q = 'select count(*) as col from users, deposits where users.id > 1 and deposits.user_id = users.id group by users.id';
   $sth = db_query($q);
   ($row = mysql_fetch_array($sth));
   $act_c = sprintf('%d', $row['col']);

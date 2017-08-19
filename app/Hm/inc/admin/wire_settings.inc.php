@@ -11,17 +11,17 @@
 
 echo '<b>Wire Transfer Settings.</b><br><br>
 ';
-  $q = 'select count(*) as col from hm2_settings where name=\'wire_text\'';
+  $q = 'select count(*) as col from settings where name=\'wire_text\'';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       if ($row['col'] == 0) {
-          $q = 'insert into hm2_settings set name=\'wire_text\', value=\'Enter your bank account number information.\'';
+          $q = 'insert into settings set name=\'wire_text\', value=\'Enter your bank account number information.\'';
           db_query($q);
           continue;
       }
   }
 
-  $q = 'select `value` from hm2_settings where name=\'wire_text\'';
+  $q = 'select `value` from settings where name=\'wire_text\'';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $wire_txt = $row['value'];

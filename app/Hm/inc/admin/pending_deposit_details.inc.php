@@ -13,19 +13,19 @@ echo '<b>Deposit Details:</b><br><br>
 ';
   $id = sprintf('%d', app('data')->frm['id']);
   $q = 'select 
-          hm2_pending_deposits.*,
-          date_format(hm2_pending_deposits.date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
-          hm2_users.username
+          pending_deposits.*,
+          date_format(pending_deposits.date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d,
+          users.username
         from
-          hm2_pending_deposits,
-          hm2_users
+          pending_deposits,
+          users
         where
-          hm2_pending_deposits.id = '.$id.' and
-          hm2_users.id = hm2_pending_deposits.user_id
+          pending_deposits.id = '.$id.' and
+          users.id = pending_deposits.user_id
        ');
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
-  $q = 'select * from hm2_processings where id = '.$row['ec'];
+  $q = 'select * from processings where id = '.$row['ec'];
   $sth = db_query($q);
   $processing = mysql_fetch_array($sth);
   $pfields = unserialize($processing['infofields']);

@@ -18,12 +18,12 @@ function compare($a, $b)
          select 
                count(distinct(user_id)) as cnt
          from 
-               hm2_history 
+               history 
          where 
                type in (\'deposit\', \'earning\', \'withdrawal\') and user_id != 1
         ';
   $q = 'select count(distinct(user_id)) as cnt
-	from hm2_deposits';
+	from deposits';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['cnt'];
@@ -32,7 +32,7 @@ function compare($a, $b)
                h.type,
                sum(h.actual_amount) as amt
          from 
-               hm2_users as u left outer join hm2_history as h
+               users as u left outer join history as h
                  on u.id = h.user_id
          where h.type in (\'deposit\', \'earning\', \'withdrawal\') and user_id != 1
          group by

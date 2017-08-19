@@ -24,7 +24,7 @@ if (app('data')->frm['complete']) {
                *,
                (to_days(now()) - to_days(deposit_date)) as deposit_duration
          from
-               hm2_deposits
+               deposits
          where
                user_id = '.$user_id.' and
                id = '.$deposit_id.'
@@ -37,7 +37,7 @@ if (app('data')->frm['complete']) {
       throw new EmptyException();
   }
 
-  $q = 'select * from hm2_types where id = '.$deposit['type_id'];
+  $q = 'select * from types where id = '.$deposit['type_id'];
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   if (!$type['withdraw_principal']) {
@@ -127,13 +127,13 @@ if (app('data')->frm['complete']) {
 
       $actual_amount = sprintf('%.02f', $deposit['actual_amount']);
       if ($actual_amount <= $withdraw_amount) {
-          $q = 'update hm2_deposits set actual_amount = 0, amount = 0, status = \'off\' where user_id = '.$user_id.' and id = '.$deposit_id;
+          $q = 'update deposits set actual_amount = 0, amount = 0, status = \'off\' where user_id = '.$user_id.' and id = '.$deposit_id;
       } else {
-          $q = 'update hm2_deposits set actual_amount = actual_amount - '.$withdraw_amount.', amount = amount - '.$withdraw_amount.' where user_id = '.$user_id.' and id = '.$deposit_id;
+          $q = 'update deposits set actual_amount = actual_amount - '.$withdraw_amount.', amount = amount - '.$withdraw_amount.' where user_id = '.$user_id.' and id = '.$deposit_id;
       }
 
       db_query($q);
-      $q = 'insert into hm2_history set
+      $q = 'insert into history set
                user_id = '.$user_id.',
                amount = '.$to_balance.',
                actual_amount = '.$to_balance.',

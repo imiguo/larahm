@@ -10,7 +10,7 @@
  */
 
   $id = sprintf('%d', app('data')->frm['id']);
-  $q = 'select * from hm2_users where id = '.$id.' and id <> 1';
+  $q = 'select * from users where id = '.$id.' and id <> 1';
   if (! ($sth = db_query($q))) {
   }
 

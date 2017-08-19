@@ -18,7 +18,7 @@ $ok = 1;
   $ec = sprintf('%d', substr(app('data')->frm['type'], 8));
   $on_hold = 0;
   if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
-      $q = 'select id from hm2_deposits where user_id = '.$userinfo['id'];
+      $q = 'select id from deposits where user_id = '.$userinfo['id'];
       $sth = db_query($q);
       $deps = [];
       $deps[0] = 0;
@@ -26,7 +26,7 @@ $ok = 1;
           array_push($deps, $row[id]);
       }
 
-      $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
+      $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
 	deposit_id in (').join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));';
@@ -37,16 +37,16 @@ $ok = 1;
   }
 
   if (app('data')->settings['hold_only_first_days'] == 1) {
-      $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec.' and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
+      $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and ec='.$ec.' and deposits.deposit_date + interval types.hold day > now()';
   } else {
-      $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and ec='.$ec;
+      $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and ec='.$ec;
   }
 
   $sth = db_query($q);
   $deps = [];
   $deps[0] = 0;
   while ($row = mysql_fetch_array($sth)) {
-      $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
+      $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(''.' and ec = '.$ec.' and
 		deposit_id = '.$row[id].' and date > now() - interval '.$row[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -56,7 +56,7 @@ $ok = 1;
       }
   }
 
-  $q = 'select * from hm2_types where id = '.$h_id.' and closed = 0';
+  $q = 'select * from types where id = '.$h_id.' and closed = 0';
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   $delay = -1;
@@ -103,7 +103,7 @@ $ok = 1;
   }
 
   view_assign('use_compound', $use_compound);
-  $q = 'select count(*) as col, min(min_deposit) as min from hm2_plans where parent = '.$h_id;
+  $q = 'select count(*) as col, min(min_deposit) as min from plans where parent = '.$h_id;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   if ($row) {
@@ -123,7 +123,7 @@ $ok = 1;
   }
 
   view_assign('type', app('data')->frm['type']);
-  $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$userinfo['id'].' group by ec';
+  $q = 'select sum(actual_amount) as sm, ec from history where user_id = '.$userinfo['id'].' group by ec';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       app('data')->exchange_systems[$row['ec']]['balance'] = $row['sm'];
@@ -131,7 +131,7 @@ $ok = 1;
 
   $accounting = get_user_balance($userinfo['id']);
   $max_deposit = $accounting['total'];
-  $q = 'select min(max_deposit) as min, max(max_deposit) as max from hm2_plans where parent = '.$h_id;
+  $q = 'select min(max_deposit) as min, max(max_deposit) as max from plans where parent = '.$h_id;
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   if ($row) {
@@ -181,7 +181,7 @@ $ok = 1;
           }
       }
 
-      $q = 'insert into hm2_deposits set
+      $q = 'insert into deposits set
            user_id = '.$userinfo['id'].(''.',
            type_id = '.$h_id.',
            deposit_date = now(),
@@ -194,7 +194,7 @@ $ok = 1;
     ');
       db_query($q);
       $deposit_id = mysql_insert_id();
-      $q = 'insert into hm2_history set
+      $q = 'insert into history set
            user_id = '.$userinfo['id'].(''.',
            amount = -'.$amount.',
            actual_amount = -'.$amount.',

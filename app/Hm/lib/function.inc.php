@@ -31,7 +31,7 @@ function send_mail()
     $subject = func_get_arg(1);
     $message = func_get_arg(2);
     $time = time();
-    $sth = db_query("select time from hm2_sendmails where `to` = '$to' and `status` = 1 order by `time` desc limit 1");
+    $sth = db_query("select time from sendmails where `to` = '$to' and `status` = 1 order by `time` desc limit 1");
     $row = mysql_fetch_assoc($sth);
     $status = 0;
     if (! isset($row['time']) || (time() - $row['time'] > 60)) {
@@ -40,14 +40,14 @@ function send_mail()
     }
     $subject = mysql_real_escape_string($subject);
     $message = mysql_real_escape_string($message);
-    db_query("insert hm2_sendmails (`to`, `subject`, `message`, `time`, `status`) values ('$to', '$subject', '$message', '$time', '$status')");
+    db_query("insert sendmails (`to`, `subject`, `message`, `time`, `status`) values ('$to', '$subject', '$message', '$time', '$status')");
 }
 
 function add_log($subject, $message)
 {
     $time = time();
     $subject = mysql_real_escape_string($subject);
-    db_query("insert hm2_logs (`subject`, `message`, `time`) values('$subject', '$message', '$time')");
+    db_query("insert logs (`subject`, `message`, `time`) values('$subject', '$message', '$time')");
 }
 
 function genarate_token()
@@ -63,7 +63,7 @@ function db_query($q)
     $time = time();
     if (strpos($q, 'select') !== 0) {
         $insert = mysql_real_escape_string($q);
-        mysql_query("insert into hm2_queries (`query`, `time`) values ('$insert', '$time')");
+        mysql_query("insert into queries (`query`, `time`) values ('$insert', '$time')");
     }
 
     return mysql_query($q);
@@ -76,7 +76,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $user_id = intval($user_id);
     $amount = sprintf('%.02f', $amount);
     $batch_found = 0;
-    $q = 'select count(*) as cnt from hm2_history where ec = '.$ec.' && type = \'add_funds\' && description like \'%Batch id = '.$batch.'\'';
+    $q = 'select count(*) as cnt from history where ec = '.$ec.' && type = \'add_funds\' && description like \'%Batch id = '.$batch.'\'';
     $sth = db_query($q);
     $row = mysql_fetch_array($sth);
     if (0 < $row['cnt']) {
@@ -93,7 +93,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         $amount = $amount - $amount * 6.9 / 100 - 0.69;
     }
 
-    $q = 'insert into hm2_history set
+    $q = 'insert into history set
         	user_id = '.$user_id.',
         	amount = \''.$amount.'\',
         	type = \'add_funds\',
@@ -103,7 +103,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         	date = now()
         	';
     db_query($q);
-    $q = 'select * from hm2_types where id = '.$h_id;
+    $q = 'select * from types where id = '.$h_id;
     $sth = db_query($q);
     $name = '';
     $type = mysql_fetch_array($sth);
@@ -143,13 +143,13 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         $delay = 0;
     }
 
-    $q = 'select min(hm2_plans.min_deposit) as min, max(if(hm2_plans.max_deposit = 0, 999999999999, hm2_plans.max_deposit)) as max from hm2_types left outer join hm2_plans on hm2_types.id = hm2_plans.parent where hm2_types.id = '.$h_id;
+    $q = 'select min(plans.min_deposit) as min, max(if(plans.max_deposit = 0, 999999999999, plans.max_deposit)) as max from types left outer join plans on types.id = plans.parent where types.id = '.$h_id;
     $sth1 = db_query($q);
     $row1 = mysql_fetch_array($sth1);
     $min_deposit = $row1['min'];
     $max_deposit = $row1['max'];
     if (($min_deposit <= $amount and $amount <= $max_deposit)) {
-        $q = 'insert into hm2_deposits set
+        $q = 'insert into deposits set
           	user_id = '.$user_id.',
           	type_id = '.$h_id.',
           	deposit_date = now(),
@@ -163,7 +163,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
           	';
         db_query($q);
         $deposit_id = mysql_insert_id();
-        $q = 'insert into hm2_history set
+        $q = 'insert into history set
           	user_id = '.$user_id.',
           	amount = \'-'.$amount.'\',
           	type = \'deposit\',
@@ -181,7 +181,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
             }
 
             if (0 < $imps) {
-                $q = 'update hm2_users set imps = imps + '.$imps.' where id = '.$user_id;
+                $q = 'update users set imps = imps + '.$imps.' where id = '.$user_id;
                 db_query($q);
             }
         }
@@ -191,7 +191,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         $name = 'Deposit to Account';
     }
 
-    $q = 'select * from hm2_users where id = '.$user_id;
+    $q = 'select * from users where id = '.$user_id;
     $sth = db_query($q);
     $user = mysql_fetch_array($sth);
     $info = [$user];
@@ -204,7 +204,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $info['compound'] = $compound;
     $info['plan'] = $name;
     $info['ref_sum'] = $ref_sum;
-    $q = 'select email from hm2_users where id = 1';
+    $q = 'select email from users where id = 1';
     $sth = db_query($q);
     $admin_email = '';
     while ($row = mysql_fetch_array($sth)) {
@@ -223,7 +223,7 @@ function referral_commission($user_id, $amount, $ec)
 {
     $ref_sum = 0;
     if (app('data')->settings['use_referal_program'] == 1) {
-        $q = 'select * from hm2_users where id = '.$user_id;
+        $q = 'select * from users where id = '.$user_id;
         $rsth = db_query($q);
         $uinfo = mysql_fetch_array($rsth);
         $ref = 0;
@@ -234,7 +234,7 @@ function referral_commission($user_id, $amount, $ec)
         }
 
         if (app('data')->settings['pay_active_referal']) {
-            $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$ref;
+            $q = 'select count(*) as cnt from deposits where user_id = '.$ref;
             $sth = db_query($q);
             $row = mysql_fetch_array($sth);
             if ($row['cnt'] <= 0) {
@@ -244,13 +244,13 @@ function referral_commission($user_id, $amount, $ec)
 
         if (app('data')->settings['use_solid_referral_commission'] == 1) {
             if (0 < app('data')->settings['solid_referral_commission_amount']) {
-                $q = 'select count(*) as cnt from hm2_deposits where user_id = '.$user_id;
+                $q = 'select count(*) as cnt from deposits where user_id = '.$user_id;
                 $sth = db_query($q);
                 $row = mysql_fetch_array($sth);
                 if ($row['cnt'] == 1) {
                     $sum = app('data')->settings['solid_referral_commission_amount'];
                     $ref_sum += $sum;
-                    $q = 'insert into hm2_history set
+                    $q = 'insert into history set
     		user_id = '.$ref.',
     		amount = '.$sum.',
     		actual_amount = '.$sum.',
@@ -259,7 +259,7 @@ function referral_commission($user_id, $amount, $ec)
     		ec = '.$ec.',
     		date = now()');
                     db_query($q);
-                    $q = 'select * from hm2_users where id = '.$ref;
+                    $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
                     $refinfo = mysql_fetch_array($rsth);
                     $refinfo['amount'] = number_format($sum, 2);
@@ -272,20 +272,20 @@ function referral_commission($user_id, $amount, $ec)
             }
         } else {
             if (app('data')->settings['use_active_referal'] == 1) {
-                $q = 'select count(distinct user_id) as col from hm2_users, hm2_deposits where ref = '.$ref.' and hm2_deposits.user_id = hm2_users.id';
+                $q = 'select count(distinct user_id) as col from users, deposits where ref = '.$ref.' and deposits.user_id = users.id';
             } else {
-                $q = 'select count(*) as col from hm2_users where ref = '.$ref;
+                $q = 'select count(*) as col from users where ref = '.$ref;
             }
 
             $sth = db_query($q);
             if ($row = mysql_fetch_array($sth)) {
                 $col = $row['col'];
-                $q = 'select percent from hm2_referal where from_value <= '.$col.' and (to_value >= '.$col.' or to_value = 0) order by from_value desc limit 1';
+                $q = 'select percent from referal where from_value <= '.$col.' and (to_value >= '.$col.' or to_value = 0) order by from_value desc limit 1';
                 $sth = db_query($q);
                 if ($row = mysql_fetch_array($sth)) {
                     $sum = $amount * $row['percent'] / 100;
                     $ref_sum += $sum;
-                    $q = 'insert into hm2_history set
+                    $q = 'insert into history set
     		user_id = '.$ref.',
     		amount = '.$sum.',
     		actual_amount = '.$sum.',
@@ -294,7 +294,7 @@ function referral_commission($user_id, $amount, $ec)
     		ec = '.$ec.',
     		date = now()');
                     db_query($q);
-                    $q = 'select * from hm2_users where id = '.$ref;
+                    $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
                     $refinfo = mysql_fetch_array($rsth);
                     $refinfo['amount'] = number_format($sum, 2);
@@ -313,7 +313,7 @@ function referral_commission($user_id, $amount, $ec)
                     break;
                 }
 
-                $q = 'select * from hm2_users where id = '.$ref;
+                $q = 'select * from users where id = '.$ref;
                 $sth = db_query($q);
                 $ref = 0;
                 while ($row = mysql_fetch_array($sth)) {
@@ -321,7 +321,7 @@ function referral_commission($user_id, $amount, $ec)
                     if (0 < $ref) {
                         $sum = $amount * app('data')->settings['ref'.$i.'_cms'] / 100;
                         $ref_sum += $sum;
-                        $q = 'insert into hm2_history set
+                        $q = 'insert into history set
                   user_id = '.$row['ref'].(',
                   amount = '.$sum.',
                   actual_amount = '.$sum.',
@@ -343,14 +343,14 @@ function referral_commission($user_id, $amount, $ec)
 function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $error_txt)
 {
     if ($account == 0) {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to Perfect-Money account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can`t process withdrawal to Perfect-Money account 0.\'';
         db_query($q);
 
         return [0, 'Invalid Perfect-Money account', ''];
     }
 
     if ($e_password == '') {
-        $q = 'select v from hm2_pay_settings where n=\'perfectmoney_account_password\'';
+        $q = 'select v from pay_settings where n=\'perfectmoney_account_password\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $perfectmoney_password = decode_pass_for_mysql($row['v']);
@@ -382,7 +382,7 @@ function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $erro
         return [1, '', $parts[1]];
     }
     $e = quote($error_txt.' '.$a);
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $error_txt.(' '.$a), ''];
@@ -391,14 +391,14 @@ function send_money_to_perfectmoney($e_password, $amount, $account, $memo, $erro
 function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
 {
     if ($account == 0) {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to E-Gold account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can`t process withdrawal to E-Gold account 0.\'';
         db_query($q);
 
         return [0, 'Invalid E-Gold account', ''];
     }
 
     if ($e_password == '') {
-        $q = 'select v from hm2_pay_settings where n=\'egold_account_password\'';
+        $q = 'select v from pay_settings where n=\'egold_account_password\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $egold_password = decode_pass_for_mysql($row['v']);
@@ -434,13 +434,13 @@ function send_money_to_egold($e_password, $amount, $account, $memo, $error_txt)
         $txt = preg_replace('/&lt;/i', '<', $parts[1]);
         $txt = preg_replace('/&gt;/i', '>', $txt);
         $e = quote($error_txt.' '.$txt);
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
         db_query($q);
 
         return [0, $error_txt.(' '.$txt), ''];
     }
     $e = quote($error_txt.' Unknown error');
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $error_txt.' Unknown error', ''];
@@ -451,20 +451,20 @@ function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt
     $amount = sprintf('%0.2f', floor($amount * 100) / 100);
 
     if ($account == 0) {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can not process withdrawal to Evocash account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can not process withdrawal to Evocash account 0.\'';
         db_query($q);
 
         return [0, 'Invalid EvoCash account', ''];
     }
 
     if ($e_password == '') {
-        $q = 'select v from hm2_pay_settings where n=\'evocash_account_password\'';
+        $q = 'select v from pay_settings where n=\'evocash_account_password\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $evocash_password = decode_pass_for_mysql($row['v']);
         }
 
-        $q = 'select v from hm2_pay_settings where n=\'evocash_transaction_code\'';
+        $q = 'select v from pay_settings where n=\'evocash_transaction_code\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $evocash_code = decode_pass_for_mysql($row['v']);
@@ -488,13 +488,13 @@ function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt
     if (preg_match('/<INPUT TYPE="Hidden" NAME="Error" VALUE="(.*?)">/ims', $a, $parts)) {
         $txt = $parts[1];
         $e = quote($error_txt.' '.$txt);
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
         db_query($q);
 
         return [0, $error_txt.(' '.$txt), ''];
     }
     $e = quote($error_txt.' Unknown error');
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $error_txt.' Unknown error', ''];
@@ -503,20 +503,20 @@ function send_money_to_evocash($e_password, $amount, $account, $memo, $error_txt
 function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt)
 {
     if ($account == 0) {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to IntGold account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can`t process withdrawal to IntGold account 0.\'';
         db_query($q);
 
         return [0, 'Invalid IntGold account', ''];
     }
 
     if ($e_password == '') {
-        $q = 'select v from hm2_pay_settings where n=\'intgold_password\'';
+        $q = 'select v from pay_settings where n=\'intgold_password\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $intgold_password = decode_pass_for_mysql($row['v']);
         }
 
-        $q = 'select v from hm2_pay_settings where n=\'intgold_transaction_code\'';
+        $q = 'select v from pay_settings where n=\'intgold_transaction_code\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $intgold_code = decode_pass_for_mysql($row['v']);
@@ -542,7 +542,7 @@ function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt
         return [1, '', $parts[1]];
     }
     $e = quote($error_txt.' '.$a);
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $error_txt.(' '.$a), ''];
@@ -551,20 +551,20 @@ function send_money_to_intgold($e_password, $amount, $account, $memo, $error_txt
 function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error_txt)
 {
     if ($account == 0) {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to eeeCureency account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can`t process withdrawal to eeeCureency account 0.\'';
         db_query($q);
 
         return [0, 'Invalid eeeCurrency account', ''];
     }
 
     if ($e_password == '') {
-        $q = 'select v from hm2_pay_settings where n=\'eeecurrency_password\'';
+        $q = 'select v from pay_settings where n=\'eeecurrency_password\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $eeecurrency_password = decode_pass_for_mysql($row['v']);
         }
 
-        $q = 'select v from hm2_pay_settings where n=\'eeecurrency_transaction_code\'';
+        $q = 'select v from pay_settings where n=\'eeecurrency_transaction_code\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $eeecurrency_code = decode_pass_for_mysql($row['v']);
@@ -589,7 +589,7 @@ function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error
         return [1, '', $parts[1]];
     }
     $e = quote($error_txt.' '.$a);
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $error_txt.(' '.$a), ''];
@@ -598,14 +598,14 @@ function send_money_to_eeecurrency($e_password, $amount, $account, $memo, $error
 function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt)
 {
     if ($account == 0) {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to Pecunix account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can`t process withdrawal to Pecunix account 0.\'';
         db_query($q);
 
         return [0, 'Invalid Pecunix account', ''];
     }
 
     if ($e_password == '') {
-        $q = 'select v from hm2_pay_settings where n=\'pecunix_password\'';
+        $q = 'select v from pay_settings where n=\'pecunix_password\'';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $pecunix_password = decode_pass_for_mysql($row['v']);
@@ -656,13 +656,13 @@ function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt
     }
     if ($out['status'] == 'error') {
         $e = quote($error_txt.' '.$out['text'].' '.$out['additional']);
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
         db_query($q);
 
         return [0, $e, ''];
     }
     $e = quote($error_txt.' Parse error: '.$a);
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $e, ''];
@@ -671,7 +671,7 @@ function send_money_to_pecunix($e_password, $amount, $account, $memo, $error_txt
 function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
 {
     if ($account == '') {
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \'Can`t process withdrawal to e-Bullion account 0.\'';
+        $q = 'insert into pay_errors set date = now(), txt = \'Can`t process withdrawal to e-Bullion account 0.\'';
         db_query($q);
 
         return [0, 'Invalid e-Bullion account', ''];
@@ -753,7 +753,7 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
             fclose($fx);
         } else {
             $e = quote($error_txt.' Can not found decrypted verification response!');
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+            $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
             db_query($q);
 
             return [0, $error_txt.' Can not found decrypted verification response!', ''];
@@ -765,19 +765,19 @@ function send_money_to_ebullion($dump, $amount, $account, $memo, $error_txt)
         }
         if ($data['status'] == 'error') {
             $e = quote($error_txt.' '.$data['text'].' '.$data['additional']);
-            $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+            $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
             db_query($q);
 
             return [0, $error_txt.$data['text'].' '.$data['additional']];
         }
         $e = quote($error_txt.' Unknown error');
-        $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+        $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
         db_query($q);
 
         return [0, $error_txt.' Unknown error', ''];
     }
     $e = quote($error_txt.' Can not decrypt verification response! ');
-    $q = 'insert into hm2_pay_errors set date = now(), txt = \''.$e.'\'';
+    $q = 'insert into pay_errors set date = now(), txt = \''.$e.'\'';
     db_query($q);
 
     return [0, $error_txt.' Can not decrypt verification response!', ''];
@@ -1072,7 +1072,7 @@ function decode_pass_for_mysql($string)
 
 function send_template_mail($email_id, $to, $from, $info)
 {
-    $q = 'select * from hm2_emails where id = \''.$email_id.'\'';
+    $q = 'select * from emails where id = \''.$email_id.'\'';
     $sth = db_query($q);
     $row = mysql_fetch_array($sth);
     if (! $row) {
@@ -1139,17 +1139,17 @@ function end_info_table()
 function pay_direct_return_deposit($deposit_id, $amount)
 {
     if (app('data')->settings['use_auto_payment'] == 1) {
-        $q = 'select * from hm2_deposits where id = '.$deposit_id;
+        $q = 'select * from deposits where id = '.$deposit_id;
         $sth = db_query($q);
         $dep = mysql_fetch_array($sth);
-        $q = 'select * from hm2_users where id = '.$dep['user_id'];
+        $q = 'select * from users where id = '.$dep['user_id'];
         $sth = db_query($q);
         $user = mysql_fetch_array($sth);
         if ($user['auto_withdraw'] != 1) {
             return;
         }
 
-        $q = 'select * from hm2_types where id = '.$dep['type_id'];
+        $q = 'select * from types where id = '.$dep['type_id'];
         $sth = db_query($q);
         $type = mysql_fetch_array($sth);
         $amount = abs($amount);
@@ -1157,7 +1157,7 @@ function pay_direct_return_deposit($deposit_id, $amount)
         $error_txt = 'Auto-withdrawal error, tried to return '.$amount.' to e-gold account # '.$user['egold_account'].'. Error:';
         list($res, $text, $batch) = send_money_to_egold('', $amount, $user['egold_account'], $success_txt, $error_txt);
         if ($res == 1) {
-            $q = 'insert into hm2_history set
+            $q = 'insert into history set
           	user_id = '.$user['id'].(',
             amount = -'.$amount.',
           	actual_amount = -'.$amount.',
@@ -1176,14 +1176,14 @@ function pay_direct_earning($deposit_id, $amount, $date)
     }
 
     if (app('data')->settings['use_auto_payment'] == 1) {
-        $q = 'select * from hm2_deposits where id = '.$deposit_id;
+        $q = 'select * from deposits where id = '.$deposit_id;
         $sth = db_query($q);
         $dep = mysql_fetch_array($sth);
         if (! in_array($dep[ec], [0, 1, 2, 5])) {
             return;
         }
 
-        $q = 'select * from hm2_users where id = '.$dep['user_id'];
+        $q = 'select * from users where id = '.$dep['user_id'];
         $sth = db_query($q);
         $user = mysql_fetch_array($sth);
         if (($user['admin_auto_pay_earning'] != 1 or $user['user_auto_pay_earning'] != 1)) {
@@ -1258,7 +1258,7 @@ function pay_direct_earning($deposit_id, $amount, $date)
                 $user['eeecurrency_account'],
                 $user['pecunix_account'],
             ];
-            $q = 'insert into hm2_history set
+            $q = 'insert into history set
             user_id = '.$user['id'].(',
         		amount = -'.$amount.',
             		actual_amount = -'.$amount.',
@@ -1286,7 +1286,7 @@ function count_earning($u_id)
         return;
     }
 
-    $q = 'select hm2_plans.* from hm2_plans, hm2_types where hm2_types.status = \'on\' and hm2_types.id = hm2_plans.parent order by parent, min_deposit';
+    $q = 'select plans.* from plans, types where types.status = \'on\' and types.id = plans.parent order by parent, min_deposit';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
         $types[$row['parent']][$row['id']] = $row;
@@ -1296,20 +1296,20 @@ function count_earning($u_id)
     $u_cond = 'u.last_access_time + interval 30 minute < now() ';
     if ($u_id == -1) {
         $u_cond = '1 = 1';
-        $q = 'select * from hm2_users where l_e_t + interval 15 minute < now() and status = \'on\'';
+        $q = 'select * from users where l_e_t + interval 15 minute < now() and status = \'on\'';
     } else {
-        $q = 'select * from hm2_users where id = '.$u_id.' and status = \'on\'';
+        $q = 'select * from users where id = '.$u_id.' and status = \'on\'';
     }
 
     if ($u_id == -2) {
-        $q = 'select * from hm2_users where status = \'on\'';
-        $q = 'select distinct user_id as id from hm2_deposits where to_days(last_pay_date) < to_days(now()) order by user_id';
+        $q = 'select * from users where status = \'on\'';
+        $q = 'select distinct user_id as id from deposits where to_days(last_pay_date) < to_days(now()) order by user_id';
     }
 
     ($sth_users = db_query($q));
     while ($row_user = mysql_fetch_array($sth_users)) {
         $row_user_id = $row_user['id'];
-        $q = 'update hm2_users set l_e_t = now() where id = '.$row_user_id;
+        $q = 'update users set l_e_t = now() where id = '.$row_user_id;
         db_query($q);
         $lines = 1;
         while (0 < $lines) {
@@ -1324,9 +1324,9 @@ function count_earning($u_id)
               (d.deposit_date + interval t.withdraw_principal_duration day < now()) wp_ok,
               t.return_profit as return_profit
             from
-              hm2_deposits as d,
-              hm2_types as t,
-              hm2_users as u
+              deposits as d,
+              types as t,
+              users as u
             where
               u.id = '.$row_user_id.' and
               u.status = \'on\' and
@@ -1439,7 +1439,7 @@ function count_earning($u_id)
                     $dw = $row2['dw'];
                 }
 
-                $q = 'select count(*) as col from hm2_history where
+                $q = 'select count(*) as col from history where
                 to_days(date) = to_days(\''.$row['last_pay_date'].('\' + interval '.$interval.') and
                 deposit_id = ').$row['id'];
                 ($sth3 = db_query($q));
@@ -1450,7 +1450,7 @@ function count_earning($u_id)
 
                 if ($flag_exists_earning == 0) {
                     if ((5 <= $dw and $row['work_week'] == 1)) {
-                        $q = 'insert into hm2_history set user_id = '.$row['user_id'].',
+                        $q = 'insert into history set user_id = '.$row['user_id'].',
                     amount = 0,
                     type = \'earning\',
                     description = \'No interest on '.($dw == 5 ? 'Saturday' : 'Sunday').'\',
@@ -1460,7 +1460,7 @@ function count_earning($u_id)
                     str = \'gg\',
                     deposit_id = '.$row['id'];
                     } else {
-                        $q = 'insert into hm2_history set user_id = '.$row['user_id'].(',
+                        $q = 'insert into history set user_id = '.$row['user_id'].(',
                     amount = '.$inc.',
                     type = \'earning\',
                     description = \'Earning from deposit $').number_format($row['actual_amount'], 2).(' - '.$percent.' %\',
@@ -1480,7 +1480,7 @@ function count_earning($u_id)
                     }
 
                     if (($row['return_profit'] == 1 and ($row['withdraw_principal'] == 0 or ($row['withdraw_principal'] and $row['wp_ok'])))) {
-                        $q = 'insert into hm2_history set user_id = '.$row['user_id'].',
+                        $q = 'insert into history set user_id = '.$row['user_id'].',
                     amount = '.$row['actual_amount'].',
                     type=\'release_deposit\',
                     actual_amount = '.$row['actual_amount'].',
@@ -1519,7 +1519,7 @@ function count_earning($u_id)
                             if ((0 < $row['compound'] and $row['compound'] <= 100)) {
                                 $comp_amount = $inc * $row['compound'] / 100;
                                 $inc = floor((floor($inc * 100000) / 100000 - floor($comp_amount * 100000) / 100000) * 100) / 100;
-                                $q = 'insert into hm2_history set user_id = '.$row['user_id'].(',
+                                $q = 'insert into history set user_id = '.$row['user_id'].(',
                         amount = -'.$comp_amount.',
                     		type=\'deposit\',
                     		description = \'Compounding deposit\',
@@ -1528,7 +1528,7 @@ function count_earning($u_id)
                     		date = \''.$row['last_pay_date'].('\' + interval '.$interval.',
                                 deposit_id = ').$row['id'];
                                 db_query($q);
-                                $q = 'update hm2_deposits set amount = amount + '.$comp_amount.',
+                                $q = 'update deposits set amount = amount + '.$comp_amount.',
                     		actual_amount = actual_amount + '.$comp_amount.'
                     		where id = '.$row['id'];
                                 db_query($q);
@@ -1540,20 +1540,20 @@ function count_earning($u_id)
                     }
                 }
 
-                $q = 'update hm2_deposits set
+                $q = 'update deposits set
       	q_pays = q_pays + 1,
       	last_pay_date = last_pay_date + interval '.$interval.' '.$status.' where id ='.$row['id'];
                 db_query($q);
             }
         }
 
-        $q = 'select * from hm2_types where q_days > 0';
+        $q = 'select * from types where q_days > 0';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             $q_days = $row['q_days'];
             $id = $row['id'];
             if ($row['return_profit'] == 1) {
-                $q = 'select * from hm2_deposits where
+                $q = 'select * from deposits where
                 type_id = '.$id.' and
                 status = \'on\' and
                 user_id = '.$row_user_id.' and
@@ -1562,7 +1562,7 @@ function count_earning($u_id)
              ';
                 $sth1 = db_query($q);
                 while ($row1 = mysql_fetch_array($sth1)) {
-                    $q = 'insert into hm2_history set
+                    $q = 'insert into history set
                 user_id = '.$row1['user_id'].',
       		amount = '.$row1['actual_amount'].',
       		type=\'release_deposit\',
@@ -1574,7 +1574,7 @@ function count_earning($u_id)
                 }
             }
 
-            $q = 'update hm2_deposits set status=\'off\' where
+            $q = 'update deposits set status=\'off\' where
              user_id = '.$row_user_id.' and
     	       (deposit_date + interval '.$q_days.' day < last_pay_date or deposit_date + interval '.$q_days.' day < now()) and
              (('.$row['withdraw_principal'].' = 0) || ('.$row['withdraw_principal'].' && (deposit_date + interval '.$row['withdraw_principal_duration'].' day < now()))) and
@@ -1698,7 +1698,7 @@ function get_rand_md5($len)
 
 function get_user_balance($id)
 {
-    $q = 'select type, sum(actual_amount) as sum from hm2_history where user_id = '.$id.' group by type';
+    $q = 'select type, sum(actual_amount) as sum from history where user_id = '.$id.' group by type';
     $sth = db_query($q);
     $accounting = [];
     while ($row = mysql_fetch_array($sth)) {
@@ -1711,7 +1711,7 @@ function get_user_balance($id)
     }
 
     $accounting['total'] = $total;
-    $q = 'select sum(actual_amount) as sum from hm2_deposits where user_id = '.$id.' and status=\'on\'';
+    $q = 'select sum(actual_amount) as sum from deposits where user_id = '.$id.' and status=\'on\'';
     $sth = db_query($q);
     while ($row = mysql_fetch_array($sth)) {
         $accounting['active_deposit'] += $row['sum'];

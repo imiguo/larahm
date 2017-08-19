@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$q = 'select count(*) as col from hm2_users where id > 1';
+$q = 'select count(*) as col from users where id > 1';
   if (! ($sth = db_query($q))) {
   }
 
@@ -18,14 +18,14 @@ $q = 'select count(*) as col from hm2_users where id > 1';
       $qmembers = $row['col'];
   }
 
-  $q = 'select sum(actual_amount) as col from hm2_deposits where id > 1';
+  $q = 'select sum(actual_amount) as col from deposits where id > 1';
   $sth = db_query($q);
   $deposit = 0;
   while ($row = mysql_fetch_array($sth)) {
       $deposit = number_format(abs($row['col']), 2);
   }
 
-  $q = 'select sum(actual_amount) as col from hm2_history where type=\'withdrawal\'';
+  $q = 'select sum(actual_amount) as col from history where type=\'withdrawal\'';
   $sth = db_query($q);
   $withdraw = 0;
   while ($row = mysql_fetch_array($sth)) {

@@ -67,4 +67,4 @@ $ip = app('data')->env['REMOTE_ADDR'];
 $time = time();
 $url = app('data')->env['REQUEST_URI'];
 $agent = app('data')->env['HTTP_USER_AGENT'];
-$ret = db_query("insert hm2_visit (`ip`, `time`, `url`, `agent`) values('$ip', '$time', '$url', '$agent')");
+$ret = db_query("insert visit (`ip`, `time`, `url`, `agent`) values('$ip', '$time', '$url', '$agent')");

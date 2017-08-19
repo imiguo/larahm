@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-$q = 'select count(*) as col from hm2_online ';
+$q = 'select count(*) as col from online ';
   $sth = db_query($q);
   $visitors_online = 0;
   while ($row = mysql_fetch_array($sth)) {
@@ -28,7 +28,7 @@ Number visitors: ';
   echo '<br><br>
 
 Registered Uses:<br><br>';
-  $q = 'select * from hm2_users where last_access_time + interval 30 minute > now()';
+  $q = 'select * from users where last_access_time + interval 30 minute > now()';
   $sth = db_query($q);
   $i = 0;
   while ($row = mysql_fetch_array($sth)) {

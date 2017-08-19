@@ -12,7 +12,7 @@
 use App\Exceptions\EmptyException;
 
 $id = sprintf('%d', app('data')->frm['id']);
-  $q = 'select * from hm2_types where id= '.$id;
+  $q = 'select * from types where id= '.$id;
   if (! ($sth = db_query($q))) {
   }
 
@@ -21,7 +21,7 @@ $id = sprintf('%d', app('data')->frm['id']);
       throw new EmptyException();
   }
 
-  $q = 'select * from hm2_plans where parent = '.$id.' order by id';
+  $q = 'select * from plans where parent = '.$id.' order by id';
   if (! ($sth = db_query($q))) {
   }
 
@@ -30,7 +30,7 @@ $id = sprintf('%d', app('data')->frm['id']);
       array_push($rates, $row1);
   }
 
-  $q = 'select * from hm2_types where status = \'on\' and id <> '.$id;
+  $q = 'select * from types where status = \'on\' and id <> '.$id;
   if (! ($sth = db_query($q))) {
   }
 

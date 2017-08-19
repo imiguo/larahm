@@ -36,7 +36,7 @@ function show_program_stat()
 function try_auth(&$userinfo)
 {
     if (Auth::check() && Auth::id() == 1) {
-        $q = 'select * from hm2_users where id = 1';
+        $q = 'select * from users where id = 1';
         $sth = db_query($q);
         $row = mysql_fetch_array($sth);
         $userinfo = $row;
@@ -79,13 +79,13 @@ function save_exchange_rates()
                     $percent = 100;
                 }
 
-                $q = 'select count(*) as cnt from hm2_exchange_rates where `sfrom` = '.$id_from.' and `sto` = '.$id_to;
+                $q = 'select count(*) as cnt from exchange_rates where `sfrom` = '.$id_from.' and `sto` = '.$id_to;
                 $sth = db_query($q);
                 $row = mysql_fetch_array($sth);
                 if (0 < $row['cnt']) {
-                    $q = 'update hm2_exchange_rates set percent = '.$percent.' where `sfrom` = '.$id_from.' and `sto` = '.$id_to;
+                    $q = 'update exchange_rates set percent = '.$percent.' where `sfrom` = '.$id_from.' and `sto` = '.$id_to;
                 } else {
-                    $q = 'insert into hm2_exchange_rates set percent = '.$percent.', `sfrom` = '.$id_from.', `sto` = '.$id_to;
+                    $q = 'insert into exchange_rates set percent = '.$percent.', `sfrom` = '.$id_from.', `sto` = '.$id_to;
                 }
 
                 db_query($q);

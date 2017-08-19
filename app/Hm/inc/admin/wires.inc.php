@@ -23,9 +23,9 @@ echo '<b>';
  <th bgcolor=FFEA00>-</th>
 </tr>';
   if (app('data')->frm['type'] == 'problem') {
-      $q = 'select hm2_wires.*, hm2_users.username from hm2_wires, hm2_users where hm2_wires.status=\'problem\' and hm2_users.id = hm2_wires.user_id order by wire_date desc';
+      $q = 'select wires.*, users.username from wires, users where wires.status=\'problem\' and users.id = wires.user_id order by wire_date desc';
   } else {
-      $q = 'select hm2_wires.*, hm2_users.username from hm2_wires, hm2_users where hm2_wires.status=\'new\' and hm2_users.id = hm2_wires.user_id order by wire_date desc';
+      $q = 'select wires.*, users.username from wires, users where wires.status=\'new\' and users.id = wires.user_id order by wire_date desc';
   }
 
   $sth = db_query($q);

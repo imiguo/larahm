@@ -14,7 +14,7 @@ $q = 'select
                h.actual_amount as balance,
                date_format(h.deposit_date + interval '.app('data')->settings['time_dif'].' hour, \'%b-%e-%Y %r\') as dd
          from 
-               hm2_deposits as h left outer join hm2_users as u
+               deposits as h left outer join users as u
                  on u.id = h.user_id
          where h.status = \'on\' and u.id != 1 and u.status = \'on\'
          order by deposit_date desc

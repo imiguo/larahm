@@ -23,7 +23,7 @@ You cannot change change e-mail templates! ';
 <input type=hidden name="action" value="update_statuses">
 <table cellspacing=1 cellpadding=2 border=0 width=100%>';
   $found = 0;
-  $q = 'select id, name, status from hm2_emails';
+  $q = 'select id, name, status from emails';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       if ($row['id'] == app('data')->frm['type']) {
@@ -67,13 +67,13 @@ You cannot change change e-mail templates! ';
               $text = quote(app('data')->frm['text']);
               $text = preg_replace('/
 /', '', $text);
-              $q = 'update hm2_emails set subject=\''.$subject.'\', text=\''.$text.'\' where id=\''.app('data')->frm['type'].'\'';
+              $q = 'update emails set subject=\''.$subject.'\', text=\''.$text.'\' where id=\''.app('data')->frm['type'].'\'';
               $sth = db_query($q);
               echo '<br><b>Template has been saved.</b></br>';
           }
       }
 
-      $q = 'select * from hm2_emails where id = \''.app('data')->frm['type'].'\'';
+      $q = 'select * from emails where id = \''.app('data')->frm['type'].'\'';
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       echo '<br><br>

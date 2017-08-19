@@ -21,7 +21,7 @@ $id = $userinfo['id'];
 
   if (app('data')->frm['action'] == 'preview') {
       $from = intval(app('data')->frm['from']);
-      $q = 'select sum(actual_amount) as sm from hm2_history where user_id = '.$id.' and ec = '.$from;
+      $q = 'select sum(actual_amount) as sm from history where user_id = '.$id.' and ec = '.$from;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $row['sm'] = floor($row['sm'] * 100) / 100;
@@ -41,9 +41,9 @@ $id = $userinfo['id'];
       app('data')->frm[''.'amount_'.$from] = str_replace(',', '.', app('data')->frm[''.'amount_'.$from]);
       $amount = sprintf('%.02f', app('data')->frm[''.'amount_'.$from]);
       if (app('data')->settings['hold_only_first_days'] == 1) {
-          $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
+          $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and deposits.deposit_date + interval types.hold day > now()';
       } else {
-          $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id ';
+          $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id ';
       }
 
     ($sthz = db_query($q));
@@ -51,7 +51,7 @@ $id = $userinfo['id'];
       $deps[0] = 0;
       $on_hold = 0;
       while ($rowz = mysql_fetch_array($sthz)) {
-          $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$from.' and
+          $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(''.' and ec = '.$from.' and
 		deposit_id = '.$rowz[id].' and date > now() - interval '.$rowz[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -79,7 +79,7 @@ $id = $userinfo['id'];
           throw new EmptyException();
       }
 
-      $q = 'select * from hm2_exchange_rates where sfrom = '.$from.' and sto = '.$to;
+      $q = 'select * from exchange_rates where sfrom = '.$from.' and sto = '.$to;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $percent = $row['percent'];
@@ -109,7 +109,7 @@ $id = $userinfo['id'];
 
   if (app('data')->frm['action'] == 'exchange') {
       $from = intval(app('data')->frm['from']);
-      $q = 'select sum(actual_amount) as sm from hm2_history where user_id = '.$id.' and ec = '.$from;
+      $q = 'select sum(actual_amount) as sm from history where user_id = '.$id.' and ec = '.$from;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $row['sm'] = floor($row['sm'] * 100) / 100;
@@ -128,9 +128,9 @@ $id = $userinfo['id'];
 
       $amount = sprintf('%.02f', app('data')->frm['amount']);
       if (app('data')->settings['hold_only_first_days'] == 1) {
-          $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
+          $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and deposits.deposit_date + interval types.hold day > now()';
       } else {
-          $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id ';
+          $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id ';
       }
 
     ($sthz = db_query($q));
@@ -138,7 +138,7 @@ $id = $userinfo['id'];
       $deps[0] = 0;
       $on_hold = 0;
       while ($rowz = mysql_fetch_array($sthz)) {
-          $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$from.' and
+          $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(''.' and ec = '.$from.' and
 		deposit_id = '.$rowz[id].' and date > now() - interval '.$rowz[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -166,7 +166,7 @@ $id = $userinfo['id'];
           throw new EmptyException();
       }
 
-      $q = 'select * from hm2_exchange_rates where sfrom = '.$from.' and sto = '.$to;
+      $q = 'select * from exchange_rates where sfrom = '.$from.' and sto = '.$to;
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $percent = $row['percent'];
@@ -186,7 +186,7 @@ $id = $userinfo['id'];
 
       $from_name = app('data')->exchange_systems[$from]['name'];
       $to_name = app('data')->exchange_systems[$to]['name'];
-      $q = 'insert into hm2_history set
+      $q = 'insert into history set
              user_id = '.$id.',
              amount = -'.$amount.',
              actual_amount = -'.$amount.',
@@ -196,7 +196,7 @@ $id = $userinfo['id'];
              ec = '.$from.'
           ';
       db_query($q);
-      $q = 'insert into hm2_history set
+      $q = 'insert into history set
              user_id = '.$id.',
              amount = '.$exchange_amount.',
              actual_amount = '.$exchange_amount.',
@@ -213,7 +213,7 @@ $id = $userinfo['id'];
       $info['amount_from'] = number_format($amount, 2);
       $info['currency_to'] = app('data')->exchange_systems[$to]['name'];
       $info['amount_to'] = number_format($exchange_amount, 2);
-      $q = 'select email from hm2_users where id = 1';
+      $q = 'select email from users where id = 1';
       $sth = db_query($q);
       $admin_email = '';
       while ($row = mysql_fetch_array($sth)) {
@@ -227,7 +227,7 @@ $id = $userinfo['id'];
 
   $balances = [];
   $tmp_amounts = [];
-  $q = 'select sum(actual_amount) as sm, ec from hm2_history where user_id = '.$id.' group by ec order by ec asc';
+  $q = 'select sum(actual_amount) as sm, ec from history where user_id = '.$id.' group by ec order by ec asc';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $row['sm'] = floor($row['sm'] * 100) / 100;
@@ -238,7 +238,7 @@ $id = $userinfo['id'];
       $tmp_amounts[$row['ec']] = $row['sm'];
       $tos = [];
       foreach (app('data')->exchange_systems as $to => $data) {
-          $q1 = 'select * from hm2_exchange_rates where sfrom = '.$row['ec'].' and sto = '.$to;
+          $q1 = 'select * from exchange_rates where sfrom = '.$row['ec'].' and sto = '.$to;
           $sth1 = db_query($q1);
           $row1 = mysql_fetch_array($sth1);
           $row1['percent'] = intval($row1['percent']);
@@ -249,9 +249,9 @@ $id = $userinfo['id'];
       }
 
       if (app('data')->settings['hold_only_first_days'] == 1) {
-          $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id and hm2_deposits.deposit_date + interval hm2_types.hold day > now()';
+          $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id and deposits.deposit_date + interval types.hold day > now()';
       } else {
-          $q = 'select hm2_deposits.id, hm2_types.hold from hm2_deposits, hm2_types where user_id = '.$userinfo[id].' and hm2_types.id = hm2_deposits.type_id ';
+          $q = 'select deposits.id, types.hold from deposits, types where user_id = '.$userinfo[id].' and types.id = deposits.type_id ';
       }
 
     ($sthz = db_query($q));
@@ -259,7 +259,7 @@ $id = $userinfo['id'];
       $deps[0] = 0;
       $on_hold = 0;
       while ($rowz = mysql_fetch_array($sthz)) {
-          $q = 'select sum(actual_amount) as amount from hm2_history where user_id = '.$userinfo['id'].(''.' and ec = '.$row[ec].' and
+          $q = 'select sum(actual_amount) as amount from history where user_id = '.$userinfo['id'].(''.' and ec = '.$row[ec].' and
 		deposit_id = '.$rowz[id].' and date > now() - interval '.$rowz[hold].' day and
 			(type=\'earning\' or
 		(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\')));');
@@ -274,7 +274,7 @@ $id = $userinfo['id'];
 
   view_assign('ec', $balances);
   $exch = [];
-  $q = 'select * from hm2_exchange_rates';
+  $q = 'select * from exchange_rates';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $exch[$row['sfrom']][$row['sto']] = $row['percent'];

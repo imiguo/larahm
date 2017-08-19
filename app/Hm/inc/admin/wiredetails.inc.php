@@ -13,7 +13,7 @@ echo '<b>Wire Transfer Details.</b><br>
 <br>
 ';
   $id = sprintf('%d', app('data')->frm['id']);
-  $q = 'select hm2_wires.*, date_format(hm2_wires.wire_date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as wire_date1, hm2_users.username from hm2_wires, hm2_users where hm2_wires.id = '.$id.' and hm2_users.id = hm2_wires.user_id');
+  $q = 'select wires.*, date_format(wires.wire_date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as wire_date1, users.username from wires, users where wires.id = '.$id.' and users.id = wires.user_id');
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   echo '

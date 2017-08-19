@@ -14,11 +14,11 @@ use App\Exceptions\EmptyException;
 echo ' <b>Process Withdrawal:</b><br><br>';
 
 $id = sprintf('%d', app('data')->frm['id']);
-$q = 'select * from hm2_history where id='.$id.' and type=\'withdraw_pending\'';
+$q = 'select * from history where id='.$id.' and type=\'withdraw_pending\'';
 $sth = db_query($q);
 $do_not_show_form = 0;
 if ($trans = mysql_fetch_array($sth)) {
-    $q = 'select * from hm2_users where id = '.$trans['user_id'];
+    $q = 'select * from users where id = '.$trans['user_id'];
     $sth1 = db_query($q);
     if ($user = mysql_fetch_array($sth1)) {
     } else {
@@ -28,7 +28,7 @@ if ($trans = mysql_fetch_array($sth)) {
 
     if ($trans['str'] == '') {
         $str = gen_confirm_code(30);
-        $q = 'update hm2_history set str = \''.$str.'\' where id ='.$id;
+        $q = 'update history set str = \''.$str.'\' where id ='.$id;
         db_query($q);
         $trans['str'] = $str;
     }
@@ -464,9 +464,9 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
                                         if ($trans['ec'] == 999) {
                                             echo '  ';
                                             if (app('data')->frm['confirm'] == 'ok') {
-                                                $q = 'delete from hm2_history where id = '.$id;
+                                                $q = 'delete from history where id = '.$id;
                                                 db_query($q);
-                                                $q = 'insert into hm2_history set
+                                                $q = 'insert into history set
         user_id = '.$user['id'].',
         amount = -'.abs($trans['actual_amount']).',
         type = \'withdrawal\',
@@ -496,9 +496,9 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
                                             }
                                         } else {
                                             if (app('data')->frm['confirm'] == 'ok') {
-                                                $q = 'delete from hm2_history where id = '.$id;
+                                                $q = 'delete from history where id = '.$id;
                                                 db_query($q);
-                                                $q = 'insert into hm2_history set
+                                                $q = 'insert into history set
          user_id = '.$user['id'].',
          amount = -'.abs($trans['actual_amount']).',
          type = \'withdrawal\',
@@ -509,7 +509,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
          ';
                                                 db_query($q);
                                                 $row = $trans;
-                                                $q = 'select * from hm2_users where id = '.$row['user_id'];
+                                                $q = 'select * from users where id = '.$row['user_id'];
                                                 $sth = db_query($q);
                                                 $userinfo = mysql_fetch_array($sth);
                                                 $info = [];
@@ -521,7 +521,7 @@ Payment will be made from this account:<br><br> <INPUT type=text class=inpts nam
                                                 $info['batch'] = 'n/a';
                                                 send_template_mail('withdraw_user_notification', $userinfo['email'],
                                                     app('data')->settings['opt_in_email'], $info);
-                                                $q = 'select email from hm2_users where id = 1';
+                                                $q = 'select email from users where id = 1';
                                                 $sth = db_query($q);
                                                 $admin_row = mysql_fetch_array($sth);
                                                 send_template_mail('withdraw_admin_notification', $admin_row['email'],

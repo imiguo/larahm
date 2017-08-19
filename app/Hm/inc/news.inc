@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-  $q = 'select count(*) as `call` from hm2_news';
+  $q = 'select count(*) as `call` from news';
   $sth = db_query($q);
   $row = mysql_fetch_array($sth);
   $count_all = $row['call'];
@@ -29,7 +29,7 @@
                  *,
                  date_format(date + interval '.app('data')->settings['time_dif'].(''.' hour, \'%b-%e-%Y %r\') as d
            from
-                 hm2_news
+                 news
            order by
                  date desc
            limit

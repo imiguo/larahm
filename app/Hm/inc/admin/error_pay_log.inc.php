@@ -18,7 +18,7 @@ echo '
  <td bgcolor=FFEA00 align=center>Error</td>
 </tr>
 ';
-  $q = 'select * from hm2_pay_errors order by id desc';
+  $q = 'select * from pay_errors order by id desc';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       $txt = $row['txt'];
