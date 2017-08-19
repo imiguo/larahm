@@ -257,7 +257,6 @@ function do_login(&$userinfo)
 {
     $username = quote(app('data')->frm['username']);
     $password = quote(app('data')->frm['password']);
-    $password = md5($password);
     $add_opt_in_check = '';
     if (app('data')->settings['use_opt_in'] == 1) {
         $add_opt_in_check = ' and (confirm_string = "" or confirm_string is NULL)';
@@ -271,11 +270,9 @@ function do_login(&$userinfo)
                 throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
             }
         }
-
         if ((app('data')->settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
-
         if ((app('data')->settings['brute_force_handler'] == 1 and $row['bf_counter'] == app('data')->settings['brute_force_max_tries'])) {
             $activation_code = get_rand_md5(50);
             $q = 'update users set bf_counter = bf_counter + 1, activation_code = \''.$activation_code.'\' where id = '.$row['id'];
@@ -289,7 +286,7 @@ function do_login(&$userinfo)
             send_template_mail('brute_force_activation', $row['email'], app('data')->settings['system_email'], $info);
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
-        if ($row['password'] != $password) {
+        if (! app('hash')->check($password, $row['password'])) {
             $q = 'update users set bf_counter = bf_counter + 1 where id = '.$row['id'];
             db_query($q);
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);

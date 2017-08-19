@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('miadmin'),
             'date_register' => Carbon::now(),
             'email' => 'midollaradm@gmail.com',
+            'status' => 'on',
         ]);
         User::create([
             'name' => 'test',
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('test'),
             'date_register' => Carbon::now(),
             'email' => '1194316669@qq.com',
+            'status' => 'on',
         ]);
 
         $file = __DIR__.'/import.sql';
