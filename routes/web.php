@@ -11,27 +11,8 @@
 |
 */
 
-Route::match(['get', 'post'], '/', function () {
-    $app_file = app_path('Hm').'/http/index.php';
+Route::match(['get', 'post'], '/', 'HmController@index');
 
-    return hanlder_app($app_file);
-});
+Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), 'HmController@admin');
 
-Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), function () {
-    $app_file = app_path('Hm').'/http/admin.php';
-
-    return hanlder_app($app_file);
-});
-
-Route::match(['get', 'post'], '/payments/{payment}', function ($payment) {
-    $payments = [
-        'payeer',
-        'perfectmoney',
-    ];
-    if (in_array($payment, $payments)) {
-        $app_file = app_path('Hm').'/http/payments/'.$payment.'.php';
-
-        return hanlder_app($app_file);
-    }
-    abort(404);
-});
+Route::match(['get', 'post'], '/payments/{payment}', 'HmController@payment');
