@@ -82,6 +82,22 @@ if (! function_exists('theme')) {
     }
 }
 
+if (! function_exists('refresh_theme')) {
+    function refresh_theme()
+    {
+        foreach (glob(public_path().'/*') as $file) {
+            if (strpos($file, 'index.php') !== false) {
+                continue;
+            }
+            unlink($file);
+        }
+        foreach (glob(dirname(tmpl_path()).'/public/*') as $file) {
+            $target = public_path().'/'.basename($file);
+            symlink($file, $target);
+        }
+    }
+}
+
 if (! function_exists('tmpl_path')) {
     function tmpl_path()
     {

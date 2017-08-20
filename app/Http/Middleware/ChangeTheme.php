@@ -20,16 +20,7 @@ class ChangeTheme
         $theme = theme();
         config(['hm.theme' => $theme]);
         if ($theme != Cache::get('last_theme', false)) {
-            foreach (glob(public_path().'/*') as $file) {
-                if (strpos($file, 'index.php') !== false) {
-                    continue;
-                }
-                unlink($file);
-            }
-            foreach (glob(dirname(tmpl_path()).'/public/*') as $file) {
-                $target = public_path().'/'.basename($file);
-                symlink($file, $target);
-            }
+            refresh_theme();
             Cache::forever('last_theme', $theme);
         }
 
