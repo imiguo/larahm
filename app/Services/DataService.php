@@ -91,7 +91,7 @@ class DataService
 
     public function fakePayout()
     {
-        if (FakeHistory::where('type', 1)->count() < 100) {
+        if (FakeHistory::where('type', 1)->count() < 50) {
             return;
         }
         $user = FakeUser::where('amount', '>', 0)->first();
@@ -102,7 +102,7 @@ class DataService
             'user_id' => $user->id,
             'amount' => max($user->amount * mt_rand(1, 10) / 10, 0.1),
             'payment' => $user->payment,
-            'type' => 1,
+            'type' => 2,
             'created_at' => Carbon::now(),
         ]);
         $user->amount = $user->amount - $history->amount;
