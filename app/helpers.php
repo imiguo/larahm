@@ -42,7 +42,7 @@ if (! function_exists('theme_list')) {
     function theme_list()
     {
         $themes = [];
-        foreach (glob(dirname(base_path()).'/templates/*') as $file) {
+        foreach (glob(dirname(base_path()).'/'.env('TEMPLATES_NAME').'/*') as $file) {
             if (is_dir($file) && ($name = basename($file)) != 'vendor') {
                 $themes[] = $name;
             }
@@ -101,7 +101,7 @@ if (! function_exists('refresh_theme')) {
 if (! function_exists('tmpl_path')) {
     function tmpl_path()
     {
-        return dirname(base_path()).'/templates/'.config('hm.theme').'/tmpl';
+        return dirname(base_path()).'/'.env('TEMPLATES_NAME').'/'.config('hm.theme').'/tmpl';
     }
 }
 
