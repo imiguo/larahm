@@ -36,11 +36,12 @@ class Kernel extends ConsoleKernel
                 return Carbon::now()->addMinutes(mt_rand(10, 60));
             });
             if (Carbon::now()->greaterThan($time)) {
-                Cache::forget('schedule_fakeDeposit');
+                Cache::forget('schedule.fakeDeposit');
                 return true;
             }
             return false;
         });
+
         $schedule->call(function () {
             app(DataService::class)->fakePayout();
         })->when(function () {
@@ -48,7 +49,7 @@ class Kernel extends ConsoleKernel
                 return Carbon::now()->addMinutes(mt_rand(30, 90));
             });
             if (Carbon::now()->greaterThan($time)) {
-                Cache::forget('schedule_fakeDeposit');
+                Cache::forget('schedule.fakePayout');
                 return true;
             }
             return false;
