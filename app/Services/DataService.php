@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\FakeHistory;
-use App\Models\FakeUser;
-use App\Models\History;
 use Carbon\Carbon;
+use App\Models\History;
+use App\Models\FakeUser;
+use App\Models\FakeHistory;
 
 class DataService
 {
@@ -14,13 +14,14 @@ class DataService
         2 => 'payeer',
         3 => 'btc',
     ];
+
     public function deposits($limit = 20)
     {
         $fakes = FakeHistory::where('type', 1)
             ->orderBy('created_at', 'desc')
             ->take(20)
             ->get()
-            ->transform(function($item) {
+            ->transform(function ($item) {
                 return [
                     'username' => $item->user->username,
                     'amount' => $item->amount,
@@ -33,7 +34,7 @@ class DataService
             ->orderBy('date', 'desc')
             ->take(20)
             ->get()
-            ->transform(function($item) {
+            ->transform(function ($item) {
                 return [
                     'username' => $item->user->username ?? 'EmmNisen',
                     'amount' => $item->amount,
@@ -41,6 +42,7 @@ class DataService
                     'time' => $item->date,
                 ];
             });
+
         return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
     }
 
@@ -50,7 +52,7 @@ class DataService
             ->orderBy('created_at', 'desc')
             ->take(20)
             ->get()
-            ->transform(function($item) {
+            ->transform(function ($item) {
                 return [
                     'username' => $item->user->username,
                     'amount' => $item->amount,
@@ -63,7 +65,7 @@ class DataService
             ->orderBy('date', 'desc')
             ->take(20)
             ->get()
-            ->transform(function($item) {
+            ->transform(function ($item) {
                 return [
                     'username' => $item->user->username,
                     'amount' => $item->amount,
@@ -71,6 +73,7 @@ class DataService
                     'time' => $item->date,
                 ];
             });
+
         return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
     }
 

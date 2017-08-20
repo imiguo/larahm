@@ -62,7 +62,7 @@ view_assign('settings', app('data')->settings);
 if (app('data')->frm['a'] == 'do_login') {
     do_login($userinfo);
     Auth::loginUsingId($userinfo['id']);
-    if (app('data')->is_monitor && !Cookie::get('identity')) {
+    if (app('data')->is_monitor && ! Cookie::get('identity')) {
         Cookie::queue('identity', 'monitor', 43200);
     }
     if (($userinfo['logged'] == 1 and $userinfo['id'] == 1)) {
