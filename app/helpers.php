@@ -43,7 +43,9 @@ if (! function_exists('theme_list')) {
     {
         $themes = [];
         foreach (glob(dirname(base_path()).'/templates/*') as $file) {
-            $themes[] = basename($file);
+            if (is_dir($file) && ($name = basename($file)) != 'vendor') {
+                $themes[] = $name;
+            }
         }
 
         return $themes;
