@@ -41,12 +41,12 @@ class DataService
                     'time' => $item->date,
                 ];
             });
-        return $fakes->union($histories)->sortBy('time')->take($limit);
+        return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
     }
 
     public function payouts($limit = 20)
     {
-        $fakes = FakeHistory::where('type', 1)
+        $fakes = FakeHistory::where('type', 2)
             ->orderBy('created_at', 'desc')
             ->take(20)
             ->get()
@@ -71,7 +71,7 @@ class DataService
                     'time' => $item->date,
                 ];
             });
-        return $fakes->union($histories)->sortBy('time')->take($limit);
+        return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
     }
 
     public function fakeDeposit()
