@@ -101,7 +101,7 @@ if (! function_exists('refresh_theme')) {
 if (! function_exists('tmpl_path')) {
     function tmpl_path()
     {
-        return dirname(base_path()).'/'.env('TEMPLATES_NAME').'/'.config('hm.theme').'/tmpl';
+        return dirname(base_path()).'/'.env('TEMPLATES_NAME').'/'.theme().'/tmpl';
     }
 }
 
@@ -138,7 +138,7 @@ if (! function_exists('view_execute')) {
     function view_execute($view)
     {
         $view_data = [
-            'tag' => crc32(config('hm.theme')),
+            'tag' => crc32(theme()),
             'csrf_token' => csrf_token(),
             'app_name' => env('APP_NAME'),
             'app_full_name' => env('APP_FULL_NAME'),

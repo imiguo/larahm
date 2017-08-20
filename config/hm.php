@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'theme' => theme(),
-
     'payments' => [
         0  => ['name' => 'e-gold', 'sfx' => 'egold'],
         2  => ['name' => 'INTGold', 'sfx' => 'intgold'],
