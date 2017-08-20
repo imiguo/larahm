@@ -62,23 +62,23 @@ if (! function_exists('old_theme')) {
 if (! function_exists('theme')) {
     function theme()
     {
-        $theme = config('hm.theme');
+        $theme = env('THEME');
+        if (in_array($theme, theme_list())) {
+            return $theme;
+        }
         if ($theme == 'random') {
             return array_rand(array_flip(theme_list()));
         }
         if ($theme == 'next') {
             $themes = theme_list();
             if ($oldTheme = old_theme()) {
-                try {
-                    return $themes[(array_flip($themes)[$oldTheme] + 1) % count($themes)];
-                } catch (Exception $e) {
-                }
+                return $themes[(array_flip($themes)[$oldTheme] + 1) % count($themes)];
             }
 
             return current($themes);
         }
 
-        return $theme ?: 'default';
+        return 'default';
     }
 }
 
