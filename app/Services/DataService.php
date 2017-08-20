@@ -98,15 +98,18 @@ class DataService
     public function generateAmount()
     {
         return collect([
-            array_fill(0, 100, 1),
-            array_fill(0, 2000, 5),
+            array_fill(0, 50, 1),
+            array_fill(0, 50, 2),
+            array_fill(0, 50, 3),
+            array_fill(0, 50, 4),
+            array_fill(0, 200, 5),
             array_fill(0, 2000, 10),
             array_fill(0, 1000, 20),
             array_fill(0, 200, 50),
             array_fill(0, 100, 100),
             array_fill(0, 20, 500),
             array_fill(0, 10, 1000),
-        ])->flatten()->random(mt_rand(1, 10))->sum();
+        ])->flatten()->shuffle()->random(mt_rand(1, 10))->sum();
     }
 
     public function generatePayment()
@@ -115,6 +118,6 @@ class DataService
             array_fill(0, 1, 10),
             array_fill(0, 2, 5),
             array_fill(0, 3, 2),
-        ])->flatten()->random();
+        ])->flatten()->shuffle()->random();
     }
 }
