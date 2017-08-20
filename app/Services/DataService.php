@@ -9,7 +9,12 @@ use Carbon\Carbon;
 
 class DataService
 {
-    public function deposits()
+    const paymentMap = [
+        1 => 'pm',
+        2 => 'payeer',
+        3 => 'btc',
+    ];
+    public function deposits($limit = 20)
     {
         $fakes = FakeHistory::where('type', 1)
             ->orderBy('created_at', 'desc')
@@ -19,7 +24,7 @@ class DataService
                 return [
                     'username' => $item->user->username,
                     'amount' => $item->amount,
-                    'payment' => $item->payment,
+                    'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
                 ];
             });
@@ -36,20 +41,20 @@ class DataService
                     'time' => $item->date,
                 ];
             });
-        return $fakes->union($histories)->sortBy('time');
+        return $fakes->union($histories)->sortBy('time')->take($limit);
     }
 
-    public function payouts()
+    public function payouts($limit = 20)
     {
         $fakes = FakeHistory::where('type', 1)
-            ->orderBy('time', 'desc')
+            ->orderBy('created_at', 'desc')
             ->take(20)
             ->get()
             ->transform(function($item) {
                 return [
                     'username' => $item->user->username,
                     'amount' => $item->amount,
-                    'payment' => $item->payment,
+                    'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
                 ];
             });
@@ -66,7 +71,7 @@ class DataService
                     'time' => $item->date,
                 ];
             });
-        return $fakes->union($histories)->sortBy('time');
+        return $fakes->union($histories)->sortBy('time')->take($limit);
     }
 
     public function fakeDeposit()

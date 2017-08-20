@@ -19,4 +19,5 @@ return [
 
     'auto_blade' => env('AUTO_BLADE', true),
     'blade_path' => storage_path('blades'),
+    'show_history' => env('SHOW_HISTORY', true),
 ];
