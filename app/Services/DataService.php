@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\FakeHistory;
 use App\Models\FakeUser;
 use App\Models\History;
+use Carbon\Carbon;
 
 class DataService
 {
@@ -76,6 +77,7 @@ class DataService
             'amount' => $this->generateAmount(),
             'payment' => $user->payment ?: $this->generatePayment(),
             'type' => 1,
+            'created_at' => Carbon::now(),
         ]);
         $user->payment = $history->payment;
         $user->amount = $history->amount;
@@ -96,6 +98,7 @@ class DataService
             'amount' => max($user->amount * mt_rand(1, 10) / 10, 0.1),
             'payment' => $user->payment,
             'type' => 1,
+            'created_at' => Carbon::now(),
         ]);
         $user->amount = $user->amount - $history->amount;
         $user->save();

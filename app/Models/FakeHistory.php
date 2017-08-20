@@ -8,6 +8,8 @@ class FakeHistory extends Model
 {
     protected $guarded = [];
 
+    public $timestamps = false;
+
     public function user()
     {
         return $this->belongsTo(FakeUser::class);

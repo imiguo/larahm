@@ -19,8 +19,7 @@ class CreateFakeHistoriesTable extends Migration
             $table->double('amount', 10, 5)->default(0.00000);
             $table->tinyInteger('payment');
             $table->tinyInteger('type');
-            $table->timestamp('time')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         });
     }
 
