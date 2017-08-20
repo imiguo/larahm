@@ -2,10 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\IpService;
 use Closure;
+use App\Services\IpService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 
 class HackMonitors
 {
@@ -22,6 +21,7 @@ class HackMonitors
         $is_monitor = $this->is_monitor($request);
         app('data')->is_monitor = $is_monitor;
         view_assign('is_monitor', $is_monitor);
+
         return $next($request);
     }
 
@@ -40,6 +40,7 @@ class HackMonitors
         if (Auth::check() && Auth::user()->identity == 'monitor') {
             return true;
         }
+
         return false;
     }
 }

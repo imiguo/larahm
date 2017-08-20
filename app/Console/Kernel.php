@@ -2,12 +2,12 @@
 
 namespace App\Console;
 
-use App\Console\Commands\BladeClearCommand;
-use App\Services\DataService;
 use Carbon\Carbon;
+use App\Services\DataService;
+use Illuminate\Support\Facades\Cache;
+use App\Console\Commands\BladeClearCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Cache;
 
 class Kernel extends ConsoleKernel
 {
@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        BladeClearCommand::class
+        BladeClearCommand::class,
     ];
 
     /**
@@ -37,8 +37,10 @@ class Kernel extends ConsoleKernel
             });
             if (Carbon::now()->greaterThan($time)) {
                 Cache::forget('schedule.fakeDeposit');
+
                 return true;
             }
+
             return false;
         });
 
@@ -50,8 +52,10 @@ class Kernel extends ConsoleKernel
             });
             if (Carbon::now()->greaterThan($time)) {
                 Cache::forget('schedule.fakePayout');
+
                 return true;
             }
+
             return false;
         });
     }

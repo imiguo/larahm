@@ -22,11 +22,12 @@ class IpService
         $longIp = ip2long($ip);
         $country = Ip::where('ip', $longIp)->value('country');
         if (! $country) {
-            $country = retry(3, function() use ($ip) {
+            $country = retry(3, function () use ($ip) {
                 return $this->requestInfo($ip);
             });
             Ip::create(['ip' => $longIp, 'country' => $country]);
         }
+
         return $country;
     }
 
@@ -35,6 +36,7 @@ class IpService
         $gateWay = array_random($this->gateWays());
         $url = sprintf($gateWay['url'], $ip);
         $info = $this->get($url);
+
         return call_user_func($gateWay['callback'], $info);
     }
 
@@ -43,44 +45,45 @@ class IpService
         return [
             [
                 'url' => 'https://ipapi.co/%s/country/',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     return $info != 'Undefined' ? $info : '';
                 },
             ],
             [
                 'url' => 'http://ip-api.com/json/%s',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     return $info['countryCode'];
                 },
             ],
             [
                 'url' => 'http://www.geoplugin.net/json.gp?ip=%s',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     $info = json_decode($info, true);
+
                     return $info['geoplugin_countryCode'];
                 },
             ],
             [
                 'url' => 'https://freegeoip.net/json/%s',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     return $info['country_code'];
                 },
             ],
             [
                 'url' => 'http://api.db-ip.com/addrinfo?addr=%s&api_key=bc2ab711d740d7cfa6fcb0ca8822cb327e38844f',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     return $info['SG'];
                 },
             ],
             [
                 'url' => 'http://geoip.nekudo.com/api/%s',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     return $info['country']['code'];
                 },
             ],
             [
                 'url' => 'https://ipapi.co/%s/json',
-                'callback' => function($info) {
+                'callback' => function ($info) {
                     return $info['country'];
                 },
             ],
@@ -92,7 +95,7 @@ class IpService
         return ! filter_var(
             $ip,
             FILTER_VALIDATE_IP,
-            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE |  FILTER_FLAG_NO_RES_RANGE
+            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
         );
     }
 }

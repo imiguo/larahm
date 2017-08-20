@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\FakeUser;
 use Carbon\Carbon;
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\FakeUser;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -44,12 +44,12 @@ class DatabaseSeeder extends Seeder
                 'status' => 'on',
                 'created_at' => $now,
                 'updated_at' => $now,
-            ]
+            ],
         ];
         User::insert($users);
 
         $fakeUsers = require 'fake_users.php';
-        $fakeUsers = collect($fakeUsers)->map(function($fakeUser) use ($now) {
+        $fakeUsers = collect($fakeUsers)->map(function ($fakeUser) use ($now) {
             return [
                 'username' => $fakeUser,
                 'created_at' => $now,
