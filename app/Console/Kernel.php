@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Services\DataService;
 use Illuminate\Support\Facades\Cache;
 use App\Console\Commands\BladeClearCommand;
+use App\Console\Commands\HmAdmin;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         BladeClearCommand::class,
+        HmAdmin::class,
     ];
 
     /**
