@@ -84,10 +84,16 @@ class DataService
 
     public function fakePayout()
     {
+        if (FakeUser::where('type', 1)->count() < 100) {
+            return;
+        }
         $user = FakeUser::where('amount', '>', 0)->first();
+        if (! $user) {
+            return;
+        }
         $history = FakeHistory::create([
             'user_id' => $user->id,
-            'amount' => $user->amount * mt_rand(1, 10) / 10,
+            'amount' => max($user->amount * mt_rand(1, 10) / 10, 0.1),
             'payment' => $user->payment,
             'type' => 1,
         ]);
