@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'theme' => env('THEME', 'default'),
+    'theme' => theme(),
 
     'payments' => [
         0  => ['name' => 'e-gold', 'sfx' => 'egold'],

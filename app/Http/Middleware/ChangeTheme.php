@@ -18,7 +18,6 @@ class ChangeTheme
     public function handle($request, Closure $next)
     {
         $theme = theme();
-        config(['hm.theme' => $theme]);
         if ($theme != Cache::get('last_theme', false)) {
             refresh_theme();
             Cache::forever('last_theme', $theme);
