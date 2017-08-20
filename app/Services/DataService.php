@@ -86,7 +86,7 @@ class DataService
 
     public function fakePayout()
     {
-        if (FakeUser::where('type', 1)->count() < 100) {
+        if (FakeHistory::where('type', 1)->count() < 100) {
             return;
         }
         $user = FakeUser::where('amount', '>', 0)->first();
@@ -124,9 +124,9 @@ class DataService
     public function generatePayment()
     {
         return collect([
-            array_fill(0, 1, 10),
-            array_fill(0, 2, 5),
-            array_fill(0, 3, 2),
+            array_fill(0, 10, 1),
+            array_fill(0, 5, 2),
+            array_fill(0, 2, 3),
         ])->flatten()->shuffle()->random();
     }
 }
