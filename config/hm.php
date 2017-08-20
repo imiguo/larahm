@@ -2,17 +2,17 @@
 
 return [
     'payments' => [
-        0  => ['name' => 'e-gold', 'sfx' => 'egold'],
-        2  => ['name' => 'INTGold', 'sfx' => 'intgold'],
-        3  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney'],
-        4  => ['name' => 'StormPay', 'sfx' => 'stormpay'],
-        5  => ['name' => 'e-Bullion', 'sfx' => 'ebullion'],
-        6  => ['name' => 'PayPal', 'sfx' => 'paypal'],
-        7  => ['name' => 'GoldMoney', 'sfx' => 'goldmoney'],
-        8  => ['name' => 'eeeCurrency', 'sfx' => 'eeecurrency'],
-        9  => ['name' => 'Pecunix', 'sfx' => 'pecunix'],
-        10 => ['name' => 'Payeer', 'sfx' => 'payeer'],
-        11 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
+        1  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney'],
+        2 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
+        3 => ['name' => 'Payeer', 'sfx' => 'payeer'],
+        4  => ['name' => 'e-gold', 'sfx' => 'egold'],
+        5  => ['name' => 'INTGold', 'sfx' => 'intgold'],
+        6  => ['name' => 'StormPay', 'sfx' => 'stormpay'],
+        7  => ['name' => 'e-Bullion', 'sfx' => 'ebullion'],
+        8  => ['name' => 'PayPal', 'sfx' => 'paypal'],
+        9  => ['name' => 'GoldMoney', 'sfx' => 'goldmoney'],
+        10  => ['name' => 'eeeCurrency', 'sfx' => 'eeecurrency'],
+        11  => ['name' => 'Pecunix', 'sfx' => 'pecunix'],
     ],
 
     'auto_blade' => env('AUTO_BLADE', true),
