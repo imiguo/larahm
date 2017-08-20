@@ -61,6 +61,5 @@ class HmAdmin extends Command
             ]);
             $this->info('change admin success');
         }
-
     }
 }
