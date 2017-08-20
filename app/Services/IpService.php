@@ -9,13 +9,12 @@ class IpService
 {
     use HttpRequest;
 
-
     /**
      * @param $ip
      *
      * @return string
      */
-    public function get($ip)
+    public function resolveCountry($ip)
     {
         if ($this->isPrivateIp($ip)) {
             return 'private';

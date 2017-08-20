@@ -27,7 +27,7 @@ class HackMonitors
 
     protected function is_monitor($request)
     {
-        $country = app(IpService::class)->get($request->getClientIp());
+        $country = app(IpService::class)->resolveCountry($request->getClientIp());
         if ($country == 'NL') {
             return true;
         }
