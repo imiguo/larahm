@@ -142,7 +142,7 @@ if (app('data')->frm['say'] == 'confirm') {
           }
 
           $explicit_password = $password;
-          $enc_password = md5($password);
+          $enc_password = bcrypt($password);
 
           $perfectmoney = quote(app('data')->frm['perfectmoney']);
           $payeer = quote(app('data')->frm['payeer']);

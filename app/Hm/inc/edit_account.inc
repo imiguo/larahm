@@ -114,7 +114,7 @@ if (app('data')->frm['action'] == 'edit_account') {
 
         $fullname = quote(app('data')->frm['fullname']);
         $password = quote(app('data')->frm['password']);
-        $enc_password = md5($password);
+        $enc_password = bcrypt($password);
         $email = quote(app('data')->frm['email']);
 
         $egold = quote(app('data')->frm['egold_account']);
@@ -178,7 +178,7 @@ if (app('data')->frm['action'] == 'edit_account') {
         }
 
         if (app('data')->frm['wappassword'] != '') {
-            $enc_password = quote(md5(app('data')->frm['wappassword']));
+            $enc_password = quote(bcrypt(app('data')->frm['wappassword']));
             $q = 'update users set stat_password = \''.$enc_password.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }

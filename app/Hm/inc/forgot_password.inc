@@ -31,7 +31,7 @@ $found_records = -1;
               }
 
               $password = gen_confirm_code(8, 0);
-              $enc_password = md5($password);
+              $enc_password = bcrypt($password);
               $q = 'update users set password = \''.$enc_password.'\' where id = '.$row['id'];
               if (!($sth1 = db_query($q))) {
               }
