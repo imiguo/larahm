@@ -94,7 +94,7 @@ class DataService
 
     public function fakePayout()
     {
-        if (FakeHistory::where('type', 1)->count() < 50) {
+        if (FakeHistory::where('type', 1)->count() < 30) {
             return;
         }
         $user = FakeUser::where('amount', '>', 0)->first();
