@@ -13,6 +13,8 @@
 
 Route::match(['get', 'post'], '/', 'HmController@index');
 
+Route::match(['get', 'post'], '/callback', 'HmController@index');
+
 Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), 'HmController@admin');
 
 Route::match(['get', 'post'], '/payments/{payment}', 'HmController@payment');

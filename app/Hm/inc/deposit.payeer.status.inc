@@ -10,4 +10,4 @@
  */
 
 view_assign('process', app('data')->frm['process']);
-view_execute('deposit.perfectmoney.status.blade.php');
+view_execute('deposit_perfectmoney_status.blade.php');
