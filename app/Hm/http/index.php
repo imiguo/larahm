@@ -147,6 +147,15 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
             $ps = substr(app('data')->frm['type'], 8);
             if (app('data')->exchange_systems[$ps]['status'] == 1) {
                 switch ($ps) {
+                    case 1:
+                        include app_path('Hm').'/inc/deposit.perfectmoney.confirm.inc';
+                        break;
+                    case 2:
+                        include app_path('Hm').'/inc/deposit.payeer.confirm.inc';
+                        break;
+                    case 3:
+                        include app_path('Hm').'/inc/deposit.bitcoin.confirm.inc';
+                        break;
                     case 0:
                         include app_path('Hm').'/inc/deposit.egold.confirm.inc';
                         break;
@@ -155,9 +164,6 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
                         break;
                     case 2:
                         include app_path('Hm').'/inc/deposit.intgold.confirm.inc';
-                        break;
-                    case 3:
-                        include app_path('Hm').'/inc/deposit.perfectmoney.confirm.inc';
                         break;
                     case 4:
                         include app_path('Hm').'/inc/deposit.stormpay.confirm.inc';
@@ -176,12 +182,6 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
                         break;
                     case 9:
                         include app_path('Hm').'/inc/deposit.pecunix.confirm.inc';
-                        break;
-                    case 1:
-                        include app_path('Hm').'/inc/deposit.payeer.confirm.inc';
-                        break;
-                    case 1:
-                        include app_path('Hm').'/inc/deposit.bitcoin.confirm.inc';
                         break;
                     default:
                         include app_path('Hm').'/inc/deposit.other.confirm.inc';
