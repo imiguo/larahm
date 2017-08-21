@@ -75,7 +75,7 @@ if (app('data')->frm['a'] == 'do_login') {
     }
     throw new RedirectException('/?a=account');
 }
-    do_login_else($userinfo);
+do_login_else($userinfo);
 
 if (($userinfo['logged'] == 1 and $userinfo['should_count'] == 1)) {
     count_earning($userinfo['id']);
@@ -102,21 +102,6 @@ if ($userinfo['logged'] == 1) {
     }
 
     $userinfo['balance'] = number_format(abs($balance), 2);
-}
-
-if ((((((app('data')->frm['a'] != 'show_validation_image' and ! $userinfo['logged']) and extension_loaded('gd')) and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars']) and app('data')->frm['action'] != 'signup')) {
-    $userinfo['validation_enabled'] = 1;
-    $validation_number = gen_confirm_code(app('data')->settings['graph_max_chars'], 0);
-    if (app('data')->settings['use_number_validation_number']) {
-        $i = 0;
-        $validation_number = '';
-        while ($i < app('data')->settings['graph_max_chars']) {
-            $validation_number .= rand(0, 9);
-            ++$i;
-        }
-    }
-
-    session(['validation_number' => $validation_number]);
 }
 
 if ((app('data')->frm['a'] == 'cancelwithdraw' and $userinfo['logged'] == 1)) {
@@ -242,8 +227,6 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
         include app_path('Hm').'/inc/company.inc';
     } elseif (app('data')->frm['a'] == 'rules') {
         include app_path('Hm').'/inc/rules.inc';
-    } elseif (app('data')->frm['a'] == 'show_validation_image') {
-        include app_path('Hm').'/inc/show_validation_image.inc';
     } elseif (((app('data')->frm['a'] == 'members_stats' and app('data')->settings['show_stats_box']) and app('data')->settings['show_members_stats'])) {
         include app_path('Hm').'/inc/members_stats.inc';
     } elseif (((app('data')->frm['a'] == 'paidout' and app('data')->settings['show_stats_box']) and app('data')->settings['show_paidout_stats'])) {

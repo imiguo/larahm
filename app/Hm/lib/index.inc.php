@@ -265,11 +265,6 @@ function do_login(&$userinfo)
     $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from users where username = \''.$username.'\' and (status=\'on\' or status=\'suspended\') '.$add_opt_in_check;
     $sth = db_query($q);
     if ($row = mysql_fetch_array($sth)) {
-        if (((extension_loaded('gd') and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars'])) {
-            if (session('validation_number') != app('data')->frm['validation_number']) {
-                throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
-            }
-        }
         if ((app('data')->settings['brute_force_handler'] == 1 and $row['activation_code'] != '')) {
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }

@@ -714,11 +714,8 @@ echo '>No</select></td>
  <td><input type=text name=graph_max_chars value="';
 echo app('data')->settings['graph_max_chars'];
 echo '" class=inpts size=10></td>
-</tr><tr>
- <td colspan=2><input type=checkbox name=use_number_validation_number value=1 ';
-echo app('data')->settings['use_number_validation_number'] == 1 ? 'checked' : '';
-echo '> Show numbers only in the validation image</td>
-</tr><tr>
+</tr>
+<tr>
  <td>Turing image text color:</td>
  <td><input type=text name=graph_text_color value="';
 echo app('data')->settings['graph_text_color'];

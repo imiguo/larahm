@@ -25,12 +25,6 @@ if (app('data')->frm['say'] == 'confirm') {
 
   if ((app('data')->frm['action'] == 'signup' and app('data')->settings['deny_registration'] == 0)) {
       $errors = [];
-      if (((extension_loaded('gd') and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars'])) {
-          if (session('validation_number') != app('data')->frm['validation_number']) {
-              array_push($errors, 'turing_image');
-          }
-      }
-
       if (app('data')->frm['fullname'] == '') {
           array_push($errors, 'full_name');
       }
@@ -290,22 +284,6 @@ if (app('data')->frm['say'] == 'confirm') {
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
       view_assign('referer', $row);
-  }
-
-  if (((((app('data')->frm['a'] != 'show_validation_image' and !$userinfo['logged']) and extension_loaded('gd')) and app('data')->settings['graph_validation'] == 1) and 0 < app('data')->settings['graph_max_chars'])) {
-      $userinfo[validation_enabled] = 1;
-      $validation_number = gen_confirm_code(app('data')->settings['graph_max_chars'], 0);
-      if (app('data')->settings['use_number_validation_number']) {
-          $i = 0;
-          $validation_number = '';
-          while ($i < app('data')->settings['graph_max_chars']) {
-              $validation_number .= rand(0, 9);
-              ++$i;
-          }
-      }
-
-      session(['validation_number' => $validation_number]);
-      view_assign('userinfo', $userinfo);
   }
 
   view_assign('token', $token);

@@ -1122,7 +1122,6 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         app('data')->settings['graph_max_chars'] = app('data')->frm['graph_max_chars'];
         app('data')->settings['graph_text_color'] = app('data')->frm['graph_text_color'];
         app('data')->settings['graph_bg_color'] = app('data')->frm['graph_bg_color'];
-        app('data')->settings['use_number_validation_number'] = sprintf('%d', app('data')->frm['use_number_validation_number']);
         app('data')->settings['advanced_graph_validation'] = (app('data')->frm['advanced_graph_validation'] ? 1 : 0);
         if (! function_exists('imagettfbbox')) {
             app('data')->settings['advanced_graph_validation'] = 0;
