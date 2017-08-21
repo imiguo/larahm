@@ -55,46 +55,6 @@ if ((app('data')->frm['a'] == 'exchange_rates' and app('data')->frm['action'] ==
     throw new EmptyException();
 }
 
-/*
- * @action test_egold_settings
- */
-if (app('data')->frm['a'] == 'test_egold_settings') {
-    include app_path('Hm').'/inc/admin/auto_pay_settings_test.inc.php';
-    throw new EmptyException();
-}
-
-/*
- * @action test_evocash_settings
- */
-if (app('data')->frm['a'] == 'test_evocash_settings') {
-    include app_path('Hm').'/inc/admin/auto_pay_settings_evocash_test.inc.php';
-    throw new EmptyException();
-}
-
-/*
- * @action test_intgold_settings
- */
-if (app('data')->frm['a'] == 'test_intgold_settings') {
-    include app_path('Hm').'/inc/admin/auto_pay_settings_intgold_test.inc.php';
-    throw new EmptyException();
-}
-
-/*
- * @action test_eeecurrency_settings
- */
-if (app('data')->frm['a'] == 'test_eeecurrency_settings') {
-    include app_path('Hm').'/inc/admin/auto_pay_settings_eeecurrency_test.inc.php';
-    throw new EmptyException();
-}
-
-/*
- * @action test_ebullion_settings
- */
-if (app('data')->frm['a'] == 'test_ebullion_settings') {
-    include app_path('Hm').'/inc/admin/auto_pay_settings_ebullion_test.inc.php';
-    throw new EmptyException();
-}
-
 if ($userinfo['should_count'] == 1) {
     $q = 'update users set last_access_time = now() where username=\''.$username.'\'';
     db_query($q);
@@ -420,18 +380,6 @@ if (app('data')->frm['a'] == 'mass') {
         }
 
         $ids = app('data')->frm['pend'];
-        if (app('data')->frm['e_acc'] == 1) {
-            $egold_account = app('data')->frm['egold_account'];
-            $egold_password = app('data')->frm['egold_password'];
-            app('data')->settings['egold_from_account'] = $egold_account;
-        } else {
-            $q = 'select v from pay_settings where n=\'egold_account_password\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $egold_account = app('data')->settings['egold_from_account'];
-                $egold_password = decode_pass_for_mysql($row['v']);
-            }
-        }
 
         if (app('data')->frm['perfectmoney_acc'] == 1) {
             $egold_account = app('data')->frm['perfectmoney_account'];
@@ -443,67 +391,6 @@ if (app('data')->frm['a'] == 'mass') {
             while ($row = mysql_fetch_array($sth)) {
                 $perfectmoney_account = app('data')->settings['perfectmoney_from_account'];
                 $perfectmoney_password = decode_pass_for_mysql($row['v']);
-            }
-        }
-
-        if (app('data')->frm['evo_acc'] == 1) {
-            $evocash_account = app('data')->frm['evocash_account'];
-            $evocash_password = app('data')->frm['evocash_password'];
-            $evocash_code = app('data')->frm['evocash_code'];
-            app('data')->settings['evocash_username'] = app('data')->frm[evocash_name];
-            app('data')->settings['evocash_from_account'] = $evocash_account;
-        } else {
-            $q = 'select v from pay_settings where n=\'evocash_account_password\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $evocash_account = app('data')->settings['evocash_from_account'];
-                $evocash_password = decode_pass_for_mysql($row['v']);
-            }
-
-            $q = 'select v from pay_settings where n=\'evocash_transaction_code\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $evocash_code = decode_pass_for_mysql($row['v']);
-            }
-        }
-
-        if (app('data')->frm['intgold_acc'] == 1) {
-            $intgold_account = app('data')->frm['intgold_account'];
-            $intgold_password = app('data')->frm['intgold_password'];
-            $intgold_code = app('data')->frm['intgold_code'];
-            app('data')->settings['intgold_from_account'] = $intgold_account;
-        } else {
-            $q = 'select v from pay_settings where n=\'intgold_password\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $intgold_account = app('data')->settings['intgold_from_account'];
-                $intgold_password = decode_pass_for_mysql($row['v']);
-            }
-
-            $q = 'select v from pay_settings where n=\'intgold_transaction_code\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $intgold_code = decode_pass_for_mysql($row['v']);
-            }
-        }
-
-        if (app('data')->frm['eeecurrency_acc'] == 1) {
-            $eeecurrency_account = app('data')->frm['eeecurrency_account'];
-            $eeecurrency_password = app('data')->frm['eeecurrency_password'];
-            $eeecurrency_code = app('data')->frm['eeecurrency_code'];
-            app('data')->settings['eeecurrency_from_account'] = $eeecurrency_account;
-        } else {
-            $q = 'select v from pay_settings where n=\'eeecurrency_password\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $eeecurrency_account = app('data')->settings['eeecurrency_from_account'];
-                $eeecurrency_password = decode_pass_for_mysql($row['v']);
-            }
-
-            $q = 'select v from pay_settings where n=\'eeecurrency_transaction_code\'';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                $eeecurrency_code = decode_pass_for_mysql($row['v']);
             }
         }
 
@@ -604,85 +491,6 @@ if (app('data')->frm['a'] == 'mass') {
 
         throw new EmptyException();
     }
-}
-
-/*
- * @action auto-pay-settings
- */
-if ((app('data')->frm['a'] == 'auto-pay-settings' and app('data')->frm['action'] == 'auto-pay-settings')) {
-    if (app('data')->settings['demomode'] != 1) {
-        if (($userinfo['transaction_code'] != '' and $userinfo['transaction_code'] != app('data')->frm['alternative_passphrase'])) {
-            throw new RedirectException($admin_url.'?a=auto-pay-settings&say=invalid_passphrase');
-        }
-
-        app('data')->settings['use_auto_payment'] = app('data')->frm['use_auto_payment'];
-        app('data')->settings['egold_from_account'] = app('data')->frm['egold_from_account'];
-        app('data')->settings['evocash_from_account'] = app('data')->frm['evocash_from_account'];
-        app('data')->settings['evocash_username'] = app('data')->frm['evocash_username'];
-        if (app('data')->frm['evocash_account_password'] != '') {
-            $evo_pass = quote(encode_pass_for_mysql(app('data')->frm['evocash_account_password']));
-            $q = 'delete from pay_settings where n=\'evocash_account_password\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'evocash_account_password\', v=\''.$evo_pass.'\'';
-            db_query($q);
-        }
-
-        if (app('data')->frm['evocash_transaction_code'] != '') {
-            $evo_code = quote(encode_pass_for_mysql(app('data')->frm['evocash_transaction_code']));
-            $q = 'delete from pay_settings where n=\'evocash_transaction_code\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'evocash_transaction_code\', v=\''.$evo_code.'\'';
-            db_query($q);
-        }
-
-        app('data')->settings['intgold_from_account'] = app('data')->frm['intgold_from_account'];
-        if (app('data')->frm['intgold_password'] != '') {
-            $intgold_pass = quote(encode_pass_for_mysql(app('data')->frm['intgold_password']));
-            $q = 'delete from pay_settings where n=\'intgold_password\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'intgold_password\', v=\''.$intgold_pass.'\'';
-            db_query($q);
-        }
-
-        if (app('data')->frm['intgold_transaction_code'] != '') {
-            $intgold_code = quote(encode_pass_for_mysql(app('data')->frm['intgold_transaction_code']));
-            $q = 'delete from pay_settings where n=\'intgold_transaction_code\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'intgold_transaction_code\', v=\''.$intgold_code.'\'';
-            db_query($q);
-        }
-
-        app('data')->settings['eeecurrency_from_account'] = app('data')->frm['eeecurrency_from_account'];
-        if (app('data')->frm['eeecurrency_password'] != '') {
-            $eeecurrency_pass = quote(encode_pass_for_mysql(app('data')->frm['eeecurrency_password']));
-            $q = 'delete from pay_settings where n=\'eeecurrency_password\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'eeecurrency_password\', v=\''.$eeecurrency_pass.'\'';
-            db_query($q);
-        }
-
-        if (app('data')->frm['eeecurrency_transaction_code'] != '') {
-            $eeecurrency_code = quote(encode_pass_for_mysql(app('data')->frm['eeecurrency_transaction_code']));
-            $q = 'delete from pay_settings where n=\'eeecurrency_transaction_code\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'eeecurrency_transaction_code\', v=\''.$eeecurrency_code.'\'';
-            db_query($q);
-        }
-
-        app('data')->settings['min_auto_withdraw'] = app('data')->frm['min_auto_withdraw'];
-        app('data')->settings['max_auto_withdraw'] = app('data')->frm['max_auto_withdraw'];
-        app('data')->settings['max_auto_withdraw_user'] = app('data')->frm['max_auto_withdraw_user'];
-        save_settings();
-        if (app('data')->frm['egold_account_password'] != '') {
-            $e_pass = quote(encode_pass_for_mysql(app('data')->frm['egold_account_password']));
-            $q = 'delete from pay_settings where n=\'egold_account_password\'';
-            db_query($q);
-            $q = 'insert into pay_settings set n=\'egold_account_password\', v=\''.$e_pass.'\'';
-            db_query($q);
-        }
-    }
-
-    throw new RedirectException($admin_url.'?a=auto-pay-settings&say=done');
 }
 
 /*
@@ -2168,9 +1976,6 @@ switch (app('data')->frm['a']) {
         break;
     case 'referal':
         include app_path('Hm').'/inc/admin/referal.inc.php';
-        break;
-    case 'auto-pay-settings':
-        include app_path('Hm').'/inc/admin/auto_pay_settings.inc.php';
         break;
     case 'error_pay_log':
         include app_path('Hm').'/inc/admin/error_pay_log.inc.php';
