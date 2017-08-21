@@ -96,7 +96,8 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
             }
         }
 
-        $m_desc = "Deposit to {app('data')->settings['site_name']} User {$userinfo['username']}";
+        $site_name = app('data')->settings['site_name'];
+        $m_desc = "Deposit to {$site_name} User {$userinfo['username']}";
         $m_desc = base64_encode($m_desc);
         $arHash = [
             app('data')->settings['def_payee_account_payeer'], // m_shop

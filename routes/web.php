@@ -11,10 +11,10 @@
 |
 */
 
-Route::match(['get', 'post'], '/', 'HmController@index');
+Route::match(['get', 'post'], '/', 'HmController@index')->name('index');
 
-Route::match(['get', 'post'], '/callback', 'HmController@index');
+Route::match(['get', 'post'], '/callback', 'HmController@callback')->name('callback');
 
-Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), 'HmController@admin');
+Route::match(['get', 'post'], env('ADMIN_ROUTE', '/admin'), 'HmController@admin')->name('admin');
 
-Route::match(['get', 'post'], '/payments/{payment}', 'HmController@payment');
+Route::match(['get', 'post'], '/payments/{payment}', 'HmController@payment')->name('payment');

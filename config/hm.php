@@ -3,8 +3,8 @@
 return [
     'payments' => [
         1  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney'],
-        2 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
-        3 => ['name' => 'Payeer', 'sfx' => 'payeer'],
+        2 => ['name' => 'Payeer', 'sfx' => 'payeer'],
+        3 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
         4  => ['name' => 'e-gold', 'sfx' => 'egold'],
         5  => ['name' => 'INTGold', 'sfx' => 'intgold'],
         6  => ['name' => 'StormPay', 'sfx' => 'stormpay'],
