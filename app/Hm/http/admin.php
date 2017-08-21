@@ -1965,7 +1965,7 @@ if ((app('data')->frm['a'] == 'thistory' and app('data')->frm['action2'] == 'dow
     header('Content-type: text/coma-separated-values');
     echo '"Transaction Type","User","Amount","Currency","Date","Description"';
     for ($i = 0; $i < count($trans); ++$i) {
-        echo '"'.$transtype[$trans[$i]['type']].'","'.$trans[$i]['username'].'","$'.number_format(abs($trans[$i]['actual_amount']),
+        echo '"'.config('hm.transtype')[$trans[$i]['type']].'","'.$trans[$i]['username'].'","$'.number_format(abs($trans[$i]['actual_amount']),
                 2).'","'.app('data')->exchange_systems[$trans[$i]['ec']]['name'].'","'.$trans[$i]['d'].'","'.$trans[$i]['description'].'"'.'';
     }
 }

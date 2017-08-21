@@ -31,25 +31,6 @@ if (! strpos($referer, '//'.$host)) {
     Cookie::queue('came_from', $referer, 43200);
 }
 
-$transtype = [
-    'withdraw_pending'             => 'Withdrawal request',
-    'add_funds'                    => 'Transfer from external processings',
-    'deposit'                      => 'Deposit',
-    'bonus'                        => 'Bonus',
-    'penality'                     => 'Penalty',
-    'earning'                      => 'Earning',
-    'withdrawal'                   => 'Withdrawal',
-    'commissions'                  => 'Referral commission',
-    'early_deposit_release'        => 'Deposit release',
-    'early_deposit_charge'         => 'Commission for an early deposit release',
-    'release_deposit'              => 'Deposit returned to user account',
-    'exchange_out'                 => ' Received on exchange',
-    'exchange_in'                  => 'Spent on exchange',
-    'exchange'                     => 'Exchange',
-    'internal_transaction_spend'   => 'Spent on Internal Transaction',
-    'internal_transaction_receive' => 'Received from Internal Transaction',
-];
-
 app('data')->exchange_systems = config('hm.payments');
 app('data')->settings = get_settings();
 

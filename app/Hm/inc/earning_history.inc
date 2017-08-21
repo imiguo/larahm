@@ -24,7 +24,7 @@ $id = $userinfo['id'];
           continue;
       }
 
-      $row['type_name'] = $transtype[$row['type']];
+      $row['type_name'] = config('hm.transtype')[$row['type']];
       $row['selected'] = ($row['type'] == app('data')->frm['type'] ? 1 : 0);
       if ($type == $row['type']) {
           $type_found = 1;
@@ -92,7 +92,7 @@ $id = $userinfo['id'];
   $sth = db_query($q);
   $trans = [];
   while ($row = mysql_fetch_array($sth)) {
-      $row['transtype'] = $transtype[$row['type']];
+      $row['transtype'] = config('hm.transtype')[$row['type']];
       $row['debitcredit'] = ($row['actual_amount'] < 0 ? 1 : 0);
       $row['orig_amount'] = $row['actual_amount'];
       $row['actual_amount'] = number_format(abs($row['actual_amount']), 2);

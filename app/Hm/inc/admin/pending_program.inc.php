@@ -87,7 +87,7 @@ echo '<html>
  <td colspan=3 style="color: gray">';
           echo '<s';
           echo 'mall><b>';
-          echo $transtype[$trans[$i]['type']];
+          echo config('hm.transtype')[$trans[$i]['type']];
           echo ': &nbsp; </b>';
           echo $trans[$i]['description'];
           echo '</small></td>
