@@ -40,11 +40,6 @@ if (app('data')->frm['a'] == 'logout') {
 }
 
 $stats = [];
-if (app('data')->settings['crontab_stats'] == 1) {
-    $s = file('stats.php');
-    $stats = unserialize($s[0]);
-}
-
 show_info_box($stats);
 
 $ref = Cookie::get('referer', '');
