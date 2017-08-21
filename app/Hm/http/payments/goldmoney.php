@@ -11,8 +11,6 @@
 
 use App\Exceptions\EmptyException;
 
-include app_path('Hm').'/lib/config.inc.php';
-
 $mymd5 = app('data')->settings['md5altphrase_goldmoney'];
 if (app('data')->frm['a'] == 'pay_withdraw') {
     $batch = app('data')->frm['OMI_TXN_ID'];

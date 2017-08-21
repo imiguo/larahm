@@ -11,8 +11,6 @@
 
 use App\Exceptions\RedirectException;
 
-include app_path('Hm').'/lib/config.inc.php';
-
 list($action, $user_id, $h_id) = preg_split('/\\|/', app('data')->frm['custom']);
 if ($action == 'pay_withdraw') {
     $batch = app('data')->frm['txn_id'];

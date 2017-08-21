@@ -11,8 +11,6 @@
 
 use App\Exceptions\EmptyException;
 
-include app_path('Hm').'/lib/config.inc.php';
-
 if (app('data')->frm['a'] == 'pay_withdraw') {
     $batch = app('data')->frm['ATIP_TRANSACTION_ID'];
     list($id, $str) = explode('-', app('data')->frm['withdraw']);

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;
 
-require app_path('Hm').'/lib/config.inc.php';
 require app_path('Hm').'/lib/index.inc.php';
 
 $smarty = app('smarty');

@@ -11,8 +11,6 @@
 
 use App\Exceptions\EmptyException;
 
-include app_path('Hm').'/lib/config.inc.php';
-
 $mymd5 = app('data')->settings['md5altphrase_eeecurrency'];
 if (($mymd5 == app('data')->frm['HASH'] and (app('data')->frm['TRANSACTION_ID'] != '' and app('data')->exchange_systems[8]['status'] == 1))) {
     if (app('data')->frm['RESULT'] != '0') {

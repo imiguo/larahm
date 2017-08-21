@@ -11,8 +11,6 @@
 
 use App\Exceptions\EmptyException;
 
-include app_path('Hm').'/lib/config.inc.php';
-
 file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
 file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
 

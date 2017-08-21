@@ -15,11 +15,6 @@ ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 
 require 'function.inc.php';
 
-if (! extension_loaded('gd')) {
-    $prefix = (PHP_SHLIB_SUFFIX == 'dll' ? 'php_' : '');
-    dl($prefix.'gd.'.PHP_SHLIB_SUFFIX);
-}
-
 app('data')->frm = request()->toArray();
 
 app('data')->env = array_merge($_ENV, $_SERVER);

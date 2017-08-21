@@ -15,7 +15,6 @@ use App\Exceptions\RedirectException;
 
 $admin_url = env('ADMIN_URL');
 
-include app_path('Hm').'/lib/config.inc.php';
 require app_path('Hm').'/lib/admin.inc.php';
 
 $userinfo = [];
