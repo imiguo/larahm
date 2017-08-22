@@ -167,6 +167,8 @@ return [
          * Package Service Providers...
          */
         Laravel\Tinker\TinkerServiceProvider::class,
+        entimm\LaravelPayeer\PayeerServiceProvider::class,
+        entimm\LaravelPerfectMoney\PerfectMoneyServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -1,0 +1,266 @@
+<?php
+namespace entimm\LaravelPerfectMoney;
+
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+
+/**
+ * Class PerfectMoney
+ */
+class PerfectMoney {
+
+    /**
+     * @var string
+     */
+    protected $account_id;
+
+    /**
+     * @var string
+     */
+    protected $passphrase;
+
+    /**
+     * @var string
+     */
+    protected $alt_passphrase;
+
+    /**
+     * @var string
+     */
+    protected $marchant_id;
+
+    /**
+     * @var object
+     */
+    protected $client;
+
+    /**
+     * @var array
+     */
+    protected $params;
+
+    public function __construct()
+    {
+        $this->account_id = config('perfectmoney.account_id');
+        $this->passphrase = config('perfectmoney.passphrase');
+        $this->alt_passphrase = config('perfectmoney.alternate_passphrase');
+        $this->marchant_id = config('perfectmoney.marchant_id');
+
+        $this->client = new Client([
+            'base_uri' => 'https://perfectmoney.is',
+            'timeout'  => config('perfectmoney.timeout'),
+        ]);
+
+        $this->params = [
+            'AccountID' => $this->account_id,
+            'PassPhrase' => $this->passphrase,
+        ];
+    }
+
+    /**
+     * Get data from the url
+     *
+     * @param  string $url
+     * @param  array  $params
+     *
+     * @return string
+     * @throws PerfectMoneyException
+     */
+    private function post($url, $params)
+    {
+        return $content = $this->client->request('POST', $url, [
+            'form_params' => $params,
+        ])->getBody()->getContents();
+    }
+
+    /**
+     * get the balance for the wallet
+     *
+     * @return array
+     * @throws PerfectMoneyException
+     */
+    public function getBalance()
+    {
+        // Get data from the server
+        $content = $this->post('/acct/balance.asp', $this->params);
+
+        // searching for hidden fields
+        if(!preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $content, $result, PREG_SET_ORDER)) throw new PerfectMoneyException('Invalid output');
+
+        // putting data to array (return error, if have any)
+        $data = [];
+        foreach($result as $item)
+        {
+            if($item[1] == 'ERROR') throw new PerfectMoneyException($item[2]);
+            else $data[$item[1]] = $item[2];
+        }
+
+        return $data;
+    }
+
+    /**
+     * Send Money
+     *
+     * @param   string $account
+     * @param   double $amount
+     * @param   string $description
+     * @param   string $payment_id
+     *
+     * @return array
+     * @throws PerfectMoneyException
+     */
+    public function sendMoney($account, $amount, $description = '', $payment_id = '')
+    {
+        // Send data from the server
+        $params = array_merge($this->params, [
+            'Payer_Account' => $this->marchant_id,
+            'Payee_Account' => $account,
+            'Amount' => $amount,
+            'Memo' => $description,
+            'PAYMENT_ID' => $payment_id,
+        ]);
+        $content = $this->post('/acct/confirm.asp', $params);
+
+        // searching for hidden fields
+        if(!preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $content, $result, PREG_SET_ORDER)) throw new PerfectMoneyException('Invalid output');
+
+        // putting data to array (return error, if have any)
+        $data = [];
+        foreach($result as $item) {
+            if($item[1] == 'ERROR') throw new PerfectMoneyException($item[2]);
+            else $data[strtolower($item[1])] = $item[2];
+        }
+
+        return $data;
+    }
+
+    /**
+     * This script demonstrates querying account history
+     * using PerfectMoney API interface.
+     *
+     * @param   int $start_day
+     * @param   int $start_month
+     * @param null  $start_year
+     * @param   int $end_day
+     * @param   int $end_month
+     * @param   int $end_year
+     * @param array $data
+     *
+     * @return array
+     * @throws PerfectMoneyException
+     */
+    public function getHistory(
+        $start_day = null,
+        $start_month = null,
+        $start_year = null,
+        $end_day = null,
+        $end_month = null,
+        $end_year = null,
+        $data = []
+    )
+    {
+        $params = array_merge($this->params, [
+            'startday' => $start_day ?: Carbon::now()->subYear(1)->day,
+            'startmonth' => $start_month ?: Carbon::now()->subYear(1)->month,
+            'startyear' => $start_year ?: Carbon::now()->subYear(1)->year,
+            'endday' => $end_day ?: Carbon::now()->day,
+            'endmonth' => $end_month ?: Carbon::now()->month,
+            'endyear' => $end_year ?: Carbon::now()->year,
+        ], array_only($data, ['payment_id', 'batchfilter', 'counterfilter', 'metalfilter']));
+
+        if (isset($data['oldsort']) &&
+            in_array(strtolower($data['oldsort']),
+                ['tstamp', 'batch_num', 'metal_name', 'counteraccount_id', 'amount '])) {
+            $params['oldsort'] = $data['oldsort'];
+        }
+        if (! empty($data['paymentsmade'])) {
+            $params['paymentsmade'] = 1;
+        }
+        if (! empty($data['paymentsreceived'])) {
+            $params['paymentsreceived'] = 1;
+        }
+
+        // Get data from the server
+        $content = $this->post('/acct/historycsv.asp', $params);
+
+        if (substr($content, 0, 63) == 'Time,Type,Batch,Currency,Amount,Fee,Payer Account,Payee Account') {
+            $lines = explode("\n", $content);
+
+            // Getting table names (Time,Type,Batch,Currency,Amount,Fee,Payer Account,Payee Account)
+            $rows = explode(',', $lines[0]);
+
+            $return_data = [];
+
+            // Fetching history
+            $return_data['history'] = [];
+            for($i=1; $i < count($lines); $i++) {
+
+                // Skip empty lines
+                if(empty($lines[$i])) break;
+
+                // Split line into items
+                $items = explode(',', $lines[$i]);
+
+                // Get history items
+                $history_line = [];
+                foreach ($items as $key => $value) {
+                    $history_line[str_replace(' ', '_', strtolower($rows[$key]))] = $value;
+                }
+
+                $return_data['history'][] = $history_line;
+            }
+
+            return $return_data;
+        }
+
+        throw new PerfectMoneyException($content);
+    }
+
+    public function validatePayment(Request $request)
+    {
+        $string = '';
+        $string .= $request->input('PAYMENT_ID') . ':';
+        $string .= $request->input('PAYEE_ACCOUNT') . ':';
+        $string .= $request->input('PAYMENT_AMOUNT') . ':';
+        $string .= $request->input('PAYMENT_UNITS') . ':';
+        $string .= $request->input('PAYMENT_BATCH_NUM') . ':';
+        $string .= $request->input('PAYER_ACCOUNT') . ':';
+        $string .= strtoupper(md5($this->alt_passphrase)) . ':';
+        $string .= $request->input('TIMESTAMPGMT');
+
+        return strtoupper(md5($string)) == $request->input('V2_HASH');
+    }
+
+    /**
+     * Render form
+     *
+     * @param array  $data
+     * @param string $view
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function render($data = [], $view = 'perfectmoney')
+    {
+        $viewData = [
+            'payee_account' => config('perfectmoney.marchant_id'),
+            'payee_name' => config('perfectmoney.marchant_name'),
+            'payment_units' => config('perfectmoney.units'),
+            'payment_url' => config('perfectmoney.payment_url'),
+            'nopayment_url' => config('perfectmoney.nopayment_url'),
+            'status_url' => config('perfectmoney.status_url'),
+            'payment_url_method' => config('perfectmoney.payment_url_method'),
+            'nopayment_url_method' => config('perfectmoney.nopayment_url_method'),
+            'memo' => config('perfectmoney.suggested_memo'),
+        ];
+        $viewData = array_merge($viewData, $data);
+
+        // Custom view
+        if(view()->exists('perfectmoney::' . $view)) {
+            return view('perfectmoney::' . $view, $viewData);
+        }
+
+        // Default view
+        return view('perfectmoney::perfectmoney-form', $viewData);
+    }
+}
