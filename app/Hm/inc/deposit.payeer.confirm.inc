@@ -99,9 +99,10 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         $site_name = app('data')->settings['site_name'];
         $m_desc = "Deposit to {$site_name} User {$userinfo['username']}";
         $m_desc = base64_encode($m_desc);
+        $m_orderid = $userinfo['id'].'-'.time().'-'.$h_id;
         $arHash = [
             app('data')->settings['def_payee_account_payeer'], // m_shop
-            $userinfo['id'].'-'.time().'-'.$h_id, // m_orderid
+            $m_orderid, // m_orderid
             $amount, // m_amount
             'USD', // m_curr
             $m_desc, // m_desc
@@ -112,7 +113,7 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         view_assign('m_desc', $m_desc);
         view_assign('m_sign', $m_sign);
 
-        view_assign('m_orderid', $userinfo['id'].'-'.time().'-'.$h_id);
+        view_assign('m_orderid', $m_orderid);
         view_assign('h_id', $h_id);
         view_assign('amount', $amount);
         view_assign('amount_format', number_format($amount, 2, '.', ''));
