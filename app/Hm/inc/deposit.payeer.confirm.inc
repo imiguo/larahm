@@ -115,7 +115,7 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         view_assign('m_orderid', $userinfo['id'].'-'.time().'-'.$h_id);
         view_assign('h_id', $h_id);
         view_assign('amount', $amount);
-        view_assign('amount_format', number_format(app('data')->frm['amount'], 2, '.', ''));
+        view_assign('amount_format', number_format($amount, 2, '.', ''));
         view_assign('compounding', sprintf('%d', app('data')->frm['compound']));
         view_execute('deposit_payeer_confirm.blade.php');
     }
