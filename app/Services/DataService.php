@@ -24,7 +24,7 @@ class DataService
             ->transform(function ($item) {
                 return [
                     'username' => $item->user->username,
-                    'amount' => $item->amount,
+                    'amount' => number_format($item->amount, 2),
                     'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
                 ];
@@ -55,7 +55,7 @@ class DataService
             ->transform(function ($item) {
                 return [
                     'username' => $item->user->username,
-                    'amount' => $item->amount,
+                    'amount' => number_format($item->amount, 2),
                     'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
                 ];
