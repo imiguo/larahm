@@ -128,7 +128,7 @@ class Payeer {
      * @return mixed|string
      * @throws PayeerException
      */
-    public function transfer($amount, $recipient, $comment)
+    public function transfer($recipient, $amount, $comment)
     {
         if ($this->api->isAuth()) {
             $transfer = $this->api->transfer([

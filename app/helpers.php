@@ -1,6 +1,8 @@
 <?php
 
 use App\Exceptions\HmException;
+use entimm\LaravelPayeer\Payeer;
+use entimm\LaravelPerfectMoney\PerfectMoney;
 use Illuminate\Filesystem\Filesystem;
 
 if (! function_exists('mysql_query')) {
@@ -179,5 +181,24 @@ if (! function_exists('smarty_blade_block')) {
         if (! $repeat && $content) {
             return blade_string($content, $params);
         }
+    }
+}
+
+if (! function_exists('send_money_to_perfectmoney')) {
+    function send_money_to_perfectmoney($amount, $recipient, $memo) {
+        $res = (new PerfectMoney)->sendMoney($recipient, abs($amount), $memo);
+        return $res['payment_batch_num'];
+    }
+}
+
+if (! function_exists('send_money_to_payeer')) {
+    function send_money_to_payeer($amount, $recipient, $memo) {
+        return (new Payeer)->transfer($recipient, abs($amount), $memo);
+    }
+}
+
+if (! function_exists('send_money_to_bitcoin')) {
+    function send_money_to_bitcoin($amount, $recipient, $memo) {
+
     }
 }

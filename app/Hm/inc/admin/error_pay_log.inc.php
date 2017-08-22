@@ -21,7 +21,7 @@ echo '
   $q = 'select * from pay_errors order by id desc';
   $sth = db_query($q);
   while ($row = mysql_fetch_array($sth)) {
-      $txt = $row['txt'];
+      $txt = $row['error'];
       $txt = preg_replace('/<.*?>/', '', $txt);
       echo '<tr>
  <td>';

@@ -10,6 +10,7 @@
  */
 
 use App\Exceptions\RedirectException;
+use App\Models\PayError;
 
 if (app('data')->frm['action'] == 'preview') {
     $ab = get_user_balance($userinfo['id']);
@@ -257,13 +258,13 @@ if (app('data')->frm['action'] == 'preview') {
             }
 
             $q = 'insert into history set
-  	user_id = '.$userinfo['id'].(',
-  	amount = -'.$amount.',
-  	actual_amount = -'.$amount.',
-  	type=\'withdraw_pending\',
-  	date = now(),
-  	ec = '.$ec.',
-  	description = \''.$description.'\'');
+                user_id = '.$userinfo['id'].(',
+                amount = -'.$amount.',
+                actual_amount = -'.$amount.',
+                type=\'withdraw_pending\',
+                date = now(),
+                ec = '.$ec.',
+                description = \''.$description.'\'');
             $sth = db_query($q);
             $last_id = mysql_insert_id();
             $info = [];
@@ -271,66 +272,66 @@ if (app('data')->frm['action'] == 'preview') {
             $info['name'] = $userinfo['name'];
             $info['ip'] = app('data')->env['REMOTE_ADDR'];
             $info['amount'] = $amount;
-            send_template_mail('withdraw_request_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
-            send_template_mail('withdraw_request_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
-            if ((app('data')->settings['use_auto_payment'] == 1 and ((((($ec == 0 or $ec == 1) or $ec == 2) or $ec == 5) or $ec == 8) or $ec == 9))) {
-                if ((app('data')->settings['min_auto_withdraw'] <= $amount and $amount <= app('data')->settings['max_auto_withdraw'])) {
-                    $q = 'select sum(amount) as sum from history where type=\'withdrawal\' and date + interval 24 hour > now() and user_id = '.$userinfo['id'];
-                    $sth = db_query($q);
-                    if ($row = mysql_fetch_array($sth)) {
-                        if ((abs($row['sum']) + $amount <= app('data')->settings['max_auto_withdraw_user'] and $userinfo['auto_withdraw'] == 1)) {
-                            $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
-                            if ($fee < app('data')->settings['withdrawal_fee_min']) {
-                                $fee = app('data')->settings['withdrawal_fee_min'];
-                            }
+            if (app('data')->settings['use_auto_payment'] == 1 &&
+                app('data')->settings['min_auto_withdraw'] <= $amount &&
+                app('data')->settings['max_auto_withdraw'] >= $amount) {
+                $q = 'select sum(amount) as sum from history where type=\'withdrawal\' and date + interval 24 hour > now() and user_id = '.$userinfo['id'];
+                $sth = db_query($q);
+                if ($row = mysql_fetch_array($sth)) {
+                    if ((abs($row['sum']) + $amount <= app('data')->settings['max_auto_withdraw_user'] and $userinfo['auto_withdraw'] == 1)) {
+                        $fee = floor($amount * app('data')->settings['withdrawal_fee']) / 100;
+                        if ($fee < app('data')->settings['withdrawal_fee_min']) {
+                            $fee = app('data')->settings['withdrawal_fee_min'];
+                        }
 
-                            $to_withdraw = $amount - $fee;
-                            if ($to_withdraw < 0) {
-                                $to_withdraw = 0;
-                            }
+                        $to_withdraw = $amount - $fee;
+                        if ($to_withdraw < 0) {
+                            $to_withdraw = 0;
+                        }
 
-                            $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
-                            $memo = 'Withdraw to '.$userinfo['username'].' from '.app('data')->settings['site_name'];
+                        $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
+                        $memo = 'Withdraw to '.$userinfo['username'].' from '.app('data')->settings['site_name'];
 
+                        try {
                             if ($ec == 1) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to evocash account # '.$userinfo['evocash_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_evocash('', $to_withdraw, $userinfo['evocash_account'], $memo, $error_txt);
+                                $batch = send_money_to_perfectmoney($to_withdraw, $userinfo['perfectmoney_account'], $memo);
                             }
-
                             if ($ec == 2) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to IntGold account # '.$userinfo['intgold_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_intgold('', $to_withdraw, $userinfo['intgold_account'], $memo, $error_txt);
+                                $batch = send_money_to_payeer($to_withdraw, $userinfo['payeer_account'], $memo);
                             }
-
                             if ($ec == 3) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to PerfectMoney account # '.$userinfo['perfectmoney_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_perfectmoney('', $to_withdraw, $userinfo['perfectmoney_account'], $memo, $error_txt);
+                                $batch = send_money_to_bitcoin($to_withdraw, $userinfo['bitcoin_account'], $memo);
                             }
-
-
-                            if ($res == 1) {
-                                $q = 'delete from history where id = '.$last_id;
-                                db_query($q);
-                                $d_account = [$userinfo['egold_account'], $userinfo['evocash_account'], $userinfo['intgold_account'], '', $userinfo['stormpay_account'], $userinfo['ebullion_account'], $userinfo['paypal_account'], $userinfo['goldmoney_account'], $userinfo['eeecurrency_account'], $userinfo['pecunix_account']];
-                                $q = 'insert into history set
-                                        user_id = '.$userinfo['id'].(',
-                                        amount = -'.$amount.',
-                                        actual_amount = -'.$amount.',
-                                        type=\'withdrawal\',
-                                        date = now(),
-                                        ec = '.$ec.',
-                                        description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
-                                db_query($q);
-                                $info['batch'] = $batch;
-                                $info['account'] = $d_account[$ec];
-                                $info['currency'] = app('data')->exchange_systems[$ec]['name'];
-                                send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
-                                send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
-                                throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
-                            }
+                            $q = 'delete from history where id = '.$last_id;
+                            db_query($q);
+                            $d_account = [$userinfo['egold_account'], $userinfo['evocash_account'], $userinfo['intgold_account'], '', $userinfo['stormpay_account'], $userinfo['ebullion_account'], $userinfo['paypal_account'], $userinfo['goldmoney_account'], $userinfo['eeecurrency_account'], $userinfo['pecunix_account']];
+                            $q = 'insert into history set
+                                    user_id = '.$userinfo['id'].(',
+                                    amount = -'.$amount.',
+                                    actual_amount = -'.$amount.',
+                                    type=\'withdrawal\',
+                                    date = now(),
+                                    ec = '.$ec.',
+                                    description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
+                            db_query($q);
+                            $info['batch'] = $batch;
+                            $info['account'] = $d_account[$ec];
+                            $info['currency'] = app('data')->exchange_systems[$ec]['name'];
+                            send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+                            send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
+                            throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
+                        } catch (Exception $e) {
+                            $username = $userinfo['username'];
+                            PayError::create([
+                                'data' => compact($to_withdraw, $username),
+                                'error' => $e->getMessage(),
+                            ]);
                         }
                     }
                 }
+            } else {
+                send_template_mail('withdraw_request_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+                send_template_mail('withdraw_request_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
             }
 
             throw new RedirectException('/?a=withdraw&say=processed');
@@ -398,40 +399,35 @@ if (app('data')->frm['action'] == 'preview') {
         }
 
         if (app('data')->settings['hold_only_first_days'] == 1) {
-            $q = 'select
-              sum(history.actual_amount) as am,
-	      history.ec
-            from
-              history,
-              deposits,
-              types
-            where
-              history.user_id = '.$userinfo[id].' and
-	      history.deposit_id = deposits.id and
-              types.id = deposits.type_id and
-              now() - interval types.hold day < history.date and
-	      deposits.deposit_date + interval types.hold day > now() and
-	      (history.type=\'earning\' or
-		(history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
-	    group by history.ec
-          ';
+            $q = 'select sum(history.actual_amount) as am, history.ec
+                    from
+                      history,
+                      deposits,
+                      types
+                    where
+                      history.user_id = '.$userinfo[id].' and
+                    history.deposit_id = deposits.id and
+                      types.id = deposits.type_id and
+                      now() - interval types.hold day < history.date and
+                    deposits.deposit_date + interval types.hold day > now() and
+                    (history.type=\'earning\' or
+                    (history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
+                    group by history.ec';
         } else {
-            $q = 'select
-              sum(history.actual_amount) as am,
-	      history.ec
-            from
-              history,
-              deposits,
-              types
-            where
-              history.user_id = '.$userinfo[id].' and
-	      history.deposit_id = deposits.id and
-              types.id = deposits.type_id and
-              now() - interval types.hold day < history.date and
-	      (history.type=\'earning\' or
-		(history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
-	    group by history.ec
-          ';
+            $q = 'select sum(history.actual_amount) as am,
+                      history.ec
+                        from
+                          history,
+                          deposits,
+                          types
+                        where
+                          history.user_id = '.$userinfo[id].' and
+                      history.deposit_id = deposits.id and
+                          types.id = deposits.type_id and
+                          now() - interval types.hold day < history.date and
+                      (history.type=\'earning\' or
+                    (history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
+                    group by history.ec';
         }
 
         $sth = db_query($q);

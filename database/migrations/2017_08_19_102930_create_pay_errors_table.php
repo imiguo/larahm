@@ -20,8 +20,8 @@ class CreatePayErrorsTable extends Migration
     {
         Schema::create('pay_errors', function (Blueprint $table) {
             $table->increments('id');
-            $table->dateTime('date')->default('2017-01-01 00:00:00');
-            $table->text('txt');
+            $table->json('data')->nullable();
+            $table->text('error');
             $table->timestamps();
         });
     }
