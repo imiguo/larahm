@@ -213,13 +213,13 @@ class Payeer {
      *
      * @return bool
      */
-    public function validatePayment(Request $request)
+    public static function validatePayment()
     {
-        if ($this->app->environment() != 'local' &&
+        if (app()->environment() != 'local' &&
             !in_array(env('REMOTE_ADDR'), ['185.71.65.92', '185.71.65.189', '149.202.17.210'])) {
             return false;
         }
-
+        $request = app('request');
         $params = [
             $request->input('m_operation_id'),
             $request->input('m_operation_ps'),
@@ -235,11 +235,9 @@ class Payeer {
         if ($request->input('m_params')) {
             $params[] = $request->input('m_params');
         }
-        $params[] = strtoupper(md5(config('payeer.secret_key')));
-
+        $params[] = config('payeer.shop_secret_key');
         $sign_hash = strtoupper(hash('sha256', implode(':', $params)));
-
-        return $request->input('m_sign') == $sign_hash && $request->input('m_status' == 'success');
+        return $request->input('m_sign') == $sign_hash && $request->input('m_status') == 'success';
     }
 
     /**
@@ -250,23 +248,30 @@ class Payeer {
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function render($data = [], $view = 'payeer')
+    public static function render($amount, $order_id = '', $memo = '', $view = 'payeer')
     {
-        $viewData = [
-            'shop_id' => config('payeer.shop_id'),
-            'shop_sign' => config('payeer.shop_sign'),
-            'currency' => config('payeer.currency'),
-
-            'global_memo' => config('payeer.payment_memo'),
+        $amount = number_format($amount, 2);
+        $shop_id = config('payeer.shop_id');
+        $shop_secret_key = config('payeer.shop_secret_key');
+        $current = config('payeer.currency');
+        $memo = $memo ?: config('payeer.payment_memo');
+        $memo = base64_encode($memo);
+        $hash = [
+            $shop_id,
+            $order_id,
+            $amount,
+            $current,
+            $memo,
+            $shop_secret_key,
         ];
-        $viewData = array_merge($viewData, $data);
+        $shop_sign = strtoupper(hash('sha256', implode(':', $hash)));
 
-        // Custom view
+        $viewData = compact('amount', 'shop_id', 'order_id', 'shop_sign', 'currency', 'memo');
+
         if(view()->exists('payeer::' . $view)) {
             return view('payeer::' . $view, $viewData);
         }
 
-        // Default view
         return view('payeer::payeer-form', $viewData);
     }
 }

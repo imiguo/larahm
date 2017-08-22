@@ -21,7 +21,7 @@ if (app('data')->frm['a'] == 'checkpayment') {
         throw new EmptyException();
     }
     if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
-        $m_key = 'aeb814a7f44a';
+        $m_secret_key = config('payeer.shop_secret_key');
         // Forming an array for signature generation
         $arHash = [
             $_POST['m_operation_id'],
@@ -40,7 +40,7 @@ if (app('data')->frm['a'] == 'checkpayment') {
             $arHash[] = $_POST['m_params'];
         }
         // Adding the secret key to the array
-        $arHash[] = $m_key;
+        $arHash[] = $m_secret_key;
         // Forming a signature
         $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
         // If the signatures match and payment status is “Complete”

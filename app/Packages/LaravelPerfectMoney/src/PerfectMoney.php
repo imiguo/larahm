@@ -240,7 +240,7 @@ class PerfectMoney {
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function render($data = [], $view = 'perfectmoney')
+    public function render($payment_amount, $payment_id = '', $view = 'perfectmoney')
     {
         $viewData = [
             'payee_account' => config('perfectmoney.marchant_id'),
@@ -254,6 +254,8 @@ class PerfectMoney {
             'memo' => config('perfectmoney.suggested_memo'),
         ];
         $viewData = array_merge($viewData, $data);
+        $viewData['payment_amount'] = $payment_amount;
+        $viewData['payment_id'] = $payment_id;
 
         // Custom view
         if(view()->exists('perfectmoney::' . $view)) {

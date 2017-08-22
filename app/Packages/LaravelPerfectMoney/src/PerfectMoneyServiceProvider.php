@@ -20,9 +20,6 @@ class PerfectMoneyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/perfectmoney'),
         ], 'views');
-
-        // Composers
-        View::composer('perfectmoney::perfectmoney-form', 'entimm\LaravelPerfectMoney\FormComposer');
     }
 
     public function register()

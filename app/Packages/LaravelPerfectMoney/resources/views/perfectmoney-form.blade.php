@@ -1,16 +1,7 @@
 <form action="https://perfectmoney.is/api/step1.asp" method="POST" id="perfectmoney-form">
     <input type="hidden" name="PAYEE_ACCOUNT" value="{{ $payee_account }}">
     <input type="hidden" name="PAYEE_NAME" value="{{ $payee_name }}">
-
-    @if (! empty($payment_amount))
-        <input type="hidden" name="PAYMENT_AMOUNT" value="{{ $payment_amount }}">
-    @else
-        <div class="form-group">
-            <label for="payment_amount">Payment Amount</label>
-            <input id="payment_amount" type="number" name="PAYMENT_AMOUNT" value="" required autofocus>
-        </div>
-    @endif
-
+    <input type="hidden" name="PAYMENT_AMOUNT" value="{{ $payment_amount }}">
     <input type="hidden" name="PAYMENT_UNITS" value="{{ $payment_units }}">
     <input type="hidden" name="PAYMENT_URL" value="{{ $payment_url }}">
     <input type="hidden" name="NOPAYMENT_URL" value="{{ $nopayment_url }}">

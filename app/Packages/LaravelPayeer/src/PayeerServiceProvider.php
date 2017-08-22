@@ -20,9 +20,6 @@ class PayeerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/payeer'),
         ], 'views');
-
-        // Composers
-        View::composer('payeer::payeer-form', 'entimm\LaravelPayeer\FormComposer');
     }
 
     public function register()
