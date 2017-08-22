@@ -290,54 +290,36 @@ if (app('data')->frm['action'] == 'preview') {
                             }
 
                             $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
-                            $success_txt = 'Withdraw to '.$userinfo['username'].' from '.app('data')->settings['site_name'];
-                            if ($ec == 0) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to e-gold account # '.$userinfo['egold_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_egold('', $to_withdraw, $userinfo['egold_account'], $success_txt, $error_txt);
-                            }
+                            $memo = 'Withdraw to '.$userinfo['username'].' from '.app('data')->settings['site_name'];
 
                             if ($ec == 1) {
                                 $error_txt = 'Error, tried sent '.$to_withdraw.' to evocash account # '.$userinfo['evocash_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_evocash('', $to_withdraw, $userinfo['evocash_account'], $success_txt, $error_txt);
+                                list($res, $text, $batch) = send_money_to_evocash('', $to_withdraw, $userinfo['evocash_account'], $memo, $error_txt);
                             }
 
                             if ($ec == 2) {
                                 $error_txt = 'Error, tried sent '.$to_withdraw.' to IntGold account # '.$userinfo['intgold_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_intgold('', $to_withdraw, $userinfo['intgold_account'], $success_txt, $error_txt);
+                                list($res, $text, $batch) = send_money_to_intgold('', $to_withdraw, $userinfo['intgold_account'], $memo, $error_txt);
                             }
 
                             if ($ec == 3) {
                                 $error_txt = 'Error, tried sent '.$to_withdraw.' to PerfectMoney account # '.$userinfo['perfectmoney_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_perfectmoney('', $to_withdraw, $userinfo['perfectmoney_account'], $success_txt, $error_txt);
+                                list($res, $text, $batch) = send_money_to_perfectmoney('', $to_withdraw, $userinfo['perfectmoney_account'], $memo, $error_txt);
                             }
 
-                            if ($ec == 5) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to e-bullion account # '.$userinfo['ebullion_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_ebullion('', $to_withdraw, $userinfo['ebullion_account'], $success_txt, $error_txt);
-                            }
-
-                            if ($ec == 8) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to eeeCurrency account # '.$userinfo['eeecurrency_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_eeecurrency('', $to_withdraw, $userinfo['eeecurrency_account'], $success_txt, $error_txt);
-                            }
-
-                            if ($ec == 9) {
-                                $error_txt = 'Error, tried sent '.$to_withdraw.' to Pecunix account # '.$userinfo['pecunix_account'].'. Error:';
-                                list($res, $text, $batch) = send_money_to_pecunix('', $to_withdraw, $userinfo['pecunix_account'], $success_txt, $error_txt);
-                            }
 
                             if ($res == 1) {
                                 $q = 'delete from history where id = '.$last_id;
                                 db_query($q);
                                 $d_account = [$userinfo['egold_account'], $userinfo['evocash_account'], $userinfo['intgold_account'], '', $userinfo['stormpay_account'], $userinfo['ebullion_account'], $userinfo['paypal_account'], $userinfo['goldmoney_account'], $userinfo['eeecurrency_account'], $userinfo['pecunix_account']];
                                 $q = 'insert into history set
-  		user_id = '.$userinfo['id'].(',
-  		amount = -'.$amount.',
-  		actual_amount = -'.$amount.',
-  		type=\'withdrawal\',
-  		date = now(),
-  		ec = '.$ec.',
-  		description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
+                                        user_id = '.$userinfo['id'].(',
+                                        amount = -'.$amount.',
+                                        actual_amount = -'.$amount.',
+                                        type=\'withdrawal\',
+                                        date = now(),
+                                        ec = '.$ec.',
+                                        description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
                                 db_query($q);
                                 $info['batch'] = $batch;
                                 $info['account'] = $d_account[$ec];
