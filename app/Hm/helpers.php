@@ -65,6 +65,9 @@ function db_query($q)
         $insert = mysql_real_escape_string($q);
         mysql_query("insert into queries (`query`, `time`) values ('$insert', '$time')");
     }
+    if ($error = mysql_error()) {
+        throw new Exception($error);
+    }
 
     return mysql_query($q);
 }

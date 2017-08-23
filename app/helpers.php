@@ -34,6 +34,13 @@ if (! function_exists('mysql_insert_id')) {
     }
 }
 
+if (! function_exists('mysql_error')) {
+    function mysql_error()
+    {
+        return app('mysql')->error;
+    }
+}
+
 if (! function_exists('mysql_real_escape_string')) {
     function mysql_real_escape_string($escapestr)
     {
