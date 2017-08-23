@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\HmException;
+use App\Models\Order;
 use entimm\LaravelPayeer\Payeer;
 use entimm\LaravelPerfectMoney\PerfectMoney;
 use Illuminate\Filesystem\Filesystem;
@@ -200,5 +201,28 @@ if (! function_exists('send_money_to_payeer')) {
 if (! function_exists('send_money_to_bitcoin')) {
     function send_money_to_bitcoin($amount, $recipient, $memo) {
 
+    }
+}
+
+if (! function_exists('generate_id')) {
+    function generate_id() {
+        $userId = auth()->id();
+        return mt_rand(10, 99).substr(time(), 3).str_pad($userId % 100, 3, 0, STR_PAD_LEFT).mt_rand(100, 999);
+    }
+}
+
+if (! function_exists('add_deposit_order')) {
+    function add_deposit_order($amount, $data) {
+        $orderNo = generate_id();
+        Order::create([
+            'order_no' => $orderNo,
+            'amount' => $amount * 100,
+            'user_id' => auth()->id(),
+            'data' => $data,
+            'ps' => Order::PS_PERFECTMONEY,
+            'type' => Order::TYPE_DEPOSIT,
+            'status' => Order::STATUS_START,
+        ]);
+        return $orderNo;
     }
 }

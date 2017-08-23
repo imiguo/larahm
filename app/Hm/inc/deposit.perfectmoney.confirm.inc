@@ -13,7 +13,11 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
 $h_id = sprintf('%d', app('data')->frm['h_id']);
 if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     if (0.01 <= $amount) {
-        view_assign('h_id', -1);
+        $orderNo = add_deposit_order($amount, [
+            'plan_id' => $h_id,
+            'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
+        ]);
+        view_assign('payment_id', $orderNo);
         view_assign('amount', $amount);
         view_assign('amount_format', number_format($amount, 2));
         view_execute('deposit_perfectmoney_confirm.blade.php');
@@ -96,10 +100,13 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
             }
         }
 
-        view_assign('h_id', $h_id);
+        $orderNo = add_deposit_order($amount, [
+            'plan_id' => $h_id,
+            'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
+        ]);
+        view_assign('payment_id', $orderNo);
         view_assign('amount', $amount);
         view_assign('amount_format', number_format($amount, 2));
-        view_assign('compounding', sprintf('%d', app('data')->frm['compound']));
         view_execute('deposit_perfectmoney_confirm.blade.php');
     }
 }

@@ -13,7 +13,10 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
 $h_id = sprintf('%d', app('data')->frm['h_id']);
 if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     if (0.01 <= $amount) {
-        view_assign('h_id', -1);
+        $orderNo = add_deposit_order($amount, [
+            'plan_id' => $h_id,
+            'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
+        ]);
         view_assign('amount', $amount);
         view_assign('amount_format', number_format(app('data')->frm['amount'], 2, '.', ''));
         view_execute('deposit_payeer_confirm.blade.php');
@@ -99,7 +102,10 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         $site_name = app('data')->settings['site_name'];
         $m_desc = "Deposit to {$site_name} User {$userinfo['username']}";
         $m_desc = base64_encode($m_desc);
-        $m_orderid = $userinfo['id'].'-'.time().'-'.$h_id;
+        $m_orderid = add_deposit_order($amount, [
+            'plan_id' => $h_id,
+            'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
+        ]);
         $arHash = [
             app('data')->settings['def_payee_account_payeer'], // m_shop
             $m_orderid, // m_orderid
@@ -113,11 +119,9 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         view_assign('m_desc', $m_desc);
         view_assign('m_sign', $m_sign);
 
-        view_assign('m_orderid', $m_orderid);
-        view_assign('h_id', $h_id);
+        view_assign('m_orderid', $orderNo);
         view_assign('amount', $amount);
         view_assign('amount_format', number_format($amount, 2, '.', ''));
-        view_assign('compounding', sprintf('%d', app('data')->frm['compound']));
         view_execute('deposit_payeer_confirm.blade.php');
     }
 }

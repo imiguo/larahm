@@ -10,6 +10,7 @@
  */
 
 use App\Exceptions\EmptyException;
+use App\Models\Order;
 
 file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
 file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
@@ -45,10 +46,15 @@ if (app('data')->frm['a'] == 'checkpayment') {
         $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
         // If the signatures match and payment status is “Complete”
         if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success') {
-            $arr = explode('-', $_POST['m_orderid']);
-            $user_id = $arr[0];
-            $h_id = $arr[2];
-            add_deposit(10, $user_id, $_POST['m_amount'], $_POST['m_operation_id'], $_POST['client_account'], $h_id, 0);
+            $orderNo = $_POST['m_orderid'];
+            $order = Order::where('order_no', $payment_id)->first();
+            $h_id = $order->data['plan_id'];
+            $compound = $order->data['compound'];
+            $user_id = $order->user_id;
+
+            add_deposit(2, $user_id, $_POST['m_amount'], $_POST['m_operation_id'], $_POST['client_account'], $h_id, $compound);
+            $order->status = Order::STATUS_OK;
+            $order->save();
 
             // Here you can mark the invoice as paid or transfer funds to your customer
             // Returning that the payment was processed successfully

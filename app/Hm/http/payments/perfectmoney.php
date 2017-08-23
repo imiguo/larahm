@@ -10,6 +10,7 @@
  */
 
 use App\Exceptions\EmptyException;
+use App\Models\Order;
 
 file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
 file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
@@ -67,20 +68,26 @@ if (app('data')->frm['a'] == 'checkpayment') {
               app('data')->frm['TIMESTAMPGMT'];
     $hash = strtoupper(md5($string));
 
-    if ($hash == app('data')->frm['V2_HASH'] and app('data')->exchange_systems[3]['status'] == 1) {
+    if ($hash == app('data')->frm['V2_HASH']) {
         // $ip = app('data')->env['REMOTE_ADDR'];
         // if ( ! preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
         //     throw new EmptyException();
         // }
 
-        $user_id = sprintf('%d', app('data')->frm['PAYMENT_ID']);
-        $h_id = sprintf('%d', app('data')->frm['plan_id']);
-        $compound = sprintf('%d', app('data')->frm['compound']);
+        $payment_id = sprintf('%d', app('data')->frm['PAYMENT_ID']);
+
+        $order = Order::where('order_no', $payment_id)->first();
+        $h_id = $order->data['plan_id'];
+        $compound = $order->data['compound'];
+        $user_id = $order->user_id;
+
         $amount = app('data')->frm['PAYMENT_AMOUNT'];
         $batch = app('data')->frm['PAYMENT_BATCH_NUM'];
         $account = app('data')->frm['PAYER_ACCOUNT'];
         if (app('data')->frm['PAYMENT_UNITS'] == 'USD') {
-            add_deposit(3, $user_id, $amount, $batch, $account, $h_id, $compound);
+            add_deposit(1, $user_id, $amount, $batch, $account, $h_id, $compound);
+            $order->status = Order::STATUS_OK;
+            $order->save();
         }
     }
 
