@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\History;
 use App\Models\FakeUser;
 use App\Models\FakeHistory;
+use Exception;
 
 class DataService
 {
@@ -101,9 +102,16 @@ class DataService
         if (! $user) {
             return;
         }
+        $amount = retry(10, function () use ($user) {
+            $amount = $this->generateAmount();
+            if ($amount < $user->amount * 1.5) {
+                return $amount;
+            }
+            throw new Exception('generate amount fail');
+        });
         $history = FakeHistory::create([
             'user_id' => $user->id,
-            'amount' => max($user->amount * mt_rand(1, 10) / 10, 0.1),
+            'amount' => $amount,
             'payment' => $user->payment,
             'type' => 2,
             'created_at' => Carbon::now(),
