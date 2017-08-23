@@ -65,11 +65,12 @@ function db_query($q)
         $insert = mysql_real_escape_string($q);
         mysql_query("insert into queries (`query`, `time`) values ('$insert', '$time')");
     }
+    $result = mysql_query($q);
     if ($error = mysql_error()) {
-        throw new Exception($error);
+        throw new Exception($error.','.$q);
     }
 
-    return mysql_query($q);
+    return $result;
 }
 
 function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
@@ -167,13 +168,13 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         db_query($q);
         $deposit_id = mysql_insert_id();
         $q = 'insert into history set
-          	user_id = '.$user_id.',
-          	amount = \'-'.$amount.'\',
-          	type = \'deposit\',
-          	description = \'Deposit to '.quote($name).('\',
-          	actual_amount = -'.$amount.',
-          	ec = '.$ec.',
-          	date = now(),
+                user_id = '.$user_id.',
+                amount = \'-'.$amount.'\',
+                type = \'deposit\',
+                description = \'Deposit to '.quote($name).('\',
+                actual_amount = -'.$amount.',
+                ec = '.$ec.',
+                date = now(),
                 deposit_id = '.$deposit_id.'
           	');
         db_query($q);

@@ -28,7 +28,7 @@ class CreateHistoryTable extends Migration
             $table->dateTime('date')->default('2017-01-01 00:00:00');
             $table->string('str', 40)->nullable();
             $table->integer('ec');
-            $table->integer('deposit_id');
+            $table->integer('deposit_id')->default(0);
             $table->string('payment_batch_num', 15)->nullable();
             $table->timestamps();
         });
