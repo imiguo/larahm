@@ -28,7 +28,8 @@
             "entimm\\LaravelPerfectMoney\\": "app/Packages/LaravelPerfectMoney/src/"
         },
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "app/Hm/helpers.php"
         ]
     },
     "autoload-dev": {

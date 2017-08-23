@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Cookie;
 
 ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 
-require 'function.inc.php';
-
 app('data')->frm = request()->toArray();
 
 app('data')->env = array_merge($_ENV, $_SERVER);
