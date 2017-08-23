@@ -109,7 +109,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $type = mysql_fetch_array($sth);
     $delay = -1;
     if ($type) {
-        $delay += $row[delay];
+        $delay += $type['delay'];
         $name = quote($type['name']);
         if ($type['use_compound'] == 0) {
             $compound = 0;
@@ -194,7 +194,6 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $q = 'select * from users where id = '.$user_id;
     $sth = db_query($q);
     $user = mysql_fetch_array($sth);
-    $info = [$user];
     $info['username'] = $user['username'];
     $info['name'] = $user['name'];
     $info['amount'] = number_format($amount, 2);
@@ -203,7 +202,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $info['batch'] = $batch;
     $info['compound'] = $compound;
     $info['plan'] = $name;
-    $info['ref_sum'] = $ref_sum;
+    $info['ref_sum'] = $ref_sum ?? 0;
     $q = 'select email from users where id = 1';
     $sth = db_query($q);
     $admin_email = '';
@@ -213,7 +212,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
 
     if ($user['is_test'] != 1) {
         send_template_mail('deposit_admin_notification', $admin_email, app('data')->settings['system_email'], $info);
-        send_template_mail('deposit_user_notification', $user[email], app('data')->settings['system_email'], $info);
+        send_template_mail('deposit_user_notification', $user['email'], app('data')->settings['system_email'], $info);
     }
 
     return 1;
@@ -652,7 +651,7 @@ function send_template_mail($email_id, $to, $from, $info)
     $subject = preg_replace('/#site_name#/', app('data')->settings['site_name'], $subject);
     $text = preg_replace('/#site_url#/', app('data')->settings['site_url'], $text);
     $subject = preg_replace('/#site_url#/', app('data')->settings['site_url'], $subject);
-    if (app('data')->settings[site_name] == 'free') {
+    if (app('data')->settings['site_name'] == 'free') {
         $fh = fopen('mails.txt', 'a');
         fwrite($fh, 'TO: '.$to.'From: '.$from.'Subject: '.$subject.''.$text);
         fclose($fh);
