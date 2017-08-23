@@ -88,7 +88,7 @@ class DataService
             'created_at' => Carbon::now(),
         ]);
         $user->payment = $history->payment;
-        $user->amount = $history->amount;
+        $user->amount += $history->amount;
         $user->save();
     }
 
@@ -97,7 +97,7 @@ class DataService
         if (FakeHistory::where('type', 1)->count() < 30) {
             return;
         }
-        $user = FakeUser::where('amount', '>', 0)->first();
+        $user = FakeUser::where('amount', '>', 0)->inRandomOrder()->first();
         if (! $user) {
             return;
         }

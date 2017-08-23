@@ -253,14 +253,14 @@ class Payeer {
         $amount = number_format($amount, 2);
         $shop_id = config('payeer.shop_id');
         $shop_secret_key = config('payeer.shop_secret_key');
-        $current = config('payeer.currency');
+        $currency = config('payeer.currency');
         $memo = $memo ?: config('payeer.payment_memo');
         $memo = base64_encode($memo);
         $hash = [
             $shop_id,
             $order_id,
             $amount,
-            $current,
+            $currency,
             $memo,
             $shop_secret_key,
         ];
