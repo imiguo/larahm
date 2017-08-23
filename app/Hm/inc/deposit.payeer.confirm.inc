@@ -102,13 +102,14 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         $site_name = app('data')->settings['site_name'];
         $m_desc = "Deposit to {$site_name} User {$userinfo['username']}";
         $m_desc = base64_encode($m_desc);
-        $m_orderid = add_deposit_order($amount, [
+        $orderNo = add_deposit_order($amount, [
             'plan_id' => $h_id,
             'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
         ]);
+
         $arHash = [
             app('data')->settings['def_payee_account_payeer'], // m_shop
-            $m_orderid, // m_orderid
+            $orderNo, // m_orderid
             $amount, // m_amount
             'USD', // m_curr
             $m_desc, // m_desc
