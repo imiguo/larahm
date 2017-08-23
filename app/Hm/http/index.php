@@ -156,33 +156,6 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
                     case 3:
                         include app_path('Hm').'/inc/deposit.bitcoin.confirm.inc';
                         break;
-                    case 0:
-                        include app_path('Hm').'/inc/deposit.egold.confirm.inc';
-                        break;
-                    case 1:
-                        include app_path('Hm').'/inc/deposit.evocash.confirm.inc';
-                        break;
-                    case 2:
-                        include app_path('Hm').'/inc/deposit.intgold.confirm.inc';
-                        break;
-                    case 4:
-                        include app_path('Hm').'/inc/deposit.stormpay.confirm.inc';
-                        break;
-                    case 5:
-                        include app_path('Hm').'/inc/deposit.ebullion.confirm.inc';
-                        break;
-                    case 6:
-                        include app_path('Hm').'/inc/deposit.paypal.confirm.inc';
-                        break;
-                    case 7:
-                        include app_path('Hm').'/inc/deposit.goldmoney.confirm.inc';
-                        break;
-                    case 8:
-                        include app_path('Hm').'/inc/deposit.eeecurrency.confirm.inc';
-                        break;
-                    case 9:
-                        include app_path('Hm').'/inc/deposit.pecunix.confirm.inc';
-                        break;
                     default:
                         include app_path('Hm').'/inc/deposit.other.confirm.inc';
                 }
