@@ -22,7 +22,7 @@ class CreateUserAccessLogTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->dateTime('date')->nullable();
-            $table->string('ip', 15);
+            $table->string('ip', 15)->nullable();
             $table->timestamps();
         });
     }
