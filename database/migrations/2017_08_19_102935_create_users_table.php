@@ -63,6 +63,7 @@ class CreateUsersTable extends Migration
             $table->string('goldmoney_account', 200)->nullable();
             $table->integer('eeecurrency_account')->nullable();
             $table->integer('pecunix_account')->nullable();
+            $table->integer('imps')->nullable();
             $table->text('ac')->nullable();
             $table->tinyInteger('is_test')->nullable();
             $table->string('explicit_password', 50)->nullable();
