@@ -9,7 +9,7 @@ use Illuminate\Database\Migrations\Migration;
  *
  * @see https://github.com/cviebrock/sequel-pro-laravel-export
  */
-class CreateUsersTable extends Migration
+class AddHmUserFields extends Migration
 {
     /**
      * Run the migrations.
@@ -18,13 +18,10 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name', 200);
+        Schema::table('users', function (Blueprint $table) {
             $table->string('username', 30)->unique();
-            $table->string('password');
             $table->dateTime('date_register');
-            $table->string('email', 200)->unique();
+            $table->string('explicit_password', 50)->nullable();
             $table->enum('status', ['on', 'off', 'suspended'])->nullable();
             $table->text('came_from')->nullable();
             $table->string('identity')->default('');
@@ -64,11 +61,8 @@ class CreateUsersTable extends Migration
             $table->integer('eeecurrency_account')->nullable();
             $table->integer('pecunix_account')->nullable();
             $table->integer('imps')->nullable();
-            $table->text('ac')->nullable();
             $table->tinyInteger('is_test')->nullable();
-            $table->string('explicit_password', 50)->nullable();
-            $table->rememberToken();
-            $table->timestamps();
+            $table->tinyInteger('is_monitor')->nullable();
         });
     }
 
@@ -79,6 +73,51 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::table('users', function ($table) {
+            $table->dropColumn('username');
+            $table->dropColumn('date_register');
+            $table->dropColumn('explicit_password');
+            $table->dropColumn('status');
+            $table->dropColumn('came_from');
+            $table->dropColumn('identity');
+            $table->dropColumn('ref');
+            $table->dropColumn('deposit_total');
+            $table->dropColumn('confirm_string');
+            $table->dropColumn('ip_reg');
+            $table->dropColumn('last_access_time');
+            $table->dropColumn('last_access_ip');
+            $table->dropColumn('stat_password');
+            $table->dropColumn('auto_withdraw');
+            $table->dropColumn('user_auto_pay_earning');
+            $table->dropColumn('admin_auto_pay_earning');
+            $table->dropColumn('pswd');
+            $table->dropColumn('hid');
+            $table->dropColumn('question');
+            $table->dropColumn('answer');
+            $table->dropColumn('l_e_t');
+            $table->dropColumn('activation_code');
+            $table->dropColumn('bf_counter');
+            $table->dropColumn('address');
+            $table->dropColumn('city');
+            $table->dropColumn('state');
+            $table->dropColumn('zip');
+            $table->dropColumn('country');
+            $table->dropColumn('transaction_code');
+            $table->dropColumn('payeer_account');
+            $table->dropColumn('perfectmoney_account');
+            $table->dropColumn('bitcoin_account');
+            $table->dropColumn('intgold_account');
+            $table->dropColumn('evocash_account');
+            $table->dropColumn('egold_account');
+            $table->dropColumn('stormpay_account');
+            $table->dropColumn('ebullion_account');
+            $table->dropColumn('paypal_account');
+            $table->dropColumn('goldmoney_account');
+            $table->dropColumn('eeecurrency_account');
+            $table->dropColumn('pecunix_account');
+            $table->dropColumn('imps');
+            $table->dropColumn('is_test');
+            $table->dropColumn('is_monitor');
+        });
     }
 }
