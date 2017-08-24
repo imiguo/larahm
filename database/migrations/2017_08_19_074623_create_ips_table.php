@@ -17,7 +17,7 @@ class CreateIpsTable extends Migration
             $table->increments('id');
             $table->bigInteger('ip')->unique();
             $table->string('country')->nullable();
-            $table->tinyInteger('is_monitor')->default(0);
+            $table->tinyInteger('identity')->default(0);
             $table->timestamps();
         });
     }

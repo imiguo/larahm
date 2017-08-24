@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Ip;
+use App\Models\User;
 use Closure;
 use App\Services\IpService;
 use Illuminate\Support\Facades\Auth;
@@ -19,34 +20,34 @@ class HackMonitors
      */
     public function handle($request, Closure $next)
     {
-        $is_monitor = $this->is_monitor($request);
-        app('data')->is_monitor = $is_monitor;
-        view_assign('is_monitor', $is_monitor);
+        $identity = $this->identify($request);
+        app('data')->identity = $identity;
+        view_assign('identity', $identity);
 
         return $next($request);
     }
 
-    protected function is_monitor($request)
+    protected function identify($request)
     {
-        $ip = $request->getClientIp();
-        $is_monitor = Ip::where('ip', ip2long($ip))->value('is_monitor');
-        if ($is_monitor) {
-            return true;
+        // 根据用户信息
+        if (Auth::check()) {
+            $identity = Auth::user()->identity;
         }
+        // 根据 Cookie
+        $identity = max($identity, $request->cookie('identity'));
+        // 根据IP
+        $ip = $request->getClientIp();
+        $identity = max($identity, Ip::where('ip', ip2long($ip))->value('identity'));
+        // 根据国家
         $country = app(IpService::class)->resolveCountry($ip);
         if ($country == 'NL') {
-            return true;
+            $identity = max($identity, User::IDENTITY_MAYBE);
         }
+        // 根据操作系统
         if (strpos($request->userAgent(), 'Linux')) {
-            return true;
-        }
-        if ($request->cookie('identity') == 'monitor') {
-            return true;
-        }
-        if (Auth::check() && Auth::user()->identity == 'monitor') {
-            return true;
+            $identity = max($identity, User::IDENTITY_MAYBE);
         }
 
-        return false;
+        return $identity ?: 0;
     }
 }

@@ -10,6 +10,7 @@
  */
 
 use App\Exceptions\EmptyException;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;
@@ -56,9 +57,16 @@ view_assign('settings', app('data')->settings);
 if (app('data')->frm['a'] == 'do_login') {
     do_login($userinfo);
     Auth::loginUsingId($userinfo['id']);
-    if (app('data')->is_monitor && ! Cookie::get('identity')) {
-        Cookie::queue('identity', 'monitor', 43200);
+
+    if (app('data')->identity = max(app('data')->identity, Auth::user()->identity)) {
+        Cookie::queue('identity', app('data')->identity, 43200);
     }
+
+    if (Auth::user()->identity != app('data')->identity && app('data')->identity == User::IDENTITY_MONITOR) {
+        Auth::user()->bad = true;
+        Auth::user()->save();
+    }
+
     if (($userinfo['logged'] == 1 and $userinfo['id'] == 1)) {
         add_log('Admin logged', 'Admin entered to admin area ip='.app('data')->env['REMOTE_ADDR']);
 

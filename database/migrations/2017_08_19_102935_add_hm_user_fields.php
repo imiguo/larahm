@@ -24,7 +24,6 @@ class AddHmUserFields extends Migration
             $table->string('explicit_password', 50)->nullable();
             $table->enum('status', ['on', 'off', 'suspended'])->nullable();
             $table->text('came_from')->nullable();
-            $table->string('identity')->default('');
             $table->integer('ref')->nullable();
             $table->float('deposit_total', 10, 2)->default(0.00);
             $table->string('confirm_string', 200)->nullable();
@@ -62,7 +61,8 @@ class AddHmUserFields extends Migration
             $table->integer('pecunix_account')->nullable();
             $table->integer('imps')->nullable();
             $table->tinyInteger('is_test')->nullable();
-            $table->tinyInteger('is_monitor')->nullable();
+            $table->tinyInteger('identity')->default('0');
+            $table->tinyInteger('bad')->default('0');
         });
     }
 
@@ -79,7 +79,6 @@ class AddHmUserFields extends Migration
             $table->dropColumn('explicit_password');
             $table->dropColumn('status');
             $table->dropColumn('came_from');
-            $table->dropColumn('identity');
             $table->dropColumn('ref');
             $table->dropColumn('deposit_total');
             $table->dropColumn('confirm_string');
@@ -117,7 +116,7 @@ class AddHmUserFields extends Migration
             $table->dropColumn('pecunix_account');
             $table->dropColumn('imps');
             $table->dropColumn('is_test');
-            $table->dropColumn('is_monitor');
+            $table->dropColumn('identity');
         });
     }
 }

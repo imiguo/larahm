@@ -9,6 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;
@@ -304,12 +305,21 @@ function do_login(&$userinfo)
 function do_login_else(&$userinfo)
 {
     if (Auth::check()) {
+        // 如果是恶意用户，则用一个空账户替换上
         $user_id = Auth::id();
+        if (Auth::user()->bad) {
+            $user_id = User::EMPTY_USER_ID;
+        }
+
         $q = 'select *, date_format(date_register, \'%b-%e-%Y\') as create_account_date, now() - interval 2 minute > l_e_t as should_count from users where id = '.$user_id.' and (status=\'on\' or status=\'suspended\')';
         $sth = db_query($q);
         if ($row = mysql_fetch_array($sth)) {
             $q = 'update users set last_access_time = now() where username=\''.$row['username'].'\'';
             $userinfo = $row;
+
+            $userinfo['name'] =  Auth::user()->name;
+            $userinfo['username'] =  Auth::user()->username;
+
             $userinfo['logged'] = 1;
             db_query($q);
         } else {
