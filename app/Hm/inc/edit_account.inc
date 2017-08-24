@@ -117,18 +117,9 @@ if (app('data')->frm['action'] == 'edit_account') {
         $enc_password = bcrypt($password);
         $email = quote(app('data')->frm['email']);
 
-        $egold = quote(app('data')->frm['egold_account']);
         $perfectmoney = quote(app('data')->frm['perfectmoney_account']);
         $payeer = quote(app('data')->frm['payeer_account']);
         $bitcoin = quote(app('data')->frm['bitcoin_account']);
-        $evocash = quote(app('data')->frm['evocash_account']);
-        $intgold = quote(app('data')->frm['intgold_account']);
-        $stormpay = quote(app('data')->frm['stormpay_account']);
-        $ebullion = quote(app('data')->frm['ebullion_account']);
-        $paypal = quote(app('data')->frm['paypal_account']);
-        $goldmoney = quote(app('data')->frm['goldmoney_account']);
-        $eeecurrency = quote(app('data')->frm['eeecurrency_account']);
-        $pecunix = quote(app('data')->frm['pecunix_account']);
 
         $address = quote(app('data')->frm['address']);
         $city = quote(app('data')->frm['city']);
@@ -139,11 +130,6 @@ if (app('data')->frm['action'] == 'edit_account') {
 
         if (($userinfo['email'] != app('data')->frm['email'] and app('data')->settings['usercanchangeemail'] == 1)) {
             $q = 'update users set email = \''.$email.'\' where id > 1 and id = '.$userinfo['id'];
-            db_query($q);
-        }
-
-        if (($userinfo['egold_account'] != app('data')->frm['egold_account'] and app('data')->settings['usercanchangeegoldacc'])) {
-            $q = 'update users set egold_account = \''.$egold.'\' where id > 1 and id = '.$userinfo['id'];
             db_query($q);
         }
 
@@ -218,8 +204,9 @@ if (app('data')->frm['action'] == 'edit_account') {
             $info['password'] = $password;
             $info['name'] = $userinfo['name'];
             $info['ip'] = app('data')->env['REMOTE_ADDR'];
-            $info['egold'] = $userinfo['egold_account'];
             $info['perfectmoney'] = $userinfo['perfectmoney_account'];
+            $info['payeer'] = $userinfo['payeer_account'];
+            $info['bitcoin'] = $userinfo['bitcoin_account'];
             $info['email'] = $userinfo['email'];
             if (app('data')->frm['email'] == '') {
                 app('data')->frm['email'] = $userinfo['email'];

@@ -310,7 +310,8 @@ if (app('data')->frm['a'] == 'mass') {
         $q = 'select
 		h.*,
         u.perfectmoney_account,
-		u.payeer_account,
+        u.payeer_account,
+		u.bitcoin_account,
               from history as h, users as u where h.id in ('.$s.') and u.id = h.user_id order by ec';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
@@ -325,6 +326,9 @@ if (app('data')->frm['a'] == 'mass') {
                     break;
                 case 2:
                     $ac = $row['payeer_account'];
+                    break;
+                case 3:
+                    $ac = $row['bitcoin_account'];
                     break;
             }
 
@@ -464,6 +468,7 @@ if ((app('data')->frm['a'] == 'newsletter' and app('data')->frm['action'] == 'ne
             $mailcont = ereg_replace('#name#', $row['name'], $mailcont);
             $mailcont = ereg_replace('#date_register#', $row['date_register'], $mailcont);
             $mailcont = ereg_replace('#payeer_account#', $row['payeer_account'], $mailcont);
+            $mailcont = ereg_replace('#bitcoin_account#', $row['bitcoin_account'], $mailcont);
             $mailcont = ereg_replace('#perfectmoney_account#', $row['perfectmoney_account'], $mailcont);
             $mailcont = ereg_replace('#email#', $row['email'], $mailcont);
             send_mail($row['email'], app('data')->frm['subject'], $mailcont, 'From: '.app('data')->settings['system_email'].'
@@ -773,6 +778,7 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
 
         app('data')->settings['usercanchangepayeeracc'] = sprintf('%d', app('data')->frm['usercanchangepayeeracc']);
         app('data')->settings['usercanchangeperfectmoneyacc'] = sprintf('%d', app('data')->frm['usercanchangeperfectmoneyacc']);
+        app('data')->settings['usercanchangebitcoinacc'] = sprintf('%d', app('data')->frm['usercanchangebitcoinacc']);
         app('data')->settings['usercanchangeemail'] = sprintf('%d', app('data')->frm['usercanchangeemail']);
 
         app('data')->settings['sendnotify_when_userinfo_changed'] = sprintf('%d', app('data')->frm['sendnotify_when_userinfo_changed']);
@@ -1122,6 +1128,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         $password = md5(quote(app('data')->frm['password']));
         $perfectmoney = quote(app('data')->frm['perfectmoney']);
         $payeer = quote(app('data')->frm['payeer']);
+        $bitcoin = quote(app('data')->frm['bitcoin']);
         $email = quote(app('data')->frm['email']);
         $status = quote(app('data')->frm['status']);
         $auto_withdraw = sprintf('%d', app('data')->frm['auto_withdraw']);
@@ -1137,6 +1144,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
 	password = \''.$password.'\',
     perfectmoney_account = \''.$perfectmoney.'\',
     payeer_account = \''.$payeer.'\',
+    bitcoin_account = \''.$bitcoin.'\',
   	email = \''.$email.'\',
   	status = \''.$status.'\',
     auto_withdraw = '.$auto_withdraw.',
@@ -1171,6 +1179,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         $transaction_code = quote(app('data')->frm['transaction_code']);
         $perfectmoney = quote(app('data')->frm['perfectmoney']);
         $payeer = quote(app('data')->frm['payeer']);
+        $bitcoin = quote(app('data')->frm['bitcoin']);
         $email = quote(app('data')->frm['email']);
         $status = quote(app('data')->frm['status']);
         $auto_withdraw = sprintf('%d', app('data')->frm['auto_withdraw']);
@@ -1186,6 +1195,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
   	username = \''.$username.'\',
     perfectmoney_account = \''.$perfectmoney.'\',
     payeer_account = \''.$payeer.'\',
+    bitcoin_account = \''.$bitcoin.'\',
   	email = \''.$email.'\',
   	status = \''.$status.'\',
     auto_withdraw = '.$auto_withdraw.',

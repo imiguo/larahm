@@ -31,9 +31,11 @@ use App\Exceptions\RedirectException;
           if (app('data')->settings[def_payee_account_perfectmoney]) {
               $message .= 'PerfectMoney Acc : '.$userinfo['perfectmoney_account'].'';
           }
-
           if (app('data')->settings[def_payee_account_payeer]) {
               $message .= 'Payeer Acc : '.$userinfo['payeer_account'].'';
+          }
+          if (app('data')->settings[def_payee_account_bitcoin]) {
+              $message .= 'Bitcoin Acc : '.$userinfo['bitcoin_account'].'';
           }
 
           $message .= 'Status    : '.$userinfo['status'].'';
