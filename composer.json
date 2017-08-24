@@ -25,7 +25,8 @@
         "psr-4": {
             "App\\": "app/",
             "entimm\\LaravelPayeer\\": "app/Packages/LaravelPayeer/src/",
-            "entimm\\LaravelPerfectMoney\\": "app/Packages/LaravelPerfectMoney/src/"
+            "entimm\\LaravelPerfectMoney\\": "app/Packages/LaravelPerfectMoney/src/",
+            "entimm\\LaravelAsmoney\\": "app/Packages/LaravelAsmoney/src/"
         },
         "files": [
             "app/helpers.php",
