@@ -3,6 +3,7 @@
 use App\Exceptions\HmException;
 use App\Models\Order;
 use entimm\LaravelPayeer\Payeer;
+use entimm\LaravelAsmoney\Asmoney;
 use entimm\LaravelPerfectMoney\PerfectMoney;
 use Illuminate\Filesystem\Filesystem;
 
@@ -207,7 +208,7 @@ if (! function_exists('send_money_to_payeer')) {
 
 if (! function_exists('send_money_to_bitcoin')) {
     function send_money_to_bitcoin($amount, $recipient, $memo) {
-
+        return (new Asmoney)->transferBTC($recipient, abs($amount), $memo);
     }
 }
 
