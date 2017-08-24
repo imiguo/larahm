@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Ip;
 use Closure;
 use App\Services\IpService;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,12 @@ class HackMonitors
 
     protected function is_monitor($request)
     {
-        $country = app(IpService::class)->resolveCountry($request->getClientIp());
+        $ip = $request->getClientIp();
+        $is_monitor = Ip::where('ip', ip2long($ip))->value('is_monitor');
+        if ($is_monitor) {
+            return true;
+        }
+        $country = app(IpService::class)->resolveCountry($ip);
         if ($country == 'NL') {
             return true;
         }
