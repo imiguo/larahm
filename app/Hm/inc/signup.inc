@@ -31,6 +31,7 @@ if (app('data')->frm['say'] == 'confirm') {
 
       $name = quote(app('data')->frm['fullname']);
       $username = quote(app('data')->frm['username']);
+      $email = quote(app('data')->frm['email']);
       if (app('data')->frm['username'] == '') {
           array_push($errors, 'username');
       } else {
@@ -60,6 +61,15 @@ if (app('data')->frm['say'] == 'confirm') {
 
       if (app('data')->frm['email'] == '') {
           array_push($errors, 'email');
+      } else {
+        $q = 'select * from users where email = \''.$email.'\'';
+        if (!($sth = db_query($q))) {
+        }
+
+        $row = mysql_fetch_array($sth);
+        if ($row) {
+            array_push($errors, 'email_exists');
+        }
       }
 
       if (app('data')->settings['use_user_location']) {
@@ -157,7 +167,6 @@ if (app('data')->frm['say'] == 'confirm') {
           $eeecurrency = quote(app('data')->frm['eeecurrency']);
           $pecunix = quote(app('data')->frm['pecunix']);
 
-          $email = quote(app('data')->frm['email']);
           $address = quote(app('data')->frm['address']);
           $city = quote(app('data')->frm['city']);
           $state = quote(app('data')->frm['state']);
