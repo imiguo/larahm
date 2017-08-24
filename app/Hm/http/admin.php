@@ -309,50 +309,22 @@ if (app('data')->frm['a'] == 'mass') {
 
         $q = 'select
 		h.*,
-		u.egold_account,
-		u.evocash_account,
-		u.intgold_account,
-		u.stormpay_account,
-		u.ebullion_account,
-		u.paypal_account,
-		u.goldmoney_account,
-		u.eeecurrency_account
+        u.perfectmoney_account,
+		u.payeer_account,
               from history as h, users as u where h.id in ('.$s.') and u.id = h.user_id order by ec';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
-            if (100 < $row['ec']) {
-                continue;
-            }
-
             if ($ec != $row['ec']) {
                 echo '#'.app('data')->exchange_systems[$row['ec']]['name'].' transactions (account, amount)';
                 $ec = $row['ec'];
             }
 
             switch ($row['ec']) {
-                case 0:
-                    $ac = $row['egold_account'];
-                    break;
                 case 1:
-                    $ac = $row['evocash_account'];
+                    $ac = $row['perfectmoney_account'];
                     break;
                 case 2:
-                    $ac = $row['intgold_account'];
-                    break;
-                case 4:
-                    $ac = $row['stormpay_account'];
-                    break;
-                case 5:
-                    $ac = $row['ebullion_account'];
-                    break;
-                case 6:
-                    $ac = $row['paypal_account'];
-                    break;
-                case 7:
-                    $ac = $row['goldmoney_account'];
-                    break;
-                case 8:
-                    $ac = $row['eeecurrency_account'];
+                    $ac = $row['payeer_account'];
                     break;
             }
 
@@ -491,7 +463,8 @@ if ((app('data')->frm['a'] == 'newsletter' and app('data')->frm['action'] == 'ne
             $mailcont = ereg_replace('#username#', $row['username'], $mailcont);
             $mailcont = ereg_replace('#name#', $row['name'], $mailcont);
             $mailcont = ereg_replace('#date_register#', $row['date_register'], $mailcont);
-            $mailcont = ereg_replace('#egold_account#', $row['egold_account'], $mailcont);
+            $mailcont = ereg_replace('#payeer_account#', $row['payeer_account'], $mailcont);
+            $mailcont = ereg_replace('#perfectmoney_account#', $row['perfectmoney_account'], $mailcont);
             $mailcont = ereg_replace('#email#', $row['email'], $mailcont);
             send_mail($row['email'], app('data')->frm['subject'], $mailcont, 'From: '.app('data')->settings['system_email'].'
 Reply-To: '.app('data')->settings['system_email']);
@@ -792,18 +765,13 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         app('data')->settings['def_payee_name'] = app('data')->frm['def_payee_name'];
         app('data')->settings['md5altphrase'] = app('data')->frm['md5altphrase'];
 
-        app('data')->settings['def_payee_account_evocash'] = app('data')->frm['def_payee_account_evocash'];
-        app('data')->settings['md5altphrase_evocash'] = app('data')->frm['md5altphrase_evocash'];
 
-        app('data')->settings['def_payee_account_intgold'] = app('data')->frm['def_payee_account_intgold'];
-        app('data')->settings['md5altphrase_intgold'] = app('data')->frm['md5altphrase_intgold'];
-        app('data')->settings['intgold_posturl'] = sprintf('%d', app('data')->frm['intgold_posturl']);
 
         app('data')->settings['use_opt_in'] = sprintf('%d', app('data')->frm['use_opt_in']);
         app('data')->settings['opt_in_email'] = app('data')->frm['opt_in_email'];
         app('data')->settings['system_email'] = app('data')->frm['system_email'];
 
-        app('data')->settings['usercanchangeegoldacc'] = sprintf('%d', app('data')->frm['usercanchangeegoldacc']);
+        app('data')->settings['usercanchangepayeeracc'] = sprintf('%d', app('data')->frm['usercanchangepayeeracc']);
         app('data')->settings['usercanchangeperfectmoneyacc'] = sprintf('%d', app('data')->frm['usercanchangeperfectmoneyacc']);
         app('data')->settings['usercanchangeemail'] = sprintf('%d', app('data')->frm['usercanchangeemail']);
 
@@ -826,71 +794,6 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         app('data')->settings['time_dif'] = app('data')->frm['time_dif'];
         app('data')->settings['internal_transfer_enabled'] = (app('data')->frm['internal_transfer_enabled'] ? 1 : 0);
 
-        app('data')->settings['def_payee_account_stormpay'] = app('data')->frm['def_payee_account_stormpay'];
-        app('data')->settings['md5altphrase_stormpay'] = app('data')->frm['md5altphrase_stormpay'];
-        app('data')->settings['stormpay_posturl'] = app('data')->frm['stormpay_posturl'];
-        app('data')->settings['dec_stormpay_fee'] = sprintf('%d', app('data')->frm['dec_stormpay_fee']);
-
-        app('data')->settings['def_payee_account_paypal'] = app('data')->frm['def_payee_account_paypal'];
-
-        app('data')->settings['def_payee_account_goldmoney'] = app('data')->frm['def_payee_account_goldmoney'];
-        app('data')->settings['md5altphrase_goldmoney'] = app('data')->frm['md5altphrase_goldmoney'];
-
-        app('data')->settings['def_payee_account_eeecurrency'] = app('data')->frm['def_payee_account_eeecurrency'];
-        app('data')->settings['md5altphrase_eeecurrency'] = app('data')->frm['md5altphrase_eeecurrency'];
-        app('data')->settings['eeecurrency_posturl'] = sprintf('%d', app('data')->frm['eeecurrency_posturl']);
-
-        app('data')->settings['gpg_path'] = app('data')->frm['gpg_path'];
-        $atip_pl = $_FILES['atip_pl'];
-        if ((0 < $atip_pl['size'] and $atip_pl['error'] == 0)) {
-            $fp = fopen($atip_pl['tmp_name'], 'r');
-            while (! feof($fp)) {
-                $buf = fgets($fp, 4096);
-                if (preg_match('/my\\s+\\(\\$account\\)\\s+\\=\\s+\'([^\']+)\'/', $buf, $matches)) {
-                    app('data')->frm['def_payee_account_ebullion'] = $matches[1];
-                }
-
-                if (preg_match('/my\\s+\\(\\$passphrase\\)\\s+\\=\\s+\'([^\']+)\'/', $buf, $matches)) {
-                    app('data')->frm['md5altphrase_ebullion'] = $matches[1];
-                    continue;
-                }
-            }
-
-            fclose($fp);
-            unlink($atip_pl['tmp_name']);
-        }
-
-        $status_php = $_FILES['status_php'];
-        if ((0 < $status_php['size'] and $status_php['error'] == 0)) {
-            $fp = fopen($status_php['tmp_name'], 'r');
-            while (! feof($fp)) {
-                $buf = fgets($fp, 4096);
-                if (preg_match('/\\$eb_keyID\\s+\\=\\s+\'([^\']+)\'/', $buf, $matches)) {
-                    app('data')->frm['ebullion_keyID'] = $matches[1];
-                    continue;
-                }
-            }
-
-            fclose($fp);
-            unlink($status_php['tmp_name']);
-        }
-
-        $pubring_gpg = $_FILES['pubring_gpg'];
-        if ((0 < $pubring_gpg['size'] and $pubring_gpg['error'] == 0)) {
-            copy($pubring_gpg['tmp_name'], storage_path('tmpl_c').'/pubring.gpg');
-            unlink($pubring_gpg['tmp_name']);
-        }
-
-        $secring_gpg = $_FILES['secring_gpg'];
-        if ((0 < $secring_gpg['size'] and $secring_gpg['error'] == 0)) {
-            copy($secring_gpg['tmp_name'], storage_path('tmpl_c').'/secring.gpg');
-            unlink($secring_gpg['tmp_name']);
-        }
-
-        app('data')->settings['def_payee_account_ebullion'] = app('data')->frm['def_payee_account_ebullion'];
-        app('data')->settings['def_payee_name_ebullion'] = app('data')->frm['def_payee_name_ebullion'];
-        app('data')->settings['md5altphrase_ebullion'] = encode_pass_for_mysql(app('data')->frm['md5altphrase_ebullion']);
-        app('data')->settings['ebullion_keyID'] = app('data')->frm['ebullion_keyID'];
         app('data')->settings['brute_force_handler'] = (app('data')->frm['brute_force_handler'] ? 1 : 0);
         app('data')->settings['brute_force_max_tries'] = sprintf('%d', abs(app('data')->frm['brute_force_max_tries']));
         app('data')->settings['redirect_to_https'] = (app('data')->frm['redirect_to_https'] ? 1 : 0);
@@ -1217,15 +1120,8 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         $name = quote(app('data')->frm['fullname']);
         $username = quote(app('data')->frm['username']);
         $password = md5(quote(app('data')->frm['password']));
-        $egold = quote(app('data')->frm['egold']);
         $perfectmoney = quote(app('data')->frm['perfectmoney']);
-        $evocash = quote(app('data')->frm['evocash']);
-        $intgold = quote(app('data')->frm['intgold']);
-        $stormpay = quote(app('data')->frm['stormpay']);
-        $ebullion = quote(app('data')->frm['ebullion']);
-        $paypal = quote(app('data')->frm['paypal']);
-        $goldmoney = quote(app('data')->frm['goldmoney']);
-        $eeecurrency = quote(app('data')->frm['eeecurrency']);
+        $payeer = quote(app('data')->frm['payeer']);
         $email = quote(app('data')->frm['email']);
         $status = quote(app('data')->frm['status']);
         $auto_withdraw = sprintf('%d', app('data')->frm['auto_withdraw']);
@@ -1239,15 +1135,8 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
   	name = \''.$name.'\',
   	username = \''.$username.'\',
 	password = \''.$password.'\',
-    egold_account = \''.$egold.'\',
-  	perfectmoney_account = \''.$perfectmoney.'\',
-	evocash_account = \''.$evocash.'\',
-	intgold_account = \''.$intgold.'\',
-	stormpay_account = \''.$stormpay.'\',
-	ebullion_account = \''.$ebullion.'\',
-	paypal_account = \''.$paypal.'\',
-	goldmoney_account = \''.$goldmoney.'\',
-	eeecurrency_account = \''.$eeecurrency.'\',
+    perfectmoney_account = \''.$perfectmoney.'\',
+    payeer_account = \''.$payeer.'\',
   	email = \''.$email.'\',
   	status = \''.$status.'\',
     auto_withdraw = '.$auto_withdraw.',
@@ -1280,14 +1169,8 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         $username = quote(app('data')->frm['username']);
         $password = quote(app('data')->frm['password']);
         $transaction_code = quote(app('data')->frm['transaction_code']);
-        $egold = quote(app('data')->frm['egold']);
-        $evocash = quote(app('data')->frm['evocash']);
-        $intgold = quote(app('data')->frm['intgold']);
-        $stormpay = quote(app('data')->frm['stormpay']);
-        $ebullion = quote(app('data')->frm['ebullion']);
-        $paypal = quote(app('data')->frm['paypal']);
-        $goldmoney = quote(app('data')->frm['goldmoney']);
-        $eeecurrency = quote(app('data')->frm['eeecurrency']);
+        $perfectmoney = quote(app('data')->frm['perfectmoney']);
+        $payeer = quote(app('data')->frm['payeer']);
         $email = quote(app('data')->frm['email']);
         $status = quote(app('data')->frm['status']);
         $auto_withdraw = sprintf('%d', app('data')->frm['auto_withdraw']);
@@ -1301,14 +1184,8 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
   	name = \''.$name.'\',
     '.$edit_location.'
   	username = \''.$username.'\',
-  	egold_account = \''.$egold.'\',
-	evocash_account = \''.$evocash.'\',
-	intgold_account = \''.$intgold.'\',
-	stormpay_account = \''.$stormpay.'\',
-	ebullion_account = \''.$ebullion.'\',
-	paypal_account = \''.$paypal.'\',
-	goldmoney_account = \''.$goldmoney.'\',
-	eeecurrency_account = \''.$eeecurrency.'\',
+    perfectmoney_account = \''.$perfectmoney.'\',
+    payeer_account = \''.$payeer.'\',
   	email = \''.$email.'\',
   	status = \''.$status.'\',
     auto_withdraw = '.$auto_withdraw.',
@@ -1386,7 +1263,6 @@ if (app('data')->frm['action'] == 'add_hyip') {
     $return_profit = sprintf('%d', app('data')->frm['hreturn_profit']);
     $return_profit_percent = sprintf('%d', app('data')->frm['hreturn_profit_percent']);
     $percent = sprintf('%0.2f', app('data')->frm['hpercent']);
-    $pay_to_egold_directly = sprintf('%d', app('data')->frm['earning_to_egold']);
     $use_compound = sprintf('%d', app('data')->frm['use_compound']);
     $work_week = sprintf('%d', app('data')->frm['work_week']);
     $parent = sprintf('%d', app('data')->frm['parent']);
@@ -1428,7 +1304,6 @@ if (app('data')->frm['action'] == 'add_hyip') {
 	status = \''.quote(app('data')->frm['hstatus']).('\',
 	return_profit = \''.$return_profit.'\',
 	return_profit_percent = '.$return_profit_percent.',
-	pay_to_egold_directly = '.$pay_to_egold_directly.',
 	use_compound = '.$use_compound.',
 	work_week = '.$work_week.',
 	parent = '.$parent.',
@@ -1491,7 +1366,6 @@ if (app('data')->frm['action'] == 'edit_hyip') {
     $max_deposit = sprintf('%0.2f', app('data')->frm['hmax_deposit']);
     $return_profit = sprintf('%d', app('data')->frm['hreturn_profit']);
     $return_profit_percent = sprintf('%d', app('data')->frm['hreturn_profit_percent']);
-    $pay_to_egold_directly = sprintf('%d', app('data')->frm['earning_to_egold']);
     $percent = sprintf('%0.2f', app('data')->frm['hpercent']);
     $work_week = sprintf('%d', app('data')->frm['work_week']);
     $use_compound = sprintf('%d', app('data')->frm['use_compound']);
@@ -1535,7 +1409,6 @@ if (app('data')->frm['action'] == 'edit_hyip') {
 	status = \''.quote(app('data')->frm['hstatus']).('\',
 	return_profit = \''.$return_profit.'\',
 	return_profit_percent = '.$return_profit_percent.',
-	pay_to_egold_directly = '.$pay_to_egold_directly.',
 	use_compound = '.$use_compound.',
 	work_week = '.$work_week.',
 	parent = '.$parent.',
@@ -1864,15 +1737,6 @@ switch (app('data')->frm['a']) {
         break;
     case 'news':
         include app_path('Hm').'/inc/admin/news.inc.php';
-        break;
-    case 'wire_settings':
-        include app_path('Hm').'/inc/admin/wire_settings.inc.php';
-        break;
-    case 'wires':
-        include app_path('Hm').'/inc/admin/wires.inc.php';
-        break;
-    case 'wiredetails':
-        include app_path('Hm').'/inc/admin/wiredetails.inc.php';
         break;
     case 'affilates':
         include app_path('Hm').'/inc/admin/affilates.inc.php';

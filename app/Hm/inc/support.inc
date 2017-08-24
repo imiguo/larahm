@@ -28,32 +28,12 @@ use App\Exceptions\RedirectException;
           $message .= 'User Name : '.$userinfo['name'].'';
           $message .= 'E-Mail    : '.$userinfo['email'].'';
           $message .= 'E-Gold Acc : '.$userinfo['egold_account'].'';
-          if (app('data')->settings[def_payee_account_intgold]) {
-              $message .= 'IntGold Acc : '.$userinfo['intgold_account'].'';
+          if (app('data')->settings[def_payee_account_perfectmoney]) {
+              $message .= 'PerfectMoney Acc : '.$userinfo['perfectmoney_account'].'';
           }
 
-          if (app('data')->settings[def_payee_account_stormpay]) {
-              $message .= 'StormPay Acc : '.$userinfo['stormpay_account'].'';
-          }
-
-          if (app('data')->settings[def_payee_account_ebullion]) {
-              $message .= 'e-Bullion Acc : '.$userinfo['ebullion_account'].'';
-          }
-
-          if (app('data')->settings[def_payee_account_paypal]) {
-              $message .= 'PayPal Acc : '.$userinfo['paypal_account'].'';
-          }
-
-          if (app('data')->settings[def_payee_account_goldmoney]) {
-              $message .= 'GoldMoney Acc : '.$userinfo['goldmoney_account'].'';
-          }
-
-          if (app('data')->settings[def_payee_account_eeecurrency]) {
-              $message .= 'eeeCurrency Acc : '.$userinfo['eeecurrency_account'].'';
-          }
-
-          if (app('data')->settings[def_payee_account_pecunix]) {
-              $message .= 'Pecunix Acc : '.$userinfo['pecunix_account'].'';
+          if (app('data')->settings[def_payee_account_payeer]) {
+              $message .= 'Payeer Acc : '.$userinfo['payeer_account'].'';
           }
 
           $message .= 'Status    : '.$userinfo['status'].'';

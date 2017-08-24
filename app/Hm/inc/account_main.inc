@@ -112,10 +112,4 @@ $id = $userinfo['id'];
       view_assign('last_withdrawal_date', $row['dd']);
   }
 
-  $q = 'select count(*) as col from wires where user_id = '.$id.' and status != \'processed\'';
-  $sth = db_query($q);
-  if ($row = mysql_fetch_array($sth)) {
-      view_assign('wires', $row['col']);
-  }
-
   view_execute('account_main.blade.php');

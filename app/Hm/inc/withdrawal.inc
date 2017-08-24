@@ -115,40 +115,16 @@ if (app('data')->frm['action'] == 'preview') {
 
     $to_withdraw = number_format(floor($to_withdraw * 100) / 100, 2);
     $account = '';
-    if (($ec == 0 and app('data')->settings['def_payee_account'])) {
-        $account = $userinfo['egold_account'];
+
+    if (($ec == 1 and app('data')->settings['def_payee_account_perfectmoney'])) {
+        $account = $userinfo['perfectmoney_account'];
     }
 
-    if (($ec == 1 and app('data')->settings['def_payee_account_evocash'])) {
-        $account = $userinfo['evocash_account'];
+    if (($ec == 2 and app('data')->settings['def_payee_account_payeer'])) {
+        $account = $userinfo['payeer_account'];
     }
-
-    if (($ec == 2 and app('data')->settings['def_payee_account_intgold'])) {
-        $account = $userinfo['intgold_account'];
-    }
-
-    if (($ec == 4 and app('data')->settings['def_payee_account_stormpay'])) {
-        $account = $userinfo['stormpay_account'];
-    }
-
-    if (($ec == 5 and app('data')->settings['def_payee_account_ebullion'])) {
-        $account = $userinfo['ebullion_account'];
-    }
-
-    if (($ec == 6 and app('data')->settings['def_payee_account_paypal'])) {
-        $account = $userinfo['paypal_account'];
-    }
-
-    if (($ec == 7 and app('data')->settings['def_payee_account_goldmoney'])) {
-        $account = $userinfo['goldmoney_account'];
-    }
-
-    if (($ec == 8 and app('data')->settings['def_payee_account_eeecurrency'])) {
-        $account = $userinfo['eeecurrency_account'];
-    }
-
-    if (($ec == 9 and app('data')->settings['def_payee_account_pecunix'])) {
-        $account = $userinfo['pecunix_account'];
+    if (($ec == 3 and app('data')->settings['def_payee_account_bitcoin'])) {
+        $account = $userinfo['bitcoin_account'];
     }
 
     view_assign('preview', 1);
@@ -304,7 +280,11 @@ if (app('data')->frm['action'] == 'preview') {
                             }
                             $q = 'delete from history where id = '.$last_id;
                             db_query($q);
-                            $d_account = [$userinfo['egold_account'], $userinfo['evocash_account'], $userinfo['intgold_account'], '', $userinfo['stormpay_account'], $userinfo['ebullion_account'], $userinfo['paypal_account'], $userinfo['goldmoney_account'], $userinfo['eeecurrency_account'], $userinfo['pecunix_account']];
+                            $d_account = [
+                                $userinfo['perfectmoney_account'],
+                                $userinfo['payeer_account'],
+                                $userinfo['bitcoin_account'],
+                            ];
                             $q = 'insert into history set
                                     user_id = '.$userinfo['id'].(',
                                     amount = -'.$amount.',

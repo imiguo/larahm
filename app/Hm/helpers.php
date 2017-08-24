@@ -1041,8 +1041,6 @@ function get_settings()
     }
 
     $s['time_dif'] = sprintf('%d', $s['time_dif']);
-    $s['def_payee_account_wiretransfer'] = (empty($s['enable_wire']) ? 1 : 0);
-    $s['def_payee_account_egold'] = $s['def_payee_account'];
 
     return $s;
 }
