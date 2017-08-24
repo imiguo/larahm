@@ -219,14 +219,14 @@ if (! function_exists('generate_id')) {
 }
 
 if (! function_exists('add_deposit_order')) {
-    function add_deposit_order($amount, $data) {
+    function add_deposit_order($amount, $ps, $data) {
         $orderNo = generate_id();
         Order::create([
             'order_no' => $orderNo,
             'amount' => $amount * 100,
             'user_id' => auth()->id(),
             'data' => $data,
-            'ps' => Order::PS_PERFECTMONEY,
+            'ps' => $ps,
             'type' => Order::TYPE_DEPOSIT,
             'status' => Order::STATUS_START,
         ]);

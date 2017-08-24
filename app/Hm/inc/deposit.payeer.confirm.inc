@@ -13,7 +13,7 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
 $h_id = sprintf('%d', app('data')->frm['h_id']);
 if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     if (0.01 <= $amount) {
-        $orderNo = add_deposit_order($amount, [
+        $orderNo = add_deposit_order($amount, 2, [
             'plan_id' => $h_id,
             'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
         ]);
@@ -102,7 +102,7 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         $site_name = app('data')->settings['site_name'];
         $m_desc = "Deposit to {$site_name} User {$userinfo['username']}";
         $m_desc = base64_encode($m_desc);
-        $orderNo = add_deposit_order($amount, [
+        $orderNo = add_deposit_order($amount, 2, [
             'plan_id' => $h_id,
             'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
         ]);
