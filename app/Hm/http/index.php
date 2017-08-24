@@ -205,12 +205,12 @@ if ((app('data')->frm['a'] == 'signup' and $userinfo['logged'] != 1)) {
         include app_path('Hm').'/inc/last10.inc';
     } elseif (((app('data')->frm['a'] == 'refs10' and app('data')->settings['show_stats_box']) and app('data')->settings['show_refs10_stats'])) {
         include app_path('Hm').'/inc/refs10.inc';
-    } elseif ($_GET['a'] == 'return_egold') {
-        include app_path('Hm').'/inc/deposit.egold.status.inc';
+    } elseif ($_GET['a'] == 'return_bitcoin') {
+        include app_path('Hm').'/inc/deposit.status.inc';
     } elseif ($_GET['a'] == 'return_perfectmoney') {
-        include app_path('Hm').'/inc/deposit.perfectmoney.status.inc';
+        include app_path('Hm').'/inc/deposit.status.inc';
     } elseif ($_GET['a'] == 'return_payeer') {
-        include app_path('Hm').'/inc/deposit.payeer.status.inc';
+        include app_path('Hm').'/inc/deposit.status.inc';
     } elseif (((app('data')->frm['a'] == 'referallinks' and app('data')->settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
         include app_path('Hm').'/inc/referal.links.inc';
     } elseif (((app('data')->frm['a'] == 'referals' and app('data')->settings['use_referal_program'] == 1) and $userinfo['logged'] == 1)) {
