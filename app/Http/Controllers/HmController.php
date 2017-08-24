@@ -38,6 +38,7 @@ class HmController extends Controller
         $payments = [
             'payeer',
             'perfectmoney',
+            'asmoney',
         ];
         if (in_array($payment, $payments)) {
             $app_file = app_path('Hm').'/http/payments/'.$payment.'.php';
