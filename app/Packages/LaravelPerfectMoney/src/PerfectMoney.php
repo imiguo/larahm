@@ -40,16 +40,18 @@ class PerfectMoney {
      */
     protected $params;
 
-    public function __construct()
+    public function __construct($config = [])
     {
-        $this->account_id = config('perfectmoney.account_id');
-        $this->passphrase = config('perfectmoney.passphrase');
-        $this->alt_passphrase = config('perfectmoney.alternate_passphrase');
-        $this->marchant_id = config('perfectmoney.marchant_id');
+        $config = array_merge(config('payeer'), $config);
+
+        $this->account_id = $config['account_id'];
+        $this->passphrase = $config['passphrase'];
+        $this->alt_passphrase = $config['alternate_passphrase'];
+        $this->marchant_id = $config['marchant_id'];
 
         $this->client = new Client([
             'base_uri' => 'https://perfectmoney.is',
-            'timeout'  => config('perfectmoney.timeout'),
+            'timeout'  => $config['timeout'],
         ]);
 
         $this->params = [
@@ -215,54 +217,5 @@ class PerfectMoney {
         }
 
         throw new PerfectMoneyException($content);
-    }
-
-    public function validatePayment(Request $request)
-    {
-        $string = '';
-        $string .= $request->input('PAYMENT_ID') . ':';
-        $string .= $request->input('PAYEE_ACCOUNT') . ':';
-        $string .= $request->input('PAYMENT_AMOUNT') . ':';
-        $string .= $request->input('PAYMENT_UNITS') . ':';
-        $string .= $request->input('PAYMENT_BATCH_NUM') . ':';
-        $string .= $request->input('PAYER_ACCOUNT') . ':';
-        $string .= strtoupper(md5($this->alt_passphrase)) . ':';
-        $string .= $request->input('TIMESTAMPGMT');
-
-        return strtoupper(md5($string)) == $request->input('V2_HASH');
-    }
-
-    /**
-     * Render form
-     *
-     * @param array  $data
-     * @param string $view
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function render($payment_amount, $payment_id = '', $view = 'perfectmoney')
-    {
-        $viewData = [
-            'payee_account' => config('perfectmoney.marchant_id'),
-            'payee_name' => config('perfectmoney.marchant_name'),
-            'payment_units' => config('perfectmoney.units'),
-            'payment_url' => config('perfectmoney.payment_url'),
-            'nopayment_url' => config('perfectmoney.nopayment_url'),
-            'status_url' => config('perfectmoney.status_url'),
-            'payment_url_method' => config('perfectmoney.payment_url_method'),
-            'nopayment_url_method' => config('perfectmoney.nopayment_url_method'),
-            'memo' => config('perfectmoney.suggested_memo'),
-        ];
-        $viewData = array_merge($viewData, $data);
-        $viewData['payment_amount'] = $payment_amount;
-        $viewData['payment_id'] = $payment_id;
-
-        // Custom view
-        if(view()->exists('perfectmoney::' . $view)) {
-            return view('perfectmoney::' . $view, $viewData);
-        }
-
-        // Default view
-        return view('perfectmoney::perfectmoney-form', $viewData);
     }
 }

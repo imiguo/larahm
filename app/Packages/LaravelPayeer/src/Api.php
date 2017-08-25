@@ -27,32 +27,18 @@ class Api {
             'verify' => false,
         ]);
 
-        $arr = [
-            'account' => $account,
-            'apiId' => $apiId,
-            'apiPass' => $apiPass,
-        ];
+        $auth = compact('account', 'apiId', 'apiPass');
 
-        $response = $this->getResponse($arr);
-
+        $response = $this->getResponse($auth);
         if ($response['auth_error'] == '0') {
-            $this->auth = $arr;
+            $this->auth = $auth;
         }
-    }
-
-    public function isAuth()
-    {
-        if (!empty($this->auth)) {
-            return true;
-        }
-        return false;
     }
 
     private function getResponse($data)
     {
-        if ($this->isAuth()) {
-            $data = array_merge($data, $this->auth);
-        }
+        $data = array_merge($data, $this->auth);
+
         $data['language'] = $this->language;
 
         $content = $this->client->request('POST', $this->url, [

@@ -13,12 +13,15 @@ class Asmoney {
 
     const PS = 1136053;
 
-    public function __construct()
+    public function __construct($config = [])
     {
-        $username = config('asmoney.username');
-        $apiName = config('asmoney.api_name');
-        $apiPassword = config('asmoney.api_password');
-        $this->api = new API($username, $apiName, $apiPassword);
+        $this->config = array_merge(config('payeer'), $config);
+
+        $this->api = new API(
+            $this->config['username'],
+            $this->config['api_name'],
+            $this->config['api_password']
+        );
     }
 
     public function balance()
@@ -68,53 +71,5 @@ class Asmoney {
             return $batchno;
         }
         throw new AsmoneyException($r['result']);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return bool
-     */
-    public static function validatePayment()
-    {
-        $request = app('request');
-        $params = [
-            $request->input('PAYEE_ACCOUNT'),
-            $request->input('PAYER_ACCOUNT'),
-            $request->input('PAYMENT_AMOUNT'),
-            $request->input('PAYMENT_UNITS'),
-            $request->input('BATCH_NUM'),
-            $request->input('PAYMENT_ID'),
-            $request->input('PAYMENT_STATUS'),
-            md5(config('asmoney.store_password')),
-        ];
-        return $request->input('MD5_HASH') == implode('|', $params);
-    }
-
-    /**
-     * Render form
-     *
-     * @param array  $data
-     * @param string $view
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public static function render($amount, $payment_id = '', $memo = '', $view = 'asmoney')
-    {
-        $viewData = [
-            'amount' => number_format($amount, 2),
-            'payment_id' => $payment_id,
-            'user_name' => config('asmoney.user_name'),
-            'store_name' => config('asmoney.store_name'),
-            'payment_units' => config('asmoney.payment_units'),
-            'payment_method' => config('asmoney.payment_method'),
-            'memo' => $memo ?: config('asmoney.payment_memo'),
-        ];
-
-        if(view()->exists('asmoney::' . $view)) {
-            return view('asmoney::' . $view, $viewData);
-        }
-
-        return view('asmoney::asmoney-form', $viewData);
     }
 }
