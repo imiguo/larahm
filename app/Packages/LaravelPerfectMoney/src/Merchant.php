@@ -13,7 +13,7 @@ class Merchant {
 
     public function __construct($config = [])
     {
-        $this->config = array_merge(config('payeer'), $config);
+        $this->config = array_merge(config('perfectmoney'), $config);
     }
 
     public function validatePayment(Request $request)
@@ -25,7 +25,7 @@ class Merchant {
         $string .= $request->input('PAYMENT_UNITS') . ':';
         $string .= $request->input('PAYMENT_BATCH_NUM') . ':';
         $string .= $request->input('PAYER_ACCOUNT') . ':';
-        $string .= strtoupper(md5($this->config['alt_passphrase'])) . ':';
+        $string .= md5($this->config['alt_passphrase']) . ':';
         $string .= $request->input('TIMESTAMPGMT');
 
         return strtoupper(md5($string)) == $request->input('V2_HASH');

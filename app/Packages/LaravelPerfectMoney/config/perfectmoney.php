@@ -10,7 +10,7 @@ return [
     | The Account ID to use for authentication
     |
     */
-    'account_id' => env('PM_ACCOUNTID', ''),
+    'account_id' => env('PM_ACCOUNT_ID', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ return [
     | Example: "U123456"
     |
     */
-    'marchant_id' => env('PM_MARCHANTID', ''),
+    'marchant_id' => env('PM_MARCHANT_ID', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -68,7 +68,7 @@ return [
     | The Account Alternate Passphrase entered in your Perfect Money account
     |
     */
-    'alternate_passphrase' => env('PM_ALT_PASSPHRASE', ''),
+    'alternate_passphrase' => env('PM_ALTERNATE_PASSPHRASE', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -147,7 +147,7 @@ return [
     | If description not required, left it null.
     |
     */
-    'payment_memo' => env('PM_MEMO', null),
+    'payment_memo' => env('PM_PAYMENT_MEMO', null),
 
     /*
     |--------------------------------------------------------------------------

@@ -15,7 +15,7 @@ class Asmoney {
 
     public function __construct($config = [])
     {
-        $this->config = array_merge(config('payeer'), $config);
+        $this->config = array_merge(config('asmoney'), $config);
 
         $this->api = new API(
             $this->config['username'],

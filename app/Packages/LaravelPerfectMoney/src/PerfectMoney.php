@@ -42,7 +42,7 @@ class PerfectMoney {
 
     public function __construct($config = [])
     {
-        $config = array_merge(config('payeer'), $config);
+        $config = array_merge(config('perfectmoney'), $config);
 
         $this->account_id = $config['account_id'];
         $this->passphrase = $config['passphrase'];
