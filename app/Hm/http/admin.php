@@ -755,17 +755,6 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         app('data')->settings['site_start_year'] = app('data')->frm['site_start_year'];
         app('data')->settings['deny_registration'] = (app('data')->frm['deny_registration'] ? 1 : 0);
 
-        app('data')->settings['def_payee_account_perfectmoney'] = app('data')->frm['def_payee_account_perfectmoney'];
-        app('data')->settings['def_payee_name_perfectmoney'] = app('data')->frm['def_payee_name_perfectmoney'];
-        app('data')->settings['md5altphrase_perfectmoney'] = app('data')->frm['md5altphrase_perfectmoney'];
-
-        app('data')->settings['def_payee_account_payeer'] = app('data')->frm['def_payee_account_payeer'];
-        app('data')->settings['def_payee_key_payeer'] = app('data')->frm['def_payee_key_payeer'];
-        app('data')->settings['def_payee_additionalkey_payeer'] = app('data')->frm['def_payee_additionalkey_payeer'];
-
-        app('data')->settings['def_payee_account_bitcoin'] = app('data')->frm['def_payee_account_bitcoin'];
-        app('data')->settings['def_payee_qrcode_bitcoin'] = app('data')->frm['def_payee_qrcode_bitcoin'];
-
         app('data')->settings['use_opt_in'] = sprintf('%d', app('data')->frm['use_opt_in']);
         app('data')->settings['opt_in_email'] = app('data')->frm['opt_in_email'];
         app('data')->settings['system_email'] = app('data')->frm['system_email'];
