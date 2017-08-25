@@ -16,8 +16,7 @@ file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', json_encode
 file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
 
 // Rejecting queries from IP addresses not belonging to Payeer
-if (! in_array($_SERVER['REMOTE_ADDR'], ['185.71.65.92', '185.71.65.189',
-    '149.202.17.210', ])) {
+if (! in_array($_SERVER['REMOTE_ADDR'], ['185.71.65.92', '185.71.65.189', '149.202.17.210', ])) {
     throw new EmptyException();
 }
 if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {

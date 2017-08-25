@@ -189,7 +189,6 @@ if (app('data')->frm['say'] == 'confirm') {
                        question = \''.$question.'\',
                        answer = \''.$answer.'\',
                        activation_code = \'\',
-                       ac = \'\',
                        user_auto_pay_earning = 0,
                        admin_auto_pay_earning = 0,
                        address = \''.$address.'\',
