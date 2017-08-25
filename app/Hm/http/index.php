@@ -74,7 +74,7 @@ if (app('data')->frm['a'] == 'do_login') {
         $html = "<head><title>HYIP Manager</title><meta http-equiv=\"Refresh\" content=\"1; URL={$admin_url}\"></head>";
         $html .= "<body><center><a href=\"{$admin_url}\">Go to admin area</a></center></body>";
         echo $html;
-        throw new EmptyException($html);
+        throw new EmptyException();
     }
     throw new RedirectException('/?a=account');
 }
