@@ -766,12 +766,6 @@ if ((app('data')->frm['a'] == 'settings' and app('data')->frm['action'] == 'sett
         app('data')->settings['def_payee_account_bitcoin'] = app('data')->frm['def_payee_account_bitcoin'];
         app('data')->settings['def_payee_qrcode_bitcoin'] = app('data')->frm['def_payee_qrcode_bitcoin'];
 
-        app('data')->settings['def_payee_account'] = app('data')->frm['def_payee_account'];
-        app('data')->settings['def_payee_name'] = app('data')->frm['def_payee_name'];
-        app('data')->settings['md5altphrase'] = app('data')->frm['md5altphrase'];
-
-
-
         app('data')->settings['use_opt_in'] = sprintf('%d', app('data')->frm['use_opt_in']);
         app('data')->settings['opt_in_email'] = app('data')->frm['opt_in_email'];
         app('data')->settings['system_email'] = app('data')->frm['system_email'];

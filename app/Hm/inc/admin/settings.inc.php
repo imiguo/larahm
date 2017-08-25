@@ -20,24 +20,6 @@ while ($row = mysql_fetch_array($sth)) {
     }
 }
 
-$gpg_version = 0;
-$gpg_command = escapeshellcmd(app('data')->settings['gpg_path']).' --version';
-$fp = popen(''.$gpg_command, 'r');
-if ($fp) {
-    while (! feof($fp)) {
-        $buf = fgets($fp, 4096);
-        $pos = strstr($buf, 'gpg (GnuPG)');
-        if (0 < strlen($pos)) {
-            $gpg_version = preg_replace('/[\\n\\r]/', '', substr($pos, 11));
-            continue;
-        }
-    }
-
-    pclose($fp);
-}
-
-app('data')->settings['md5altphrase_ebullion'] = decode_pass_for_mysql(app('data')->settings['md5altphrase_ebullion']);
-
 app('data')->settings['use_alternative_passphrase'] = ($userinfo['transaction_code'] != '' ? 1 : 0);
 if (isset(app('data')->frm['say']) && app('data')->frm['say'] == 'invalid_passphrase') {
     echo '<b style="color:red">Invalid Alternative Passphrase. No data has been updated.</b><br><br>';
@@ -47,8 +29,7 @@ if (isset(app('data')->frm['say']) && app('data')->frm['say'] == 'done') {
     echo '<b style="color:green">Changes has been successfully saved.</b><br><br>';
 }
 
-echo '<s';
-echo 'cript language=javascript>
+echo '<script language=javascript>
 function check_form()
 {
   var d = document.mainform;';
@@ -72,14 +53,14 @@ echo '
 </script>
 
 <form method=post name="mainform" enctype="multipart/form-data" onsubmit="return check_form()">
-<input type=hidden name=a value';
-echo '=settings>
+<input type=hidden name=a value=settings>
 <input type=hidden name=action value=settings>
 
 <table cellspacing=0 cellpadding=2 border=0>
 <tr>
  <td colspan=2><b>Main settings:</b><br><br></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Site name:</td>
  <td><input type=text name=site_name value=\'';
 echo quote(app('data')->settings['site_name']);
@@ -125,7 +106,8 @@ for ($i = date('Y') - 6; $i <= date('Y'); ++$i) {
 
 echo '</select>
  </td>
-</tr><tr>
+</tr>
+<tr>
 <td colspan=2><input type=checkbox name=reverse_columns value=1 ';
 echo app('data')->settings['reverse_columns'] == 1 ? 'checked' : '';
 echo '> Reverse left and right columns</td>
@@ -133,39 +115,46 @@ echo '> Reverse left and right columns</td>
 
 <tr>
  <td colspan=2>&nbsp;<br><b>Perfect Money account settings:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your Perfect Money USD account number:</td>
  <td><input type=text name=\'def_payee_account_perfectmoney\' value=\'';
 echo quote(app('data')->settings['def_payee_account_perfectmoney']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your Perfect Money account name:</td>
  <td><input type=text name=\'def_payee_name_perfectmoney\' value=\'';
 echo quote(app('data')->settings['def_payee_name_perfectmoney']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Secret alternate password md5 hash:</td>
  <td><input type=text name=\'md5altphrase_perfectmoney\' value=\'';
 echo quote(app('data')->settings['md5altphrase_perfectmoney']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Alternate Password:</td>
  <td><input type=text name=\'perfectmoneyap\' class=inpts size=30> <input type=button class=sbmt onclick="document.mainform.md5altphrase_perfectmoney.value = calcMD5(document.mainform.perfectmoneyap.value)" value="Calculate MD5 hash"></td>
 </tr>
 
 <tr>
  <td colspan=2>&nbsp;<br><b>Payeer account settings:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your Payeer Merchant’s ID:</td>
  <td><input type=text name=\'def_payee_account_payeer\' value=\'';
 echo quote(app('data')->settings['def_payee_account_payeer']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your Payeer Secret key:</td>
  <td><input type=text name=\'def_payee_key_payeer\' value=\'';
 echo quote(app('data')->settings['def_payee_key_payeer']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your Payeer Additional Key:</td>
  <td><input type=text name=\'def_payee_additionalkey_payeer\' value=\'';
 echo quote(app('data')->settings['def_payee_additionalkey_payeer']);
@@ -174,292 +163,56 @@ echo '\' class=inpts size=30></td>
 
 <tr>
  <td colspan=2>&nbsp;<br><b>BitCoin account settings:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your BitCoin Receive Address:</td>
  <td><input type=text name=\'def_payee_account_bitcoin\' value=\'';
 echo quote(app('data')->settings['def_payee_account_bitcoin']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Your BitCoin QR Code Url:</td>
  <td><input type=text name=\'def_payee_qrcode_bitcoin\' value=\'';
 echo quote(app('data')->settings['def_payee_qrcode_bitcoin']);
 echo '\' class=inpts size=30></td>
 </tr>
-
-<!--
-<tr>
- <td colspan=2>&nbsp;<br><b>E-gold account settings:</b></td>
-</tr><tr>
- <td>Your e-gold account number:</td>
- <td><input type=text name=\'def_payee_account\' value=\'';
-echo quote(app('data')->settings['def_payee_account']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Your e-gold account name:</td>
- <td><input type=text name=\'def_payee_name\' value=\'';
-echo quote(app('data')->settings['def_payee_name']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Secret alternate password md5 hash:</td>
- <td><input type=text name=\'md5altphrase\' value=\'';
-echo quote(app('data')->settings['md5altphrase']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Alternate Password:</td>
- <td><input type=text name=\'egoldap\' class=inpts size=30> <input type=button class=sbmt onclick="document.mainform.md5altphrase.value = calcMD5(document.mainform.egoldap.value)" value="Calculate MD5 hash"></td>
-</tr>
-
-<tr>
- <td colspan=2>&nbsp;<br><b>
-        INTGold settings</b></td>
-</tr>';
-if (file_exists('intgold_processing.php')) {
-    echo '<tr>
-      <td colspan=2>
-        ';
-    echo start_info_table('100%');
-    echo '        <b>You have not renamed "intgold_processing.php" file. It is insecure!</b>
-        ';
-    echo end_info_table();
-    echo '      </td>
-    </tr>';
-}
-
-echo '<tr>
- <td>Your INTGold account number:</td>
- <td><input type=text name=\'def_payee_account_intgold\' value=\'';
-echo quote(app('data')->settings['def_payee_account_intgold']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Password for MD5 verification:</td>
- <td><input type=text name=\'md5altphrase_intgold\' value=\'';
-echo quote(app('data')->settings['md5altphrase_intgold']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
-      <td>INTGold PostUrl number:</td>
- <td><input type=text name=\'intgold_posturl\' value=\'';
-echo quote(app('data')->settings['intgold_posturl']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
-<td colspan=2>&nbsp;<br><b>eeeCurrency settings</b></td>
-</tr>';
-if (file_exists('eeecurrency_processing.php')) {
-    echo '<tr>
-      <td colspan=2>
-        ';
-    echo start_info_table('100%');
-    echo '        <b>You have not renamed "eeecurrency_processing.php" file. It is insecure!</b>
-        ';
-    echo end_info_table();
-    echo '      </td>
-    </tr>';
-}
-
-echo '<tr>
- <td>Your eeeCurrency account number:</td>
- <td><input type=text name=\'def_payee_account_eeecurrency\' value=\'';
-echo quote(app('data')->settings['def_payee_account_eeecurrency']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Password for MD5 verification:</td>
- <td><input type=text name=\'md5altphrase_eeecurrency\' value=\'';
-echo quote(app('data')->settings['md5altphrase_eeecurrency']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>eeeCurrency PostUrl number:</td>
- <td><input type=text name=\'eeecurrency_posturl\' value=\'';
-echo quote(app('data')->settings['eeecurrency_posturl']);
-echo '\' class=inpts size=30></td>
-</tr>
-<tr>
-<td colspan=2>&nbsp;<br><b>Pecunix settings</b></td>
-</tr>
-<tr>
- <td>Your Pecunix account:</td>
- <td><input type=text name=\'def_payee_account_pecunix\' value=\'';
-echo quote(app('data')->settings['def_payee_account_pecunix']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Sdared Secret:</td>
- <td><input type=text name=\'md5altphrase_pecunix\' value=\'';
-echo quote(app('data')->settings['md5altphrase_pecunix']);
-echo '\' class=inpts size=30></td>
-</tr>
-<tr>
- <td colspan=2>&nbsp;<br><b>Stormpay settings</td>
-</tr>';
-if (file_exists('stormpay_processing.php')) {
-    echo '<tr>
-      <td colspan=2>
-        ';
-    echo start_info_table('100%');
-    echo '        <b>You have not renamed "stormpay_processing.php" file. It is insecure!</b>
-        ';
-    echo end_info_table();
-    echo '      </td>
-    </tr>';
-}
-
-echo '<tr>
- <td>Your stormpay account name:</td>
- <td><input type=text name=\'def_payee_account_stormpay\' value=\'';
-echo quote(app('data')->settings['def_payee_account_stormpay']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Secret Code:</td>
- <td><input type=text name=\'md5altphrase_stormpay\' value=\'';
-echo quote(app('data')->settings['md5altphrase_stormpay']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
-      <td>IPN url:</td>
- <td><input type=text name=\'stormpay_posturl\' value=\'';
-echo quote(app('data')->settings['stormpay_posturl']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td colspan=2><input type=checkbox name=dec_stormpay_fee value=1 ';
-echo app('data')->settings['dec_stormpay_fee'] == 1 ? 'checked' : '';
-echo '> Decrease stormpay fee (6.9% plus 0.69)</td>
-</tr><tr>
- <td colspan=2>&nbsp;<br><b>e-Bullion settings</td>
-</tr><tr>
- <td>GPG Path:</td>
- <td><input type=text name=\'gpg_path\' value=\'';
-echo quote(app('data')->settings['gpg_path']);
-echo '\' class=inpts size=30> ';
-echo $gpg_version != '' ? 'Version: '.$gpg_version : '';
-echo '</td>
-</tr><tr>';
-if ($gpg_version != '') {
-    echo ' <td>Your e-Bullion account ID:</td>
- <td><input type=text name=\'def_payee_account_ebullion\' value=\'';
-    echo quote(app('data')->settings['def_payee_account_ebullion']);
-    echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Your e-Bullion account Name:</td>
- <td><input type=text name=\'def_payee_name_ebullion\' value=\'';
-    echo quote(app('data')->settings['def_payee_name_ebullion']);
-    echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>GPG Passphrase:</td>
- <td><input type=text name=\'md5altphrase_ebullion\' value=\'';
-    echo quote(app('data')->settings['md5altphrase_ebullion']);
-    echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>GPG key ID:</td>
- <td><input type=text name=\'ebullion_keyID\' value=\'';
-    echo quote(app('data')->settings['ebullion_keyID']);
-    echo '\' class=inpts size=30></td>
-</tr><tr>
- <td colspan=2>';
-    echo start_info_table('100%');
-    echo '        Your e-Bullion account number:<br>
-        Account to receive deposits. Clear this field to disable e-Bullion deposits.<br>
-<br>
-        All required data for e-Bullion usage is included in the customized for your account downlodable ATIP SDK.<br>
-        To download it please login to your e-Bullion account then click on \'Account Settings\' in the left menu and then on \'ATIP Settings\' in t';
-    echo 'he newly opened window. In the bottom of the last page you will see the link \'ATIP SDK Download: (Customized for BXXXXXX)\'. Click it to download SDK archive.<br>
-        Unpack the archive onto your local computer and choose the next files in the fields below:<br>
-        <table cellspacing=0 cellpadding=2 border=0>
-         <tr><td>atip.pl :</td><td><input type=file name=atip_pl class=inpts></td><td>';
-    echo (app('data')->settings['def_payee_account_ebullion'] and app('data')->settings['md5altphrase_ebullion']) ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
-    echo '</td></tr>
-         <tr><td>status.php :</td><td><input type=file name=status_php class=inpts></td><td>';
-    echo app('data')->settings['ebullion_keyID'] ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
-    echo '</td></tr>
-         <tr><td>pubring.gpg :</td><td><input type=file name=pubring_gpg class=inpts></td><td>';
-    echo is_file(storage_path('tmpl_c').'/pubring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
-    echo '</tr>
-         <tr><td>secring.gpg :</td><td><input type=file name=secring_gpg class=inpts></td><td>';
-    echo is_file(storage_path('tmpl_c').'/secring.gpg') ? '<b style="color: green">OK</b>' : '<b style="color: red">NO</b>';
-    echo '</tr>
-        </table>
-        then save settings. The system will parse the selected files and will get the required information which you will see in the fields above. You will have to enter your e-Bullion account name then.<br><br>
-<br><br>
-<input value="Test e-bullion" type="button" onclick="window.open(\'?a=test_ebullion_settings\', \'_testebullion\', \'width=400, height=200, status=0\');" class=sbmt>';
-    echo '<br>
-e-bullion processing works if your can see your balance after pressing the "Test" button.
-<br><br>
-
-        <b>login as user and try to deposit.</b><br>';
-    echo end_info_table();
-    echo ' </td>
-</tr><tr>';
-} else {
-    echo ' <td colspan=2>';
-    echo start_info_table('100%');
-    echo 'To use e-Bullion payment system in automatical mode you must have the GPG (GnuPG) installed on your server and know the full path to it.<br>
-If you do not know whether you have the GPG installed on your server please contact your hosting provider.<br>
-After you obtain the path to the GPG program place it in the field above and save settings. You will see more fields for e-Bullion data.';
-    echo end_info_table();
-    echo ' </td>
-</tr><tr>';
-}
-
-if (function_exists('curl_init')) {
-    echo ' <td colspan=2>&nbsp;<br><b>PayPal account settings:</b></td>
-</tr><tr>
- <td>Your PayPal account e-mail:</td>
- <td><input type=text name=\'def_payee_account_paypal\' value=\'';
-    echo quote(app('data')->settings['def_payee_account_paypal']);
-    echo '\' class=inpts size=30></td>
-</tr><tr>
-      <td colspan=2>
-        ';
-    echo start_info_table('100%');
-    echo '        Specify your PayPal account settings for income transfers here. Clear
-        this field to disable PayPal deposits.<br>
-        <br>
-        <b>login as a user and try to deposit to test settings.</b><br>
-        ';
-    echo end_info_table();
-    echo '</td>
-
-        </tr><tr>';
-}
-
-echo ' <td colspan=2>&nbsp;<br><b>GoldMoney account settings:</b></td>
-</tr><tr>
- <td>Your GoldMoney Holding Number:</td>
- <td><input type=text name=\'def_payee_account_goldmoney\' value=\'';
-echo quote(app('data')->settings['def_payee_account_goldmoney']);
-echo '\' class=inpts size=30></td>
-</tr><tr>
- <td>Your GoldMoney Secret Key:</td>
- <td><input type=text name=\'md5altphrase_goldmoney\' value=\'';
-echo quote(app('data')->settings['md5altphrase_goldmoney']);
-echo '\' class=inpts size=30></td>
-</tr>
--->
 <tr>
  <td colspan=2>&nbsp;<br>
         <b>Administrator login settings:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Login:</td>
  <td><input type=text name=admin_login value=\'';
 echo quote($userinfo['username']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Password:</td>
  <td><input type=password name=admin_password value=\'\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Retype password:</td>
  <td><input type=password name=admin_password2 value=\'\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Administrator e-mail:</td>
  <td><input type=text name=admin_email value=\'';
 echo quote($userinfo['email']);
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Password for Win program:</td>
  <td><input type=text name=admin_stat_password value=\'';
 echo $admin_stat_password;
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Retype password for Win program:</td>
  <td><input type=text name=admin_stat_password2 value=\'';
 echo $admin_stat_password;
 echo '\' class=inpts size=30></td>
-</tr><tr>
+</tr>
+<tr>
       <td colspan=2>
         ';
 echo start_info_table('100%');
@@ -471,7 +224,8 @@ echo '        Administrator login settings: type a new login and a password here
         ';
 echo end_info_table();
 echo '</td>
-    </tr><tr>
+    </tr>
+    <tr>
  <td colspan=2>&nbsp;<br><b>Other settings:</b></td>
 </tr>
 <tr>
@@ -521,7 +275,8 @@ echo '\' class=inpts size=6>
  <td><input type=text name=system_email value=\'';
 echo quote(app('data')->settings['system_email']);
 echo '\' class=inpts size=30>
-</tr><tr>
+</tr>
+<tr>
  <td>Enable Calculator:</td>
  <td>';
 echo '<s';
@@ -530,7 +285,8 @@ echo app('data')->settings['enable_calculator'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['enable_calculator'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Use double entry accounting:</td>
  <td>';
 echo '<s';
@@ -539,7 +295,8 @@ echo app('data')->settings['use_history_balance_mode'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['use_history_balance_mode'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Redirect to HTTPS:</td>
  <td>
   <table cellspacing=0 cellpadding=0 border=0><tr>
@@ -554,17 +311,20 @@ echo '>No</select></td>
 echo '<s';
 echo 'mall>Do not change this option if you don\'t exactly know how does it work.</small></td></tr></table>
  </td>
-</tr><tr>
+</tr>
+<tr>
  <td>Withdrawal Fee (%):</td>
  <td><input type=text name=withdrawal_fee value=\'';
 echo quote(app('data')->settings['withdrawal_fee']);
 echo '\' class=inpts size=6></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Minimal Withdrawal Fee ($):</td>
  <td><input type=text name=withdrawal_fee_min value=\'';
 echo quote(app('data')->settings['withdrawal_fee_min']);
 echo '\' class=inpts size=6></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Minimal Withdrawal Amount ($):</td>
  <td><input type=text name=min_withdrawal_amount value=\'';
 echo quote(app('data')->settings['min_withdrawal_amount']);
@@ -587,9 +347,11 @@ echo ' user location fields: Adds &quot;Address&quot;, &quot;City&quot;,
 		Use double entry accounting: This mod is used for the transactions history screen in both users and admin areas.';
 echo end_info_table();
 echo '</td>
-</tr><tr>
+</tr>
+<tr>
  <td colspan=2>&nbsp;<br><b>User settings:</b></td>
-</tr><tr>
+</tr>
+<tr>
       <td>Users can use the WAP access:</td>
  <td>';
 echo '<s';
@@ -598,7 +360,8 @@ echo app('data')->settings['accesswap'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['accesswap'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Users should use a transaction code to withdraw:</td>
  <td>';
 echo '<s';
@@ -607,7 +370,8 @@ echo app('data')->settings['use_transaction_code'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['use_transaction_code'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Use confirmation code when account update:</td>
  <td>';
 echo '<s';
@@ -649,7 +413,8 @@ echo app('data')->settings['usercanchangeemail'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['usercanchangeemail'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
       <td>Notify user of his profile change:</td>
  <td>';
 echo '<s';
@@ -658,7 +423,8 @@ echo app('data')->settings['sendnotify_when_userinfo_changed'] == 1 ? 'selected'
 echo '>Yes<option value=0 ';
 echo app('data')->settings['sendnotify_when_userinfo_changed'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Allow internal transfer:</td>
  <td>';
 echo '<s';
@@ -667,7 +433,8 @@ echo app('data')->settings['internal_transfer_enabled'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['internal_transfer_enabled'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Allow Deposit to Account:</td>
  <td>';
 echo '<s';
@@ -676,14 +443,16 @@ echo app('data')->settings['use_add_funds'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['use_add_funds'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Max daily withdraw:</td>
  <td><input type=text name=max_daily_withdraw class=inpts value=\'';
 echo sprintf('%0.2f', app('data')->settings['max_daily_withdraw']);
 echo '\' style=\'text-align: right\'> ';
 echo '<s';
 echo 'mall>(0 for unlimited)</small></td>
-</tr><tr>
+</tr>
+<tr>
       <td colspan=2>
         ';
 echo start_info_table('100%');
@@ -698,9 +467,11 @@ echo '     by the administrator only. It is stored in MySQL database in plain fo
         ';
 echo end_info_table();
 echo '      </td>
-    </tr><tr>
+    </tr>
+    <tr>
  <td>&nbsp;<br><b>Turing verification:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Use turing verification:</td>
  <td>';
 echo '<s';
@@ -709,7 +480,8 @@ echo app('data')->settings['graph_validation'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['graph_validation'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
       <td>Number of characters in the turing image:</td>
  <td><input type=text name=graph_max_chars value="';
 echo app('data')->settings['graph_max_chars'];
@@ -720,7 +492,8 @@ echo '" class=inpts size=10></td>
  <td><input type=text name=graph_text_color value="';
 echo app('data')->settings['graph_text_color'];
 echo '" class=inpts size=10></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Turing image bg color:</td>
  <td><input type=text name=graph_bg_color value="';
 echo app('data')->settings['graph_bg_color'];
@@ -770,7 +543,8 @@ echo '      </td>
     </tr>
 <tr>
  <td>&nbsp;<br><b>Brute force handler:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Prevent brute force:</td>
  <td>';
 echo '<s';
@@ -779,12 +553,14 @@ echo app('data')->settings['brute_force_handler'] == 1 ? 'selected' : '';
 echo '>Yes<option value=0 ';
 echo app('data')->settings['brute_force_handler'] == 0 ? 'selected' : '';
 echo '>No</select></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Max invalid tries:</td>
  <td><input type=text name=brute_force_max_tries value="';
 echo app('data')->settings['brute_force_max_tries'];
 echo '" class=inpts size=10></td>
-</tr><tr>
+</tr>
+<tr>
       <td colspan=2>
         ';
 echo start_info_table('100%');
@@ -798,26 +574,32 @@ echo 'rect
         ';
 echo end_info_table();
 echo '      </td>
-    </tr><tr>
+    </tr>
+    <tr>
  <td>&nbsp;</td>
-</tr><tr>
+</tr>
+<tr>
  <td>&nbsp;<br><b>Time settings:</b></td>
-</tr><tr>
+</tr>
+<tr>
  <td>Server time:</td>
  <td>';
 echo date('dS of F Y h:i:s A');
 echo '</td>
-</tr><tr>
+</tr>
+<tr>
  <td>System time:</td>
  <td>';
 echo date('dS of F Y h:i:s A', time() + app('data')->settings['time_dif'] * 60 * 60);
 echo '</td>
-</tr><tr>
+</tr>
+<tr>
  <td>Difference:</td>
  <td><input type=text name=time_dif value="';
 echo app('data')->settings['time_dif'];
 echo '" class=inpts size=10> hours</td>
-</tr><tr>
+</tr>
+<tr>
       <td colspan=2>
         ';
 echo start_info_table('100%');
@@ -826,12 +608,14 @@ echo '        Change your system time. You can set the system to show all dates 
         ';
 echo end_info_table();
 echo '</td>
-    </tr><tr>
+    </tr>
+    <tr>
  <td>&nbsp;</td>
 </tr>
 <tr>
  <td colspan=2>&nbsp;<br><b>Administrator Alternative Passphrase:</b></td>
-</tr><tr>
+</tr>
+<tr>
 <tr>
  <td>Use admin alternative passphrase:</td>
  <td>';

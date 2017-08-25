@@ -26,20 +26,6 @@
 	    <tr>
 		  <td background="images/ver.gif" bgcolor=#FF8D00><img src="images/top.gif" width=304 height=142 border="0" align=left></td>
 		  <td background="images/ver.gif" bgcolor=#FF8D00 valign=bottom align=right>';
-  if (((app('data')->settings['md5altphrase'] == '' and app('data')->settings['md5altphrase_evocash'] == '') and app('data')->settings['md5altphrase_intgold'] == '')) {
-      echo start_info_table('100%');
-      echo 'To receive deposits you should enter your \'Secret alternate password md5 hash\' on the settings screen!<br>
-          You can receive the secret alternate password md5 hash here:<br>
-<a href=https://www.e-gold.com/acct/md5check.html target=_blank>https://www.e-gold.com/acct/md5check.html</a><br>
-          type your alternative password in the \'Alternate Passphrase\' field, then
-          click \'cacl';
-      echo 'ulate hash now\' and copy the \'Passphrase Hash\' to the settings
-          screen.<br>
-          It is made to prevent fake deposits.
-          ';
-      echo end_info_table();
-      echo '          ';
-  }
 
   echo '          ';
   echo '<s';
