@@ -2,9 +2,9 @@
 
 return [
     'payments' => [
-        1  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney'],
-        2 => ['name' => 'Payeer', 'sfx' => 'payeer'],
-        3 => ['name' => 'BitCoin', 'sfx' => 'bitcoin'],
+        1  => ['name' => 'PerfectMoney', 'sfx' => 'perfectmoney', 'status' => 1],
+        2 => ['name' => 'Payeer', 'sfx' => 'payeer', 'status' => 1],
+        3 => ['name' => 'BitCoin', 'sfx' => 'bitcoin', 'status' => 1],
     ],
 
     'auto_blade' => env('AUTO_BLADE', true),

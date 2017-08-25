@@ -27,14 +27,6 @@ if (! strpos($referer, '//'.$host)) {
 app('data')->exchange_systems = config('hm.payments');
 app('data')->settings = get_settings();
 
-foreach (app('data')->exchange_systems as $id => $data) {
-    if (isset(app('data')->settings['def_payee_account_'.$data['sfx']]) and app('data')->settings['def_payee_account_'.$data['sfx']] != '' and app('data')->settings['def_payee_account_'.$data['sfx']] != '0') {
-        app('data')->exchange_systems[$id]['status'] = 1;
-        continue;
-    }
-    app('data')->exchange_systems[$id]['status'] = 0;
-    continue;
-}
 app('data')->settings['site_url'] = (is_SSL() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
 
 $ip = app('data')->env['REMOTE_ADDR'];
