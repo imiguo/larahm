@@ -43,46 +43,6 @@ function bind_ref()
     }
 }
 
-function custom2_pay_withdraw_eeecurrency()
-{
-    $batch = app('data')->frm['TRANSACTION_ID'];
-    list($id, $str) = explode('-', app('data')->frm['CUSTOM1']);
-    $id = sprintf('%d', $id);
-    if ($str == '') {
-        $str = 'abcdef';
-    }
-
-    $str = quote($str);
-    $q = 'select * from history where id = '.$id.' and str = \''.$str.'\'';
-    $sth = db_query($q);
-    while ($row = mysql_fetch_array($sth)) {
-        $q = 'delete from history where id = '.$id;
-        db_query($q);
-        $q = 'insert into history set
-            user_id = '.$row['user_id'].',
-            amount = -'.abs($row['amount']).(',
-            type = \'withdrawal\',
-            description = \'Withdraw processed. Batch id = '.$batch.'\',
-            actual_amount = -').abs($row['amount']).',
-            ec = 8,
-            date = now()';
-        db_query($q);
-        $q = 'select * from users where id = '.$row['user_id'];
-        $sth = db_query($q);
-        $userinfo = mysql_fetch_array($sth);
-        $info = [];
-        $info['username'] = $userinfo['username'];
-        $info['name'] = $userinfo['name'];
-        $info['amount'] = sprintf('%.02f', abs($row['amount']));
-        $info['account'] = app('data')->frm['SELLERACCOUNTID'];
-        $info['batch'] = $batch;
-        $info['paying_batch'] = $batch;
-        $info['receiving_batch'] = $batch;
-        $info['currency'] = app('data')->exchange_systems[8]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
-    }
-}
-
 function custom2_pay_withdraw()
 {
     $batch = app('data')->frm['TRANSACTION_ID'];

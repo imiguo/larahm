@@ -157,14 +157,6 @@ if (app('data')->frm['say'] == 'confirm') {
           $perfectmoney = quote(app('data')->frm['perfectmoney']);
           $payeer = quote(app('data')->frm['payeer']);
           $bitcoin = quote(app('data')->frm['bitcoin']);
-          $egold = quote(app('data')->frm['egold']);
-          $evocash = quote(app('data')->frm['evocash']);
-          $intgold = quote(app('data')->frm['intgold']);
-          $stormpay = quote(app('data')->frm['stormpay']);
-          $ebullion = quote(app('data')->frm['ebullion']);
-          $paypal = quote(app('data')->frm['paypal']);
-          $goldmoney = quote(app('data')->frm['goldmoney']);
-          $eeecurrency = quote(app('data')->frm['eeecurrency']);
           $pecunix = quote(app('data')->frm['pecunix']);
 
           $address = quote(app('data')->frm['address']);
@@ -192,14 +184,6 @@ if (app('data')->frm['say'] == 'confirm') {
                        perfectmoney_account = \''.$perfectmoney.'\',
                        payeer_account = \''.$payeer.'\',
                        bitcoin_account = \''.$bitcoin.'\',
-                       egold_account = \''.intval($egold).'\',
-                       evocash_account = \''.intval($evocash).'\',
-                       intgold_account = \''.intval($intgold).'\',
-                       stormpay_account = \''.$stormpay.'\',
-                       ebullion_account = \''.$ebullion.'\',
-                       paypal_account = \''.$paypal.'\',
-                       goldmoney_account = \''.$goldmoney.'\',
-                       eeecurrency_account = \''.intval($eeecurrency).'\',
                        stat_password = \'\',
                        hid = \'\',
                        question = \''.$question.'\',

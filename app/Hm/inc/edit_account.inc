@@ -181,16 +181,12 @@ if (app('data')->frm['action'] == 'edit_account') {
 
         $user_auto_pay_earning = sprintf('%d', app('data')->frm['user_auto_pay_earning']);
         $q = 'update users set name = \''.$fullname.'\',
-                                 '.$edit_location.'
-    	                         evocash_account = \''.$evocash.'\',
-                                 intgold_account = \''.$intgold.'\',
-				 stormpay_account = \''.$stormpay.'\',
-				 ebullion_account = \''.$ebullion.'\',
-				 paypal_account = \''.$paypal.'\',
-				 goldmoney_account = \''.$goldmoney.'\',
-				 eeecurrency_account = \''.$eeecurrency.'\',
-                                 user_auto_pay_earning = '.$user_auto_pay_earning.'
-            where id > 1 and id = '.$userinfo['id'];
+                 '.$edit_location.'
+                 perfectmoney_account = \''.$perfectmoney.'\',
+                 payeer_account = \''.$payeer.'\',
+                 bitcoin_account = \''.$bitcoin.'\',
+                 user_auto_pay_earning = '.$user_auto_pay_earning.'
+                 where id > 1 and id = '.$userinfo['id'];
         db_query($q);
         $q = 'select * from users where id ='.$userinfo['id'];
         $sth = db_query($q);

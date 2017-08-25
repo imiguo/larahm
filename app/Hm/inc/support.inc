@@ -27,7 +27,6 @@ use App\Exceptions\RedirectException;
           $message .= 'User      : '.$userinfo['username'].'';
           $message .= 'User Name : '.$userinfo['name'].'';
           $message .= 'E-Mail    : '.$userinfo['email'].'';
-          $message .= 'E-Gold Acc : '.$userinfo['egold_account'].'';
           if (app('data')->settings[def_payee_account_perfectmoney]) {
               $message .= 'PerfectMoney Acc : '.$userinfo['perfectmoney_account'].'';
           }
