@@ -20,7 +20,9 @@ if (! in_array($_SERVER['REMOTE_ADDR'], ['185.71.65.92', '185.71.65.189', '149.2
     throw new EmptyException();
 }
 if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
-    $m_secret_key = config('payeer.shop_secret_key');
+    $orderid = $_POST['m_orderid'];
+    $gate = $payment_id[0] == 1 ? 'low' : 'hight';
+    $m_secret_key = psconfig('payeer.shop_secret_key', $gate);
     // Forming an array for signature generation
     $arHash = [
         $_POST['m_operation_id'],
@@ -28,7 +30,7 @@ if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
         $_POST['m_operation_date'],
         $_POST['m_operation_pay_date'],
         $_POST['m_shop'],
-        $_POST['m_orderid'],
+        $orderid,
         $_POST['m_amount'],
         $_POST['m_curr'],
         $_POST['m_desc'],
@@ -44,7 +46,7 @@ if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
     $sign_hash = strtoupper(hash('sha256', implode(':', $arHash)));
     // If the signatures match and payment status is “Complete”
     if ($_POST['m_sign'] == $sign_hash && $_POST['m_status'] == 'success') {
-        $orderNo = $_POST['m_orderid'];
+        $orderNo = $orderid;
         $order = Order::where('order_no', $payment_id)->first();
         $h_id = $order->data['plan_id'];
         $compound = $order->data['compound'];
@@ -56,11 +58,11 @@ if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
 
         // Here you can mark the invoice as paid or transfer funds to your customer
         // Returning that the payment was processed successfully
-        echo $_POST['m_orderid'].'|success';
+        echo $orderid.'|success';
         throw new EmptyException();
     }
     // If not, returning an error
-    echo $_POST['m_orderid'].'|error';
+    echo $orderid.'|error';
     throw new EmptyException();
 }
 

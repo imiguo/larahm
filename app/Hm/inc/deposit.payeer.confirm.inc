@@ -108,12 +108,12 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
         ]);
 
         $arHash = [
-            app('data')->settings['def_payee_account_payeer'], // m_shop
+            psconfig('pe.shop_id'), // m_shop
             $orderNo, // m_orderid
             $amount, // m_amount
             'USD', // m_curr
             $m_desc, // m_desc
-            app('data')->settings['def_payee_key_payeer'], //m_key
+            psconfig('pe.shop_secret_key'), //m_key
         ];
         $m_sign = strtoupper(hash('sha256', implode(':', $arHash)));
 

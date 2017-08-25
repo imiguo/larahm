@@ -15,19 +15,21 @@ file_put_contents('../log/asmoney_processing_'.env('APP_ENV').'.txt', json_encod
 file_put_contents('../log/asmoney_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
 
 $request = app('request');
+
+$payment_id = $request->input('PAYMENT_ID');
+$gate = $payment_id[0] == 1 ? 'low' : 'hight';
+
 $params = [
     $request->input('PAYEE_ACCOUNT'),
     $request->input('PAYER_ACCOUNT'),
     $request->input('PAYMENT_AMOUNT'),
     $request->input('PAYMENT_UNITS'),
     $request->input('BATCH_NUM'),
-    $request->input('PAYMENT_ID'),
+    $payment_id,
     $request->input('PAYMENT_STATUS'),
-    md5(config('asmoney.store_password')),
+    md5(psconfig('asmoney.store_password', $gate)),
 ];
- if ($request->input('MD5_HASH') == implode('|', $params)) {
-    $payment_id = sprintf('%d', app('data')->frm['PAYMENT_ID']);
-
+if ($request->input('MD5_HASH') == implode('|', $params)) {
     $order = Order::where('order_no', $payment_id)->first();
     $h_id = $order->data['plan_id'];
     $compound = $order->data['compound'];
@@ -41,6 +43,6 @@ $params = [
         $order->status = Order::STATUS_OK;
         $order->save();
     }
- }
+}
 
 echo '1';

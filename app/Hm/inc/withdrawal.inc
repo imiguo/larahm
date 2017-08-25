@@ -116,14 +116,14 @@ if (app('data')->frm['action'] == 'preview') {
     $to_withdraw = number_format(floor($to_withdraw * 100) / 100, 2);
     $account = '';
 
-    if (($ec == 1 and app('data')->settings['def_payee_account_perfectmoney'])) {
+    if ($ec == 1 and psconfig('pm.marchant_id')) {
         $account = $userinfo['perfectmoney_account'];
     }
 
-    if (($ec == 2 and app('data')->settings['def_payee_account_payeer'])) {
+    if ($ec == 2 and psconfig('pe.shop_id')) {
         $account = $userinfo['payeer_account'];
     }
-    if (($ec == 3 and app('data')->settings['def_payee_account_bitcoin'])) {
+    if ($ec == 3 and psconfig('as.user_name')) {
         $account = $userinfo['bitcoin_account'];
     }
 

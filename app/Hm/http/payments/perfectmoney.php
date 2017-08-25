@@ -14,12 +14,13 @@ use App\Models\Order;
 file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
 file_put_contents('../log/perfectmoney_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
 
-$mymd5 = app('data')->settings['md5altphrase_perfectmoney'];
+$payment_id = app('data')->frm['PAYMENT_ID'];
+$gate = $payment_id[0] == 1 ? 'low' : 'hight';
 
-$string = app('data')->frm['PAYMENT_ID'].':'.app('data')->frm['PAYEE_ACCOUNT'].':'.
+$string = $payment_id.':'.app('data')->frm['PAYEE_ACCOUNT'].':'.
           app('data')->frm['PAYMENT_AMOUNT'].':'.app('data')->frm['PAYMENT_UNITS'].':'.
           app('data')->frm['PAYMENT_BATCH_NUM'].':'.
-          app('data')->frm['PAYER_ACCOUNT'].':'.$mymd5.':'.
+          app('data')->frm['PAYER_ACCOUNT'].':'.md5(psconfig('pm.alternate_passphrase'), $gate).':'.
           app('data')->frm['TIMESTAMPGMT'];
 $hash = strtoupper(md5($string));
 
@@ -29,7 +30,7 @@ if ($hash == app('data')->frm['V2_HASH']) {
     //     throw new EmptyException();
     // }
 
-    $payment_id = sprintf('%d', app('data')->frm['PAYMENT_ID']);
+    $payment_id = sprintf('%d', $payment_id);
 
     $order = Order::where('order_no', $payment_id)->first();
     $h_id = $order->data['plan_id'];

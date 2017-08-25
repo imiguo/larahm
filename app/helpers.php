@@ -195,27 +195,37 @@ if (! function_exists('smarty_blade_block')) {
 
 if (! function_exists('send_money_to_perfectmoney')) {
     function send_money_to_perfectmoney($amount, $recipient, $memo) {
-        $res = (new PerfectMoney)->sendMoney($recipient, abs($amount), $memo);
+        $config = psconfig_all('pm');
+        $res = (new PerfectMoney($config))->sendMoney($recipient, abs($amount), $memo);
         return $res['payment_batch_num'];
     }
 }
 
 if (! function_exists('send_money_to_payeer')) {
     function send_money_to_payeer($amount, $recipient, $memo) {
-        return (new Payeer)->transfer($recipient, abs($amount), $memo);
+        $config = psconfig_all('pe');
+        return (new Payeer($config))->transfer($recipient, abs($amount), $memo);
     }
 }
 
 if (! function_exists('send_money_to_bitcoin')) {
     function send_money_to_bitcoin($amount, $recipient, $memo) {
-        return (new Asmoney)->transferBTC($recipient, abs($amount), $memo);
+        $config = psconfig_all('am');
+        return (new Asmoney($config))->transferBTC($recipient, abs($amount), $memo);
     }
 }
 
 if (! function_exists('generate_id')) {
     function generate_id() {
         $userId = auth()->id();
-        return mt_rand(10, 99).substr(time(), 3).str_pad($userId % 100, 3, 0, STR_PAD_LEFT).mt_rand(100, 999);
+        $gateNum = app('data')->identity > 0 ? 2 : 1;
+        return implode('', [
+            $gateNum,
+            mt_rand(10, 99),
+            substr(time(), 3),
+            str_pad($userId % 100, 3, 0, STR_PAD_LEFT),
+            mt_rand(100, 999),
+        ]);
     }
 }
 
@@ -232,5 +242,24 @@ if (! function_exists('add_deposit_order')) {
             'status' => Order::STATUS_START,
         ]);
         return $orderNo;
+    }
+}
+
+if (! function_exists('psconfig_all')) {
+    function psconfig_all($ps, $gate = '') {
+
+        $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');
+
+        return array_merge(config('ps')['common'][$ps], config('ps')[$gate][$ps]);
+    }
+}
+
+if (! function_exists('psconfig')) {
+    function psconfig($key, $gate = '') {
+        list($ps, $key) = explode('.', $key, 2);
+
+        $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');
+
+        return config('ps')[$gate][$ps][$key] ?? config('ps')['common'][$ps][$key];
     }
 }

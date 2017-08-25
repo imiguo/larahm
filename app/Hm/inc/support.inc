@@ -27,13 +27,13 @@ use App\Exceptions\RedirectException;
           $message .= 'User      : '.$userinfo['username'].'';
           $message .= 'User Name : '.$userinfo['name'].'';
           $message .= 'E-Mail    : '.$userinfo['email'].'';
-          if (app('data')->settings[def_payee_account_perfectmoney]) {
+          if (psconfig('pm.marchant_id')) {
               $message .= 'PerfectMoney Acc : '.$userinfo['perfectmoney_account'].'';
           }
-          if (app('data')->settings[def_payee_account_payeer]) {
+          if (psconfig('pe.shop_id')) {
               $message .= 'Payeer Acc : '.$userinfo['payeer_account'].'';
           }
-          if (app('data')->settings[def_payee_account_bitcoin]) {
+          if (psconfig('as.user_name')) {
               $message .= 'Bitcoin Acc : '.$userinfo['bitcoin_account'].'';
           }
 
