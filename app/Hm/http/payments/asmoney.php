@@ -11,8 +11,11 @@
 
 use App\Models\Order;
 
-file_put_contents('../log/asmoney_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
-file_put_contents('../log/asmoney_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
+Log::info('asmoney_processing', [
+    'env' => env('APP_ENV'),
+    'frm' => app('data')->frm,
+    'ip' => app('data')->env['REMOTE_ADDR'],
+]);
 
 $request = app('request');
 

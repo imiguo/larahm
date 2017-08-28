@@ -12,8 +12,11 @@
 use App\Exceptions\EmptyException;
 use App\Models\Order;
 
-file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', json_encode(app('data')->frm).PHP_EOL, FILE_APPEND);
-file_put_contents('../log/payeer_processing_'.env('APP_ENV').'.txt', 'IP:'.app('data')->env['REMOTE_ADDR'].PHP_EOL, FILE_APPEND);
+Log::info('payeer_processing', [
+    'env' => env('APP_ENV'),
+    'frm' => app('data')->frm,
+    'ip' => app('data')->env['REMOTE_ADDR'],
+]);
 
 // Rejecting queries from IP addresses not belonging to Payeer
 if (! in_array($_SERVER['REMOTE_ADDR'], ['185.71.65.92', '185.71.65.189', '149.202.17.210', ])) {
