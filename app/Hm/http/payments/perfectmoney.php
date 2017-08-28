@@ -18,12 +18,13 @@ Log::info('perfectmoney_processing', [
 ]);
 
 $payment_id = app('data')->frm['PAYMENT_ID'];
-$gate = $payment_id[0] == 1 ? 'low' : 'hight';
+$gate = $payment_id[0] == 1 ? 'low' : 'high';
 
+$hash_alternate_passphrase = strtoupper(md5(psconfig('pm.alternate_passphrase', $gate)));
 $string = $payment_id.':'.app('data')->frm['PAYEE_ACCOUNT'].':'.
           app('data')->frm['PAYMENT_AMOUNT'].':'.app('data')->frm['PAYMENT_UNITS'].':'.
           app('data')->frm['PAYMENT_BATCH_NUM'].':'.
-          app('data')->frm['PAYER_ACCOUNT'].':'.md5(psconfig('pm.alternate_passphrase'), $gate).':'.
+          app('data')->frm['PAYER_ACCOUNT'].':'.$hash_alternate_passphrase.':'.
           app('data')->frm['TIMESTAMPGMT'];
 $hash = strtoupper(md5($string));
 
