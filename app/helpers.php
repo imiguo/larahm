@@ -218,7 +218,7 @@ if (! function_exists('send_money_to_bitcoin')) {
 if (! function_exists('generate_id')) {
     function generate_id() {
         $userId = auth()->id();
-        $gateNum = app('data')->identity > 0 ? 2 : 1;
+        $gateNum = app('data')->identity > 0 ? 1 : 2;
         return implode('', [
             $gateNum,
             mt_rand(10, 99),
