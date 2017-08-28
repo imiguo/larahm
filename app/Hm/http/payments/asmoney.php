@@ -20,7 +20,7 @@ Log::info('asmoney_processing', [
 $request = app('request');
 
 $payment_id = $request->input('PAYMENT_ID');
-$gate = $payment_id[0] == 1 ? 'low' : 'hight';
+$gate = $payment_id[0] == 1 ? 'low' : 'high';
 
 $params = [
     $request->input('PAYEE_ACCOUNT'),

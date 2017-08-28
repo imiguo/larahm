@@ -24,7 +24,7 @@ if (! in_array($_SERVER['REMOTE_ADDR'], ['185.71.65.92', '185.71.65.189', '149.2
 }
 if (isset($_POST['m_operation_id']) && isset($_POST['m_sign'])) {
     $orderid = $_POST['m_orderid'];
-    $gate = $payment_id[0] == 1 ? 'low' : 'hight';
+    $gate = $payment_id[0] == 1 ? 'low' : 'high';
     $m_secret_key = psconfig('payeer.shop_secret_key', $gate);
     // Forming an array for signature generation
     $arHash = [
