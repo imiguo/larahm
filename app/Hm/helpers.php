@@ -9,6 +9,10 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Models\Deposit;
+use App\Models\History;
+use Carbon\Carbon;
+
 function is_SSL()
 {
     if (! isset($_SERVER['HTTPS'])) {
@@ -73,40 +77,37 @@ function db_query($q)
     return $result;
 }
 
-function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
+function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound, $ago = 0)
 {
     $compound = intval($compound);
     $h_id = intval($h_id);
     $user_id = intval($user_id);
     $amount = sprintf('%.02f', $amount);
-    $batch_found = 0;
-    $q = 'select count(*) as cnt from history where ec = '.$ec.' && type = \'add_funds\' && description like \'%Batch id = '.$batch.'\'';
+
+    $datetime = Carbon::now()->subDays($ago);
+
+    // 查找投资是否已经入库
+    $q = 'select count(*) as cnt from history where ec = '.$ec.' && type = \'add_funds\' && payment_batch_num = \''.$batch.'\'';
     $sth = db_query($q);
     $row = mysql_fetch_array($sth);
     if (0 < $row['cnt']) {
-        $batch_found = 1;
-    }
-
-    if ($batch_found == 1) {
         return 0;
     }
 
+    // 写history(add_funds)
     $desc = 'Add funds to account from '.app('data')->exchange_systems[$ec]['name'].('. Batch id = '.$batch);
-    if ($ec == 4) {
-        $desc = 'Add funds to account from '.app('data')->exchange_systems[$ec]['name'].(' '.$amount.' - StormPay Fee. Batch id = '.$batch);
-        $amount = $amount - $amount * 6.9 / 100 - 0.69;
-    }
+    History::create([
+        'user_id' => $user_id,
+        'amount' => $amount,
+        'type' => 'add_funds',
+        'description' => $desc,
+        'actual_amount' => $amount,
+        'payment_batch_num' => $batch,
+        'ec' => $ec,
+        'date' => $datetime,
+    ]);
 
-    $q = 'insert into history set
-            user_id = '.$user_id.',
-            amount = \''.$amount.'\',
-            type = \'add_funds\',
-            description = \''.$desc.'\',
-            actual_amount = '.$amount.',
-            ec = '.$ec.',
-            date = now()
-            ';
-    db_query($q);
+    // 计算delay、compound
     $q = 'select * from types where id = '.$h_id;
     $sth = db_query($q);
     $name = '';
@@ -142,7 +143,6 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
             }
         }
     }
-
     if ($delay < 0) {
         $delay = 0;
     }
@@ -152,31 +152,35 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $row1 = mysql_fetch_array($sth1);
     $min_deposit = $row1['min'];
     $max_deposit = $row1['max'];
+    // 判断金额是否在计划范围内
     if (($min_deposit <= $amount and $amount <= $max_deposit)) {
-        $q = 'insert into deposits set
-                user_id = '.$user_id.',
-                type_id = '.$h_id.',
-                deposit_date = now(),
-                last_pay_date = now()+ interval '.$delay.' day,
-                status = \'on\',
-                q_pays = 0,
-                amount = \''.$amount.'\',
-                actual_amount = \''.$amount.'\',
-                ec = '.$ec.',
-                compound = '.$compound;
-        db_query($q);
-        $deposit_id = mysql_insert_id();
-        $q = 'insert into history set
-                user_id = '.$user_id.',
-                amount = \'-'.$amount.'\',
-                type = \'deposit\',
-                description = \'Deposit to '.quote($name).('\',
-                actual_amount = -'.$amount.',
-                ec = '.$ec.',
-                date = now(),
-                deposit_id = '.$deposit_id.'
-            ');
-        db_query($q);
+        // Add deposit
+        $deposit = Deposit::create([
+            'user_id' => $user_id,
+            'type_id' => $h_id,
+            'deposit_date' => $datetime,
+            'last_pay_date' => $datetime->addDays($delay),
+            'status' => 'on',
+            'q_pays' => 0,
+            'amount' => $amount,
+            'actual_amount' => $amount,
+            'ec' => $ec,
+            'compound' => $compound,
+        ]);
+        // Add deposit to history
+        $deposit_id = $deposit->id;
+        History::create([
+            'user_id' => $user_id,
+            'amount' => - $amount,
+            'type' => 'deposit',
+            'description' => 'Deposit to '.quote($name),
+            'actual_amount' => - $amount,
+            'ec' => $ec,
+            'date' => $datetime,
+            'deposit_id' => $deposit_id,
+        ]);
+
+        // imps
         if (app('data')->settings['banner_extension'] == 1) {
             $imps = 0;
             if (0 < app('data')->settings['imps_cost']) {
@@ -194,6 +198,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
         $name = 'Deposit to Account';
     }
 
+    // 发邮件通知用户
     $q = 'select * from users where id = '.$user_id;
     $sth = db_query($q);
     $user = mysql_fetch_array($sth);
