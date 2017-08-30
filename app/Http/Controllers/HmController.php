@@ -33,14 +33,21 @@ class HmController extends Controller
         return hanlder_app($app_file);
     }
 
-    public function payment($payment)
+    public function payment(Request $request, $payment)
     {
         $payments = [
-            'payeer',
             'perfectmoney',
+            'payeer',
             'asmoney',
         ];
+
         if (in_array($payment, $payments)) {
+            PaymentReceive::create([
+                'type' => array_flip($payments)[$payment] + 1,
+                'ip' => $request->getClientIp(),
+                'data' => $request->all(),
+            ]);
+
             $app_file = app_path('Hm').'/http/payments/'.$payment.'.php';
 
             return hanlder_app($app_file);

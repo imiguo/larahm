@@ -11,12 +11,6 @@
 
 use App\Models\Order;
 
-Log::info('asmoney_processing', [
-    'env' => env('APP_ENV'),
-    'frm' => app('data')->frm,
-    'ip' => app('data')->env['REMOTE_ADDR'],
-]);
-
 $request = app('request');
 
 $payment_id = $request->input('PAYMENT_ID');

@@ -11,12 +11,6 @@
 
 use App\Models\Order;
 
-Log::info('perfectmoney_processing', [
-    'env' => env('APP_ENV'),
-    'frm' => app('data')->frm,
-    'ip' => app('data')->env['REMOTE_ADDR'],
-]);
-
 $payment_id = app('data')->frm['PAYMENT_ID'];
 $gate = $payment_id[0] == 1 ? 'low' : 'high';
 
