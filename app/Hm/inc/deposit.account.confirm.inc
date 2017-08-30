@@ -11,7 +11,7 @@
 
 use App\Exceptions\RedirectException;
 
-$ok = 1;
+  $ok = 1;
   $amount = sprintf('%0.2f', app('data')->frm['amount']);
   $h_id = sprintf('%d', app('data')->frm['h_id']);
   $type = app('data')->frm['type'];
