@@ -11,23 +11,20 @@
 
 use App\Models\Order;
 
-$payment_id = app('data')->frm['PAYMENT_ID'];
+$request = app('request');
+
+$payment_id = $request->input('PAYMENT_ID');
 $gate = $payment_id[0] == 1 ? 'low' : 'high';
 
 $hash_alternate_passphrase = strtoupper(md5(psconfig('pm.alternate_passphrase', $gate)));
-$string = $payment_id.':'.app('data')->frm['PAYEE_ACCOUNT'].':'.
-          app('data')->frm['PAYMENT_AMOUNT'].':'.app('data')->frm['PAYMENT_UNITS'].':'.
-          app('data')->frm['PAYMENT_BATCH_NUM'].':'.
-          app('data')->frm['PAYER_ACCOUNT'].':'.$hash_alternate_passphrase.':'.
-          app('data')->frm['TIMESTAMPGMT'];
+$string = $payment_id.':'.$request->input('PAYEE_ACCOUNT').':'.
+          $request->input('PAYMENT_AMOUNT').':'.$request->input('PAYMENT_UNITS').':'.
+          $request->input('PAYMENT_BATCH_NUM').':'.
+          $request->input('PAYER_ACCOUNT').':'.$hash_alternate_passphrase.':'.
+          $request->input('TIMESTAMPGMT');
 $hash = strtoupper(md5($string));
 
-if ($hash == app('data')->frm['V2_HASH']) {
-    // $ip = app('data')->env['REMOTE_ADDR'];
-    // if ( ! preg_match('/63\\.240\\.230\\.\\d/i', $ip)) {
-    //     throw new EmptyException();
-    // }
-
+if ($hash == $request->input('V2_HASH')) {
     $payment_id = sprintf('%d', $payment_id);
 
     $order = Order::where('order_no', $payment_id)->first();
@@ -35,10 +32,10 @@ if ($hash == app('data')->frm['V2_HASH']) {
     $compound = $order->data['compound'];
     $user_id = $order->user_id;
 
-    $amount = app('data')->frm['PAYMENT_AMOUNT'];
-    $batch = app('data')->frm['PAYMENT_BATCH_NUM'];
-    $account = app('data')->frm['PAYER_ACCOUNT'];
-    if (app('data')->frm['PAYMENT_UNITS'] == 'USD') {
+    $amount = $request->input('PAYMENT_AMOUNT');
+    $batch = $request->input('PAYMENT_BATCH_NUM');
+    $account = $request->input('PAYER_ACCOUNT');
+    if ($request->input('PAYMENT_UNITS') == 'USD') {
         add_deposit(1, $user_id, $amount, $batch, $account, $h_id, $compound);
         $order->status = Order::STATUS_OK;
         $order->save();
