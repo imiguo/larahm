@@ -98,14 +98,14 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     }
 
     $q = 'insert into history set
-        	user_id = '.$user_id.',
-        	amount = \''.$amount.'\',
-        	type = \'add_funds\',
-        	description = \''.$desc.'\',
-        	actual_amount = '.$amount.',
-        	ec = '.$ec.',
-        	date = now()
-        	';
+            user_id = '.$user_id.',
+            amount = \''.$amount.'\',
+            type = \'add_funds\',
+            description = \''.$desc.'\',
+            actual_amount = '.$amount.',
+            ec = '.$ec.',
+            date = now()
+            ';
     db_query($q);
     $q = 'select * from types where id = '.$h_id;
     $sth = db_query($q);
@@ -154,17 +154,16 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
     $max_deposit = $row1['max'];
     if (($min_deposit <= $amount and $amount <= $max_deposit)) {
         $q = 'insert into deposits set
-          	user_id = '.$user_id.',
-          	type_id = '.$h_id.',
-          	deposit_date = now(),
-          	last_pay_date = now()+ interval '.$delay.' day,
-          	status = \'on\',
-          	q_pays = 0,
-          	amount = \''.$amount.'\',
-          	actual_amount = \''.$amount.'\',
-          	ec = '.$ec.',
-          	compound = '.$compound.'
-          	';
+                user_id = '.$user_id.',
+                type_id = '.$h_id.',
+                deposit_date = now(),
+                last_pay_date = now()+ interval '.$delay.' day,
+                status = \'on\',
+                q_pays = 0,
+                amount = \''.$amount.'\',
+                actual_amount = \''.$amount.'\',
+                ec = '.$ec.',
+                compound = '.$compound;
         db_query($q);
         $deposit_id = mysql_insert_id();
         $q = 'insert into history set
@@ -176,7 +175,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound)
                 ec = '.$ec.',
                 date = now(),
                 deposit_id = '.$deposit_id.'
-          	');
+            ');
         db_query($q);
         if (app('data')->settings['banner_extension'] == 1) {
             $imps = 0;
@@ -254,13 +253,13 @@ function referral_commission($user_id, $amount, $ec)
                     $sum = app('data')->settings['solid_referral_commission_amount'];
                     $ref_sum += $sum;
                     $q = 'insert into history set
-    		user_id = '.$ref.',
-    		amount = '.$sum.',
-    		actual_amount = '.$sum.',
-    		type = \'commissions\',
-    		description = \'Referral commission from '.$uinfo['username'].('\',
-    		ec = '.$ec.',
-    		date = now()');
+                        user_id = '.$ref.',
+                        amount = '.$sum.',
+                        actual_amount = '.$sum.',
+                        type = \'commissions\',
+                        description = \'Referral commission from '.$uinfo['username'].('\',
+                        ec = '.$ec.',
+                        date = now()');
                     db_query($q);
                     $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
@@ -289,13 +288,13 @@ function referral_commission($user_id, $amount, $ec)
                     $sum = $amount * $row['percent'] / 100;
                     $ref_sum += $sum;
                     $q = 'insert into history set
-    		user_id = '.$ref.',
-    		amount = '.$sum.',
-    		actual_amount = '.$sum.',
-    		type = \'commissions\',
-    		description = \'Referral commission from '.$uinfo['username'].('\',
-    		ec = '.$ec.',
-    		date = now()');
+            user_id = '.$ref.',
+            amount = '.$sum.',
+            actual_amount = '.$sum.',
+            type = \'commissions\',
+            description = \'Referral commission from '.$uinfo['username'].('\',
+            ec = '.$ec.',
+            date = now()');
                     db_query($q);
                     $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
@@ -402,7 +401,7 @@ function send_template_mail($email_id, $to, $from, $info)
     $subject = preg_replace('/#site_url#/', app('data')->settings['site_url'], $subject);
     if (app('data')->settings['site_name'] == 'free') {
         $fh = fopen('mails.txt', 'a');
-        fwrite($fh, 'TO: '.$to.'From: '.$from.'Subject: '.$subject.''.$text);
+        fwrite($fh, 'TO: '.$to.'From: '.$from.'Subject: '.$subject.$text);
         fclose($fh);
     } else {
         send_mail($to, $subject, $text, 'From: '.$from.'Reply-To: '.$from);
@@ -453,12 +452,12 @@ function pay_direct_return_deposit($deposit_id, $amount)
         list($res, $text, $batch) = send_money_to_egold('', $amount, $user['egold_account'], $success_txt, $error_txt);
         if ($res == 1) {
             $q = 'insert into history set
-          	user_id = '.$user['id'].(',
+            user_id = '.$user['id'].(',
             amount = -'.$amount.',
-          	actual_amount = -'.$amount.',
+            actual_amount = -'.$amount.',
             type=\'withdrawal\',
-          	date = now(),
-  		description = \'Auto-withdrawal retuned deposit to account ').$user['egold_account'].('. Batch is '.$batch.'\'');
+            date = now(),
+        description = \'Auto-withdrawal retuned deposit to account ').$user['egold_account'].('. Batch is '.$batch.'\'');
             db_query($q);
         }
     }
@@ -496,7 +495,7 @@ function count_earning($u_id)
         $q = 'select distinct user_id as id from deposits where to_days(last_pay_date) < to_days(now()) order by user_id';
     }
 
-    ($sth_users = db_query($q));
+    $sth_users = db_query($q);
     while ($row_user = mysql_fetch_array($sth_users)) {
         $row_user_id = $row_user['id'];
         $q = 'update users set l_e_t = now() where id = '.$row_user_id;
@@ -635,7 +634,7 @@ function count_earning($u_id)
                 ($sth3 = db_query($q));
                 $flag_exists_earning = 0;
                 while ($row3 = mysql_fetch_array($sth3)) {
-                    $flag_exists_earning = $row3[col];
+                    $flag_exists_earning = $row3['col'];
                 }
 
                 if ($flag_exists_earning == 0) {
@@ -710,17 +709,17 @@ function count_earning($u_id)
                                 $comp_amount = $inc * $row['compound'] / 100;
                                 $inc = floor((floor($inc * 100000) / 100000 - floor($comp_amount * 100000) / 100000) * 100) / 100;
                                 $q = 'insert into history set user_id = '.$row['user_id'].(',
-                        amount = -'.$comp_amount.',
-                    		type=\'deposit\',
-                    		description = \'Compounding deposit\',
-                    		actual_amount = -'.$comp_amount.',
-                    		ec = ').$row['ec'].',
-                    		date = \''.$row['last_pay_date'].('\' + interval '.$interval.',
-                                deposit_id = ').$row['id'];
-                                db_query($q);
-                                $q = 'update deposits set amount = amount + '.$comp_amount.',
-                    		actual_amount = actual_amount + '.$comp_amount.'
-                    		where id = '.$row['id'];
+                                    amount = -'.$comp_amount.',
+                                    type=\'deposit\',
+                                    description = \'Compounding deposit\',
+                                    actual_amount = -'.$comp_amount.',
+                                    ec = ').$row['ec'].',
+                                    date = \''.$row['last_pay_date'].('\' + interval '.$interval.',
+                                        deposit_id = ').$row['id'];
+                                        db_query($q);
+                                        $q = 'update deposits set amount = amount + '.$comp_amount.',
+                                    actual_amount = actual_amount + '.$comp_amount.'
+                                    where id = '.$row['id'];
                                 db_query($q);
                             }
                         }
@@ -731,8 +730,8 @@ function count_earning($u_id)
                 }
 
                 $q = 'update deposits set
-      	q_pays = q_pays + 1,
-      	last_pay_date = last_pay_date + interval '.$interval.' '.$status.' where id ='.$row['id'];
+                    q_pays = q_pays + 1,
+                    last_pay_date = last_pay_date + interval '.$interval.' '.$status.' where id ='.$row['id'];
                 db_query($q);
             }
         }
@@ -753,23 +752,21 @@ function count_earning($u_id)
                 $sth1 = db_query($q);
                 while ($row1 = mysql_fetch_array($sth1)) {
                     $q = 'insert into history set
-                user_id = '.$row1['user_id'].',
-      		amount = '.$row1['actual_amount'].',
-      		type=\'release_deposit\',
-      		actual_amount = '.$row1['actual_amount'].',
-                      ec = '.$row1['ec'].',
-      		date = \''.$row1['deposit_date'].('\' + interval '.$q_days.' day,
-                      deposit_id = ').$row1['id'];
+                        user_id = '.$row1['user_id'].',
+                        amount = '.$row1['actual_amount'].',
+                        type=\'release_deposit\',
+                        actual_amount = '.$row1['actual_amount'].',
+                        ec = '.$row1['ec'].',
+                        date = \''.$row1['deposit_date'].('\' + interval '.$q_days.' day,
+                        deposit_id = ').$row1['id'];
                     db_query($q);
                 }
             }
 
             $q = 'update deposits set status=\'off\' where
-             user_id = '.$row_user_id.' and
-    	       (deposit_date + interval '.$q_days.' day < last_pay_date or deposit_date + interval '.$q_days.' day < now()) and
-             (('.$row['withdraw_principal'].' = 0) || ('.$row['withdraw_principal'].' && (deposit_date + interval '.$row['withdraw_principal_duration'].' day < now()))) and
-             type_id = '.$id.'
-           ';
+                    user_id = '.$row_user_id.' and
+                    (deposit_date + interval '.$q_days.' day < last_pay_date or deposit_date + interval '.$q_days.' day < now()) and
+                    (('.$row['withdraw_principal'].' = 0) || ('.$row['withdraw_principal'].' && (deposit_date + interval '.$row['withdraw_principal_duration'].' day < now()))) and type_id = '.$id;
             db_query($q);
         }
     }
