@@ -273,8 +273,12 @@ function referral_commission($user_id, $amount, $ec)
                     $refinfo['ref_username'] = $uinfo['username'];
                     $refinfo['ref_name'] = $uinfo['name'];
                     $refinfo['currency'] = app('data')->exchange_systems[$ec]['name'];
-                    send_template_mail('referral_commision_notification', $refinfo['email'], app('data')->settings['system_email'],
-                        $refinfo);
+                    send_template_mail(
+                        'referral_commision_notification',
+                        $refinfo['email'],
+                        app('data')->settings['system_email'],
+                        $refinfo
+                    );
                 }
             }
         } else {
@@ -293,13 +297,13 @@ function referral_commission($user_id, $amount, $ec)
                     $sum = $amount * $row['percent'] / 100;
                     $ref_sum += $sum;
                     $q = 'insert into history set
-            user_id = '.$ref.',
-            amount = '.$sum.',
-            actual_amount = '.$sum.',
-            type = \'commissions\',
-            description = \'Referral commission from '.$uinfo['username'].('\',
-            ec = '.$ec.',
-            date = now()');
+                            user_id = '.$ref.',
+                            amount = '.$sum.',
+                            actual_amount = '.$sum.',
+                            type = \'commissions\',
+                            description = \'Referral commission from '.$uinfo['username'].'\',
+                            ec = '.$ec.',
+                            date = now()';
                     db_query($q);
                     $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
@@ -329,13 +333,13 @@ function referral_commission($user_id, $amount, $ec)
                         $sum = $amount * app('data')->settings['ref'.$i.'_cms'] / 100;
                         $ref_sum += $sum;
                         $q = 'insert into history set
-                  user_id = '.$row['ref'].(',
-                  amount = '.$sum.',
-                  actual_amount = '.$sum.',
-                  type = \'commissions\',
-                  description = \'Referral commission from ').$uinfo['username'].(' '.$i.' level referral\',
-                  ec = '.$ec.',
-                  date = now()');
+                                  user_id = '.$row['ref'].',
+                                  amount = '.$sum.',
+                                  actual_amount = '.$sum.',
+                                  type = \'commissions\',
+                                  description = \'Referral commission from '.$uinfo['username'].' '.$i.' level referral\',
+                                  ec = '.$ec.',
+                                  date = now()';
                         db_query($q);
                         continue;
                     }
