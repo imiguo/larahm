@@ -29,7 +29,7 @@ class DataService
                     'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
                 ];
-            });
+            })->toBase();
         $histories = History::select(['user_id', 'amount', 'ec', 'date'])
             ->where('type', 'deposit')
             ->orderBy('date', 'desc')
@@ -38,13 +38,13 @@ class DataService
             ->transform(function ($item) {
                 return [
                     'username' => $item->user->username ?? 'EmmNisen',
-                    'amount' => $item->amount,
-                    'payment' => $item->ec,
+                    'amount' => number_format(abs($item->amount), 2),
+                    'payment' => self::paymentMap[$item->ec],
                     'time' => $item->date,
                 ];
             });
 
-        return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
+        return $fakes->merge($histories->toArray())->sortByDesc('time')->take($limit)->sort('time');
     }
 
     public function payouts($limit = 20)
@@ -60,7 +60,7 @@ class DataService
                     'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
                 ];
-            });
+            })->toBase();
         $histories = History::select(['user_id', 'amount', 'ec', 'date'])
             ->where('type', 'withdrawal')
             ->orderBy('date', 'desc')
@@ -69,8 +69,8 @@ class DataService
             ->transform(function ($item) {
                 return [
                     'username' => $item->user->username,
-                    'amount' => $item->amount,
-                    'payment' => $item->ec,
+                    'amount' => number_format(abs($item->amount), 2),
+                    'payment' => self::paymentMap[$item->ec],
                     'time' => $item->date,
                 ];
             });
@@ -91,6 +91,7 @@ class DataService
         $user->payment = $history->payment;
         $user->amount += $history->amount;
         $user->save();
+        return $history->toArray();
     }
 
     public function fakePayout()
@@ -118,6 +119,7 @@ class DataService
         ]);
         $user->amount = $user->amount - $history->amount;
         $user->save();
+        return $history->toArray();
     }
 
     public function generateAmount()
