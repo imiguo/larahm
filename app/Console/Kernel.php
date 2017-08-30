@@ -7,6 +7,7 @@ use App\Services\DataService;
 use Illuminate\Support\Facades\Cache;
 use App\Console\Commands\BladeClearCommand;
 use App\Console\Commands\HmAdmin;
+
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -63,12 +64,14 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-     * Register the Closure based commands for the application.
+     * Register the commands for the application.
      *
      * @return void
      */
     protected function commands()
     {
+        $this->load(__DIR__.'/Commands');
+
         require base_path('routes/console.php');
     }
 }
