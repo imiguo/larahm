@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
+use App\Models\PaymentReceive;
+use Illuminate\Http\Request;
 
 class HmController extends Controller
 {
@@ -19,11 +20,9 @@ class HmController extends Controller
         return hanlder_app($app_file);
     }
 
-    public function callback()
+    public function callback(Request $request)
     {
-        $app_file = app_path('Hm').'/http/index.php';
-
-        return hanlder_app($app_file);
+        return redirect()->route('index', $request->query());
     }
 
     public function admin()
