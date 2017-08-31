@@ -48,7 +48,7 @@ class Api {
         $content = json_decode($content, true);
 
         if (isset($content['errors']) && !empty($content['errors'])) {
-            $this->errors = $content['errors'];
+            throw new PayeerException($content['errors']);
         }
 
         return $content;
@@ -70,14 +70,13 @@ class Api {
         $arPost = $arr;
         $arPost['action'] = 'initOutput';
 
-        $response = $this->getResponse($arPost);
-
-        if (empty($response['errors'])) {
+        try {
+            $this->getResponse($arPost);
             $this->output = $arr;
             return true;
+        } catch (PayeerException $e) {
+            return false;
         }
-
-        return false;
     }
 
     public function output()
@@ -87,11 +86,7 @@ class Api {
 
         $response = $this->getResponse($arPost);
 
-        if (empty($response['errors'])) {
-            return $response['historyId'];
-        }
-
-        return false;
+        return $response['historyId'];
     }
 
     public function getHistoryInfo($historyId)
@@ -115,11 +110,6 @@ class Api {
         $response = $this->getResponse($arPost);
 
         return $response;
-    }
-
-    public function getErrors()
-    {
-        return $this->errors;
     }
 
     public function transfer($arPost)
@@ -149,14 +139,12 @@ class Api {
     public function checkUser($arPost)
     {
         $arPost['action'] = 'checkUser';
-
-        $response = $this->getResponse($arPost);
-
-        if (empty($response['errors'])) {
+        try {
+            $this->getResponse($arPost);
             return true;
+        } catch (PayeerException $e) {
+            return false;
         }
-
-        return false;
     }
 
     public function getExchangeRate($arPost)
@@ -182,10 +170,6 @@ class Api {
 
         $response = $this->getResponse($arPost);
 
-        if (empty($response['errors'])) {
-            return $response;
-        }
-
-        return false;
+        return $response;
     }
 }

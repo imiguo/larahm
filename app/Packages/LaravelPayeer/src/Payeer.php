@@ -30,7 +30,6 @@ class Payeer {
      * Check of balance
      *
      * @return mixed|string
-     * @throws PayeerException
      */
     public function balance()
     {
@@ -42,7 +41,6 @@ class Payeer {
      * Receiving available payment systems
      *
      * @return mixed|string
-     * @throws PayeerException
      */
     public function paySystems()
     {
@@ -54,7 +52,6 @@ class Payeer {
      * Payout
      *
      * @return mixed|string
-     * @throws PayeerException
      */
     public function payout($amount, $recipient)
     {
@@ -68,14 +65,12 @@ class Payeer {
         if ($initOutput && $historyId = $this->api->output()) {
             return $historyId;
         }
-        throw new PayeerException($this->api->getErrors());
     }
 
     /**
      * Information on operation
      *
      * @return mixed|string
-     * @throws PayeerException
      */
     public function historyInfo($historyId)
     {
@@ -87,7 +82,6 @@ class Payeer {
      * Information on operation in shop
      *
      * @return mixed|string
-     * @throws PayeerException
      */
     public function shopOrderInfo($shopId, $orderId)
     {
@@ -102,7 +96,6 @@ class Payeer {
      * Money transfer
      *
      * @return mixed|string
-     * @throws PayeerException
      */
     public function transfer($recipient, $amount, $comment)
     {
@@ -120,7 +113,6 @@ class Payeer {
         if (empty($transfer['errors'])) {
             return $transfer['historyId'];
         }
-        throw new PayeerException($transfer["errors"]);
     }
 
     /**
