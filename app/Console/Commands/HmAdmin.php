@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class HmAdmin extends Command
@@ -61,6 +61,5 @@ class HmAdmin extends Command
             ]);
             $this->info('change admin success');
         }
-
     }
 }

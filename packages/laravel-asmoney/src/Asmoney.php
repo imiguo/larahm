@@ -2,13 +2,11 @@
 
 namespace entimm\LaravelAsmoney;
 
-use Illuminate\Http\Request;
-
 /**
- * Class Asmoney
+ * Class Asmoney.
  */
-class Asmoney {
-
+class Asmoney
+{
     private $api;
 
     const PS = 1136053;
@@ -36,8 +34,7 @@ class Asmoney {
     public function transactionInfo($batchNum)
     {
         $r = $api->GetTransaction($batchNum);
-        if ($r['result'] == APIerror::OK)
-        {
+        if ($r['result'] == APIerror::OK) {
             return $r['value'];
         }
         throw new AsmoneyException($r['result']);
@@ -48,6 +45,7 @@ class Asmoney {
         $r = $api->TransferBTC($bitcoinAddr, $amount, 'USD', $memo);
         if ($r['result'] == APIerror::OK) {
             $batchno = $r['value'];
+
             return $batchno;
         }
         throw new AsmoneyException($r['result']);
@@ -58,6 +56,7 @@ class Asmoney {
         $r = $api->TransferLTC($litecoinAddr, $amount, 'USD', $memo);
         if ($r['result'] == APIerror::OK) {
             $batchno = $r['value'];
+
             return $batchno;
         }
         throw new AsmoneyException($r['result']);
@@ -66,8 +65,7 @@ class Asmoney {
     public function history()
     {
         $r = $api->GetHistory(0); // Skip n records from top
-        if ($r['result'] == APIerror::OK)
-        {
+        if ($r['result'] == APIerror::OK) {
             return $batchno;
         }
         throw new AsmoneyException($r['result']);

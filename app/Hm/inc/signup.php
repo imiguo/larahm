@@ -9,14 +9,14 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;
 
 if (app('data')->frm['say'] == 'confirm') {
-      view_execute('after_registration_confirm.blade.php');
-      throw new EmptyException();
-  }
+    view_execute('after_registration_confirm.blade.php');
+    throw new EmptyException();
+}
 
   if (app('data')->frm['say'] == 'done') {
       view_execute('after_registration.blade.php');
@@ -36,7 +36,7 @@ if (app('data')->frm['say'] == 'confirm') {
           array_push($errors, 'username');
       } else {
           $q = 'select * from users where username = \''.$username.'\'';
-          if (!($sth = db_query($q))) {
+          if (! ($sth = db_query($q))) {
           }
 
           $row = mysql_fetch_array($sth);
@@ -62,14 +62,14 @@ if (app('data')->frm['say'] == 'confirm') {
       if (app('data')->frm['email'] == '') {
           array_push($errors, 'email');
       } else {
-        $q = 'select * from users where email = \''.$email.'\'';
-        if (!($sth = db_query($q))) {
-        }
+          $q = 'select * from users where email = \''.$email.'\'';
+          if (! ($sth = db_query($q))) {
+          }
 
-        $row = mysql_fetch_array($sth);
-        if ($row) {
-            array_push($errors, 'email_exists');
-        }
+          $row = mysql_fetch_array($sth);
+          if ($row) {
+              array_push($errors, 'email_exists');
+          }
       }
 
       if (app('data')->settings['use_user_location']) {
@@ -244,28 +244,26 @@ if (app('data')->frm['say'] == 'confirm') {
               $info['ip'] = app('data')->env['REMOTE_ADDR'];
               send_template_mail('confirm_registration', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
               throw new RedirectException('/?a=signup&say=confirm');
-          } else {
-              $q = 'select * from users where id = \''.$ref_id.'\'';
-              $sth = db_query($q);
-              while ($refinfo = mysql_fetch_array($sth)) {
-                  $info = [];
-                  $info['username'] = $refinfo['username'];
-                  $info['name'] = $refinfo['name'];
-                  $info['ref_username'] = app('data')->frm['username'];
-                  $info['ref_name'] = app('data')->frm['fullname'];
-                  $info['ref_email'] = app('data')->frm['email'];
-                  send_template_mail('direct_signup_notification', $refinfo['email'], app('data')->settings['opt_in_email'], $info);
-              }
-
+          }
+          $q = 'select * from users where id = \''.$ref_id.'\'';
+          $sth = db_query($q);
+          while ($refinfo = mysql_fetch_array($sth)) {
               $info = [];
-              $info['username'] = app('data')->frm['username'];
-              $info['password'] = $password;
-              $info['name'] = app('data')->frm['fullname'];
-              $info['ip'] = app('data')->env['REMOTE_ADDR'];
-              send_template_mail('registration', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
-              throw new RedirectException('/?a=signup&say=done');
+              $info['username'] = $refinfo['username'];
+              $info['name'] = $refinfo['name'];
+              $info['ref_username'] = app('data')->frm['username'];
+              $info['ref_name'] = app('data')->frm['fullname'];
+              $info['ref_email'] = app('data')->frm['email'];
+              send_template_mail('direct_signup_notification', $refinfo['email'], app('data')->settings['opt_in_email'], $info);
           }
 
+          $info = [];
+          $info['username'] = app('data')->frm['username'];
+          $info['password'] = $password;
+          $info['name'] = app('data')->frm['fullname'];
+          $info['ip'] = app('data')->env['REMOTE_ADDR'];
+          send_template_mail('registration', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
+          throw new RedirectException('/?a=signup&say=done');
           throw new EmptyException();
       }
   }

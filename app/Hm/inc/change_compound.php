@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
 
 if (app('data')->frm['complete']) {
     view_assign('fatal', 'update_completed');
@@ -31,7 +31,7 @@ if (app('data')->frm['complete']) {
         ';
   $sth = db_query($q);
   $deposit = mysql_fetch_array($sth);
-  if (!$deposit) {
+  if (! $deposit) {
       view_assign('fatal', 'deposit_not_found');
       view_execute('change_compound.blade.php');
       throw new EmptyException();
@@ -40,7 +40,7 @@ if (app('data')->frm['complete']) {
   $q = 'select * from types where id = '.$deposit['type_id'];
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
-  if (!$type['use_compound']) {
+  if (! $type['use_compound']) {
       view_assign('fatal', 'compound_forbidden');
       view_execute('change_compound.blade.php');
       throw new EmptyException();
@@ -83,7 +83,7 @@ if (app('data')->frm['complete']) {
       if (($type['compound_min_deposit'] <= $amount and $amount <= $type['compound_max_deposit'])) {
           if ($type['compound_percents_type'] == 1) {
               $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
-              if (!in_array($c_percent, $cps)) {
+              if (! in_array($c_percent, $cps)) {
                   $c_percent = $cps[0];
               }
           } else {

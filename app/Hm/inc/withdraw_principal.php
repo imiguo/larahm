@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
 
 if (app('data')->frm['complete']) {
     view_assign('fatal', 'withdraw_complete');
@@ -31,7 +31,7 @@ if (app('data')->frm['complete']) {
         ';
   $sth = db_query($q);
   $deposit = mysql_fetch_array($sth);
-  if (!$deposit) {
+  if (! $deposit) {
       view_assign('fatal', 'deposit_not_found');
       view_execute('withdraw_principal.blade.php');
       throw new EmptyException();
@@ -40,7 +40,7 @@ if (app('data')->frm['complete']) {
   $q = 'select * from types where id = '.$deposit['type_id'];
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
-  if (!$type['withdraw_principal']) {
+  if (! $type['withdraw_principal']) {
       view_assign('fatal', 'withdraw_forbidden');
       view_execute('withdraw_principal.blade.php');
       throw new EmptyException();

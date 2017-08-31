@@ -24,14 +24,14 @@ $already_deposits = [];
   while ($row = mysql_fetch_array($sth)) {
       if (0 < $userinfo['id']) {
           if (0 < $row['parent']) {
-              if (!in_array($row['parent'], $already_deposits)) {
+              if (! in_array($row['parent'], $already_deposits)) {
                   continue;
               }
           }
       }
 
       $q = 'select * from plans where parent = '.$row['id'].' order by id';
-      if (!($sth1 = db_query($q))) {
+      if (! ($sth1 = db_query($q))) {
       }
 
       $row['plans'] = [];

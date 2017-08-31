@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use Exception;
 use Carbon\Carbon;
 use App\Models\History;
 use App\Models\FakeUser;
 use App\Models\FakeHistory;
-use Exception;
 
 class DataService
 {
@@ -91,6 +91,7 @@ class DataService
         $user->payment = $history->payment;
         $user->amount += $history->amount;
         $user->save();
+
         return $history->toArray();
     }
 
@@ -119,6 +120,7 @@ class DataService
         ]);
         $user->amount = $user->amount - $history->amount;
         $user->save();
+
         return $history->toArray();
     }
 

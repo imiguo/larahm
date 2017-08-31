@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
 use App\Models\Ip;
 use App\Models\User;
-use Closure;
 use App\Services\IpService;
 use Illuminate\Support\Facades\Auth;
 

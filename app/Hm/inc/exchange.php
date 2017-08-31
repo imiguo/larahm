@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
 
 $id = $userinfo['id'];
   if (app('data')->frm['display'] == 'ok') {
@@ -25,14 +25,14 @@ $id = $userinfo['id'];
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $row['sm'] = floor($row['sm'] * 100) / 100;
-      if ((!isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
+      if ((! isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           view_assign('error', 'no_from');
           view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       $to = intval(app('data')->frm[''.'to_'.$from]);
-      if ((((app('data')->frm['to'] === '' or !isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1) or $to == $from)) {
+      if ((((app('data')->frm['to'] === '' or ! isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1) or $to == $from)) {
           view_assign('error', 'no_to');
           view_execute('exchange_preview.blade.php');
           throw new EmptyException();
@@ -113,14 +113,14 @@ $id = $userinfo['id'];
       $sth = db_query($q);
       $row = mysql_fetch_array($sth);
       $row['sm'] = floor($row['sm'] * 100) / 100;
-      if ((!isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
+      if ((! isset(app('data')->exchange_systems[$from]) or (app('data')->exchange_systems[$from]['status'] != 1 and $row['sm'] <= 0))) {
           view_assign('error', 'no_from');
           view_execute('exchange_preview.blade.php');
           throw new EmptyException();
       }
 
       $to = intval(app('data')->frm['to']);
-      if (((app('data')->frm['to'] == '' or !isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1)) {
+      if (((app('data')->frm['to'] == '' or ! isset(app('data')->exchange_systems[$to])) or app('data')->exchange_systems[$to]['status'] != 1)) {
           view_assign('error', 'no_to');
           view_execute('exchange_preview.blade.php');
           throw new EmptyException();
@@ -282,17 +282,17 @@ $id = $userinfo['id'];
 
   $exchange = [];
   foreach (app('data')->exchange_systems as $from => $data) {
-      if ((!$data['status'] and sprintf('%.02f', $tmp_amounts[$from]) <= 0)) {
+      if ((! $data['status'] and sprintf('%.02f', $tmp_amounts[$from]) <= 0)) {
           continue;
       }
 
       $tos = [];
       foreach (app('data')->exchange_systems as $to => $data) {
-          if ((!$data['status'] and sprintf('%.02f', $tmp_amounts[$to]) <= 0)) {
+          if ((! $data['status'] and sprintf('%.02f', $tmp_amounts[$to]) <= 0)) {
               continue;
           }
 
-          if (!$data['status']) {
+          if (! $data['status']) {
               $exch[$from][$to] = 100;
           }
 

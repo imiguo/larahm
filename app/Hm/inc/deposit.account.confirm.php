@@ -11,7 +11,7 @@
 
 use App\Exceptions\RedirectException;
 
-  $ok = 1;
+$ok = 1;
   $amount = sprintf('%0.2f', app('data')->frm['amount']);
   $h_id = sprintf('%d', app('data')->frm['h_id']);
   $type = app('data')->frm['type'];
@@ -60,7 +60,7 @@ use App\Exceptions\RedirectException;
   $sth = db_query($q);
   $type = mysql_fetch_array($sth);
   $delay = -1;
-  if (!$type) {
+  if (! $type) {
       view_assign('wrong_plan', 1);
       $ok = 0;
   } else {
@@ -167,7 +167,7 @@ use App\Exceptions\RedirectException;
       if ($use_compound) {
           if ($type['compound_percents_type'] == 1) {
               $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
-              if (!in_array($compound, $cps)) {
+              if (! in_array($compound, $cps)) {
                   $compound = $cps[0];
               }
           } else {

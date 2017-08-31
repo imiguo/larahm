@@ -14,7 +14,7 @@ $success = 0;
       $info = [];
       $conf_string = quote(app('data')->frm['c']);
       $q = 'select * from users where confirm_string = \''.$conf_string.'\'';
-      if (!($sth = db_query($q))) {
+      if (! ($sth = db_query($q))) {
       }
 
       while ($row = mysql_fetch_array($sth)) {
@@ -28,7 +28,7 @@ $success = 0;
 
       if ($success == 1) {
           $q = 'update users set confirm_string = \'\' where confirm_string = \''.$conf_string.'\'';
-          if (!(db_query($q))) {
+          if (! (db_query($q))) {
           }
 
           send_template_mail('registration', $info['email'], app('data')->settings['opt_in_email'], $info);

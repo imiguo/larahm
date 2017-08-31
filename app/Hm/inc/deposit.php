@@ -31,7 +31,7 @@ $i = 0;
 $min_deposit = 1000000000;
 while ($row = mysql_fetch_array($sth)) {
     if (0 < $row['parent']) {
-        if (!in_array($row['parent'], $already_deposits)) {
+        if (! in_array($row['parent'], $already_deposits)) {
             continue;
         }
     }
@@ -43,7 +43,7 @@ while ($row = mysql_fetch_array($sth)) {
 
     $compounding_available += $row['use_compound'];
     $q = 'select * from plans where parent = '.$row['id'].' order by id';
-    if (!($sth1 = db_query($q))) {
+    if (! ($sth1 = db_query($q))) {
     }
 
     $row['plans'] = [];

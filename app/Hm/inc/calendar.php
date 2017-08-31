@@ -17,11 +17,11 @@ $id = intval(app('data')->frm['type']);
                date_format(now() + interval '.app('data')->settings['time_dif'].' hour, \'%m/%d/%Y\') as from_date,
                date_format((now() + interval '.app('data')->settings['time_dif'].(''.' hour) + interval q_days day, \'%m/%d/%Y\') as to_date
         from types where id = '.$id);
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   $trow = mysql_fetch_array($sth);
-  if (!$trow) {
+  if (! $trow) {
       view_assign('error', 'type_not_found');
       view_execute('calendar_simple.blade.php');
       throw new EmptyException();
@@ -29,7 +29,7 @@ $id = intval(app('data')->frm['type']);
 
   $i = 0;
   $q = 'select * from plans where parent = '.$id.' order by id';
-  if (!($sth = db_query($q))) {
+  if (! ($sth = db_query($q))) {
   }
 
   while ($row = mysql_fetch_array($sth)) {

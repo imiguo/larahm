@@ -14,7 +14,7 @@ $found_records = -1;
       $found_records = 0;
       $email = quote(app('data')->frm['email']);
       $q = 'select * from users where username=\''.$email.'\' or email=\''.$email.'\' and (status=\'on\' or status=\'suspended\')';
-      if (!($sth = db_query($q))) {
+      if (! ($sth = db_query($q))) {
       }
 
       while ($row = mysql_fetch_array($sth)) {
@@ -33,13 +33,13 @@ $found_records = -1;
               $password = gen_confirm_code(8, 0);
               $enc_password = bcrypt($password);
               $q = 'update users set password = \''.$enc_password.'\' where id = '.$row['id'];
-              if (!($sth1 = db_query($q))) {
+              if (! ($sth1 = db_query($q))) {
               }
 
               if (app('data')->settings['store_uncrypted_password'] == 1) {
                   $pswd = quote($password);
                   $q = 'update users set pswd = \''.$pswd.'\' where id = '.$row['id'];
-                  if (!($sth1 = db_query($q))) {
+                  if (! ($sth1 = db_query($q))) {
                   }
               }
 

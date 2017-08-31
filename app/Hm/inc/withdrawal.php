@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Models\PayError;
+use App\Exceptions\RedirectException;
 
 if (app('data')->frm['action'] == 'preview') {
     $ab = get_user_balance($userinfo['id']);
@@ -80,10 +80,8 @@ if (app('data')->frm['action'] == 'preview') {
     if ($ab['total'] < $amount) {
         if ($amount <= $ab['total'] + $on_hold) {
             throw new RedirectException('/?a=withdraw&say=on_hold');
-        } else {
-            throw new RedirectException('/?a=withdraw&say=not_enought');
         }
-
+        throw new RedirectException('/?a=withdraw&say=not_enought');
     }
 
     if ($amount < app('data')->settings['min_withdrawal_amount']) {
@@ -209,10 +207,8 @@ if (app('data')->frm['action'] == 'preview') {
         if ($ab['total'] < $amount) {
             if ($amount <= $ab['total'] + $on_hold) {
                 throw new RedirectException('/?a=withdraw&say=on_hold');
-            } else {
-                throw new RedirectException('/?a=withdraw&say=not_enought');
             }
-
+            throw new RedirectException('/?a=withdraw&say=not_enought');
         }
 
         if (0 < app('data')->settings[max_daily_withdraw]) {
@@ -315,71 +311,68 @@ if (app('data')->frm['action'] == 'preview') {
             }
 
             throw new RedirectException('/?a=withdraw&say=processed');
-        } else {
-            if ($amount <= $ab[total] + $on_hold) {
-                throw new RedirectException('/?a=withdraw&say=on_hold');
-            } else {
-                throw new RedirectException('/?a=withdraw&say=not_enought');
-            }
-
         }
-    } else {
-        $id = $userinfo['id'];
-        $ab = get_user_balance($id);
-        $ab_formated = [];
-        $ab['withdraw_pending'] = 0 - $ab['withdraw_pending'];
-        reset($ab);
-        while (list($kk, $vv) = each($ab)) {
-            $vv = floor($vv * 100) / 100;
-            $ab_formated[$kk] = number_format($vv, 2);
+        if ($amount <= $ab[total] + $on_hold) {
+            throw new RedirectException('/?a=withdraw&say=on_hold');
+        }
+        throw new RedirectException('/?a=withdraw&say=not_enought');
+    }
+    $id = $userinfo['id'];
+    $ab = get_user_balance($id);
+    $ab_formated = [];
+    $ab['withdraw_pending'] = 0 - $ab['withdraw_pending'];
+    reset($ab);
+    while (list($kk, $vv) = each($ab)) {
+        $vv = floor($vv * 100) / 100;
+        $ab_formated[$kk] = number_format($vv, 2);
+    }
+
+    view_assign('ab_formated', $ab_formated);
+    view_assign('say', app('data')->frm['say']);
+    view_assign('batch', app('data')->frm['batch']);
+    $format = (app('data')->settings['show_full_sum'] ? 5 : 2);
+    $q = 'select sum(actual_amount) as sm, ec from history where user_id = '.$userinfo['id'].' group by ec';
+    $sth = db_query($q);
+    while ($row = mysql_fetch_array($sth)) {
+        if ($format == 2) {
+            $row['sm'] = floor($row['sm'] * 100) / 100;
         }
 
-        view_assign('ab_formated', $ab_formated);
-        view_assign('say', app('data')->frm['say']);
-        view_assign('batch', app('data')->frm['batch']);
-        $format = (app('data')->settings['show_full_sum'] ? 5 : 2);
-        $q = 'select sum(actual_amount) as sm, ec from history where user_id = '.$userinfo['id'].' group by ec';
+        app('data')->exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], $format);
+        if (100 < $row['ec']) {
+            view_assign('other_processings', 1);
+            continue;
+        }
+    }
+
+    $ps = [];
+    reset(app('data')->exchange_systems);
+    foreach (app('data')->exchange_systems as $id => $data) {
+        array_push($ps, array_merge(['id' => $id, 'account' => $accounts[$id]], $data));
+    }
+
+    $hold = [];
+    if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
+        $q = 'select id from deposits where user_id = '.$userinfo['id'].' and status=\'on\'';
         $sth = db_query($q);
+        $deps = [];
+        $deps[0] = 0;
         while ($row = mysql_fetch_array($sth)) {
-            if ($format == 2) {
-                $row['sm'] = floor($row['sm'] * 100) / 100;
-            }
-
-            app('data')->exchange_systems[$row['ec']]['balance'] = number_format($row['sm'], $format);
-            if (100 < $row['ec']) {
-                view_assign('other_processings', 1);
-                continue;
-            }
+            array_push($deps, $row[id]);
         }
 
-        $ps = [];
-        reset(app('data')->exchange_systems);
-        foreach (app('data')->exchange_systems as $id => $data) {
-            array_push($ps, array_merge(['id' => $id, 'account' => $accounts[$id]], $data));
-        }
-
-        $hold = [];
-        if (app('data')->settings['allow_withdraw_when_deposit_ends'] == 1) {
-            $q = 'select id from deposits where user_id = '.$userinfo['id'].' and status=\'on\'';
-            $sth = db_query($q);
-            $deps = [];
-            $deps[0] = 0;
-            while ($row = mysql_fetch_array($sth)) {
-                array_push($deps, $row[id]);
-            }
-
-            $q = 'select sum(actual_amount) as amount, ec from history where user_id = '.$userinfo['id'].' and
+        $q = 'select sum(actual_amount) as amount, ec from history where user_id = '.$userinfo['id'].' and
 	deposit_id in ('.join(',', $deps).') and
 			(type=\'earning\' or
 	(type=\'deposit\' and (description like \'Compou%\' or description like \'<b>Archived transactions</b>:<br>Compound%\'))) group by ec';
-            $sth = db_query($q);
-            while ($row = mysql_fetch_array($sth)) {
-                array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[amount], 2)]);
-            }
+        $sth = db_query($q);
+        while ($row = mysql_fetch_array($sth)) {
+            array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[amount], 2)]);
         }
+    }
 
-        if (app('data')->settings['hold_only_first_days'] == 1) {
-            $q = 'select sum(history.actual_amount) as am, history.ec
+    if (app('data')->settings['hold_only_first_days'] == 1) {
+        $q = 'select sum(history.actual_amount) as am, history.ec
                     from
                       history,
                       deposits,
@@ -393,8 +386,8 @@ if (app('data')->frm['action'] == 'preview') {
                     (history.type=\'earning\' or
                     (history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
                     group by history.ec';
-        } else {
-            $q = 'select sum(history.actual_amount) as am,
+    } else {
+        $q = 'select sum(history.actual_amount) as am,
                       history.ec
                         from
                           history,
@@ -408,17 +401,16 @@ if (app('data')->frm['action'] == 'preview') {
                       (history.type=\'earning\' or
                     (history.type=\'deposit\' and (history.description like \'Compou%\' or history.description like \'<b>Archived transactions</b>:<br>Compound%\')))
                     group by history.ec';
-        }
-
-        $sth = db_query($q);
-        $deps = [];
-        $deps[0] = 0;
-        while ($row = mysql_fetch_array($sth)) {
-            array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[am], 2)]);
-        }
-
-        view_assign('hold', $hold);
-        view_assign('ps', $ps);
-        view_execute('withdrawal.blade.php');
     }
+
+    $sth = db_query($q);
+    $deps = [];
+    $deps[0] = 0;
+    while ($row = mysql_fetch_array($sth)) {
+        array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[am], 2)]);
+    }
+
+    view_assign('hold', $hold);
+    view_assign('ps', $ps);
+    view_execute('withdrawal.blade.php');
 }

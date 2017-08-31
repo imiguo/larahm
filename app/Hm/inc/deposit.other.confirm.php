@@ -27,7 +27,7 @@ $ok = 1;
       $q = 'select * from types where id = '.$h_id.' and closed = 0';
       $sth = db_query($q);
       $type = mysql_fetch_array($sth);
-      if (!$type) {
+      if (! $type) {
           view_assign('wrong_plan', 1);
       } else {
           $plan_name = $type['name'];
@@ -110,7 +110,7 @@ $ok = 1;
       if ($use_compound) {
           if ($type['compound_percents_type'] == 1) {
               $cps = preg_split('/\\s*,\\s*/', $type['compound_percents']);
-              if (!in_array($compound, $cps)) {
+              if (! in_array($compound, $cps)) {
                   $compound = $cps[0];
               }
           } else {
@@ -164,9 +164,8 @@ $ok = 1;
       send_template_mail('pending_deposit_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
       if ($h_id == 0) {
           throw new RedirectException('/?a=add_funds&say=deposit_saved');
-      } else {
-          throw new RedirectException('/?a=deposit&say=deposit_saved');
       }
+      throw new RedirectException('/?a=deposit&say=deposit_saved');
   }
 
   $compound = sprintf('%d', app('data')->frm['compound']);
