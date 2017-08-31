@@ -1,5 +1,5 @@
 {
-  "name": "entimm/laravel-perfectmoney",
+  "name": "entimm/laravel-payeer",
   "type": "library",
   "description": "Perfect Money Payments integration to Laravel 5",
   "keywords": [
@@ -7,7 +7,7 @@
     "perfect money",
     "api"
   ],
-  "homepage": "https://github.com/entimm/laravel-perfectmoney",
+  "homepage": "https://github.com/entimm/laravel-payeer",
   "license": "MIT",
   "authors": [
     {
@@ -22,7 +22,14 @@
   },
   "autoload": {
     "psr-4": {
-      "entimm\\LaravelPerfectMoney\\": "src"
+      "entimm\\LaravelPayeer\\": "src"
     }
+  },
+  "extra": {
+      "laravel": {
+          "providers": [
+              "entimm\\LaravelPayeer\\Payeer"
+          ],
+      }
   }
 }

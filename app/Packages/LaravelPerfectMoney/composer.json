@@ -24,5 +24,12 @@
     "psr-4": {
       "entimm\\LaravelPerfectMoney\\": "src"
     }
+  },
+  "extra": {
+      "laravel": {
+          "providers": [
+              "entimm\\LaravelPerfectMoney\\PerfectMoney"
+          ],
+      }
   }
 }
