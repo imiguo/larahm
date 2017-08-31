@@ -46,7 +46,7 @@
   echo '\' class=inpts size=30></td>
 </tr>';
   if (app('data')->settings['use_user_location']) {
-      include app_path('Hm').'/inc/countries.inc';
+      include app_path('Hm').'/inc/countries.php';
       echo '<tr>
  <td>Address:</td>
  <td><input type=text name=address value=\'';

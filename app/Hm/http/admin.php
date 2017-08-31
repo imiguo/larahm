@@ -15,7 +15,7 @@ use App\Exceptions\RedirectException;
 
 $admin_url = env('ADMIN_URL');
 
-require app_path('Hm').'/lib/admin.inc.php';
+require app_path('Hm').'/lib/admin.php';
 
 $userinfo = [];
 $userinfo['logged'] = 0;
@@ -1638,7 +1638,7 @@ if (app('data')->frm['a'] == 'delete_processing') {
     throw new RedirectException($admin_url.'?a=processings');
 }
 
-include app_path('Hm').'/inc/admin/html.header.inc.php';
+include app_path('Hm').'/inc/admin/html.header.php';
 echo '
   <tr>
     <td valign="top">
@@ -1649,7 +1649,7 @@ echo '
              <tr bgcolor="#FFFFFF" valign="top">
               <td width=300 align=center>
 				   <!-- Image Table: Start -->';
-include app_path('Hm').'/inc/admin/menu.inc.php';
+include app_path('Hm').'/inc/admin/menu.php';
 echo '				   <br>
 
               </td>
@@ -1663,106 +1663,106 @@ echo '=100% valign=top>';
 
 switch (app('data')->frm['a']) {
     case 'rates':
-        include app_path('Hm').'/inc/admin/rates.inc.php';
+        include app_path('Hm').'/inc/admin/rates.php';
         break;
     case 'editrate':
-        include app_path('Hm').'/inc/admin/edit_hyip.inc.php';
+        include app_path('Hm').'/inc/admin/edit_hyip.php';
         break;
     case 'add_hyip':
-        include app_path('Hm').'/inc/admin/add_hyip.inc.php';
+        include app_path('Hm').'/inc/admin/add_hyip.php';
         break;
     case 'members':
-        include app_path('Hm').'/inc/admin/members.inc.php';
+        include app_path('Hm').'/inc/admin/members.php';
         break;
     case 'editaccount':
-        include app_path('Hm').'/inc/admin/editaccount.inc.php';
+        include app_path('Hm').'/inc/admin/editaccount.php';
         break;
     case 'addmember':
-        include app_path('Hm').'/inc/admin/addmember.inc.php';
+        include app_path('Hm').'/inc/admin/addmember.php';
         break;
     case 'userexists':
-        include app_path('Hm').'/inc/admin/error_userexists.inc.php';
+        include app_path('Hm').'/inc/admin/error_userexists.php';
         break;
     case 'userfunds':
-        include app_path('Hm').'/inc/admin/manage_user_funds.inc.php';
+        include app_path('Hm').'/inc/admin/manage_user_funds.php';
         break;
     case 'addbonuse':
-        include app_path('Hm').'/inc/admin/addbonuse.inc.php';
+        include app_path('Hm').'/inc/admin/addbonuse.php';
         break;
     case 'mass':
-        include app_path('Hm').'/inc/admin/prepare_mass_pay.inc.php';
+        include app_path('Hm').'/inc/admin/prepare_mass_pay.php';
         break;
     case 'thistory':
         include app_path('Hm').'/inc/admin/transactions_history.php';
         break;
     case 'addpenality':
-        include app_path('Hm').'/inc/admin/addpenality.inc.php';
+        include app_path('Hm').'/inc/admin/addpenality.php';
         break;
     case 'releasedeposits':
-        include app_path('Hm').'/inc/admin/releaseusersdeposits.inc.php';
+        include app_path('Hm').'/inc/admin/releaseusersdeposits.php';
         break;
     case 'pay_withdraw':
         include app_path('Hm').'/inc/admin/process_withdraw.php';
         break;
     case 'settings':
-        include app_path('Hm').'/inc/admin/settings.inc.php';
+        include app_path('Hm').'/inc/admin/settings.php';
         break;
     case 'info_box':
-        include app_path('Hm').'/inc/admin/info_box_settings.inc.php';
+        include app_path('Hm').'/inc/admin/info_box_settings.php';
         break;
     case 'send_bonuce':
-        include app_path('Hm').'/inc/admin/send_bonuce.inc.php';
+        include app_path('Hm').'/inc/admin/send_bonuce.php';
         break;
     case 'send_penality':
-        include app_path('Hm').'/inc/admin/send_penality.inc.php';
+        include app_path('Hm').'/inc/admin/send_penality.php';
         break;
     case 'newsletter':
-        include app_path('Hm').'/inc/admin/newsletter.inc.php';
+        include app_path('Hm').'/inc/admin/newsletter.php';
         break;
     case 'edit_emails':
-        include app_path('Hm').'/inc/admin/emails.inc.php';
+        include app_path('Hm').'/inc/admin/emails.php';
         break;
     case 'referal':
-        include app_path('Hm').'/inc/admin/referal.inc.php';
+        include app_path('Hm').'/inc/admin/referal.php';
         break;
     case 'error_pay_log':
-        include app_path('Hm').'/inc/admin/error_pay_log.inc.php';
+        include app_path('Hm').'/inc/admin/error_pay_log.php';
         break;
     case 'news':
-        include app_path('Hm').'/inc/admin/news.inc.php';
+        include app_path('Hm').'/inc/admin/news.php';
         break;
     case 'affilates':
-        include app_path('Hm').'/inc/admin/affilates.inc.php';
+        include app_path('Hm').'/inc/admin/affilates.php';
         break;
     case 'custompages':
-        include app_path('Hm').'/inc/admin/custompage.inc.php';
+        include app_path('Hm').'/inc/admin/custompage.php';
         break;
     case 'exchange_rates':
-        include app_path('Hm').'/inc/admin/exchange_rates.inc.php';
+        include app_path('Hm').'/inc/admin/exchange_rates.php';
         break;
     case 'security':
-        include app_path('Hm').'/inc/admin/security.inc.php';
+        include app_path('Hm').'/inc/admin/security.php';
         break;
     case 'processings':
-        include app_path('Hm').'/inc/admin/processings.inc.php';
+        include app_path('Hm').'/inc/admin/processings.php';
         break;
     case 'add_processing':
-        include app_path('Hm').'/inc/admin/add_processing.inc.php';
+        include app_path('Hm').'/inc/admin/add_processing.php';
         break;
     case 'edit_processing':
-        include app_path('Hm').'/inc/admin/edit_processing.inc.php';
+        include app_path('Hm').'/inc/admin/edit_processing.php';
         break;
     case 'pending_deposits':
-        include app_path('Hm').'/inc/admin/pending_deposits.inc.php';
+        include app_path('Hm').'/inc/admin/pending_deposits.php';
         break;
     case 'pending_deposit_details':
-        include app_path('Hm').'/inc/admin/pending_deposit_details.inc.php';
+        include app_path('Hm').'/inc/admin/pending_deposit_details.php';
         break;
     case 'startup_bonus':
-        include app_path('Hm').'/inc/admin/startup_bonus.inc.php';
+        include app_path('Hm').'/inc/admin/startup_bonus.php';
         break;
     default:
-        include app_path('Hm').'/inc/admin/main.inc.php';
+        include app_path('Hm').'/inc/admin/main.php';
 }
 echo '</td></tr></table><!-- Main: END --></td></tr></table></td></tr></table></td></tr>';
-include app_path('Hm').'/inc/admin/html.footer.inc.php';
+include app_path('Hm').'/inc/admin/html.footer.php';

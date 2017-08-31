@@ -15,18 +15,18 @@ use App\Exceptions\RedirectException;
 function show_program_stat()
 {
     if (app('data')->frm['page'] == 'members') {
-        include app_path('Hm').'/inc/admin/members_program.inc.php';
+        include app_path('Hm').'/inc/admin/members_program.php';
     } else {
         if (app('data')->frm['page'] == 'pendingwithdrawal') {
-            include app_path('Hm').'/inc/admin/pending_program.inc.php';
+            include app_path('Hm').'/inc/admin/pending_program.php';
         } else {
             if (app('data')->frm['page'] == 'whoonline') {
-                include app_path('Hm').'/inc/admin/whoonline_program.inc.php';
+                include app_path('Hm').'/inc/admin/whoonline_program.php';
             } else {
                 if (app('data')->frm['page'] == 'TrayInfo') {
                     include app_path('Hm').'/inc/admin/tray_info.php';
                 } else {
-                    include app_path('Hm').'/inc/admin/main_program.inc.php';
+                    include app_path('Hm').'/inc/admin/main_program.php';
                 }
             }
         }

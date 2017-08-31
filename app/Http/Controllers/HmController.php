@@ -9,7 +9,7 @@ class HmController extends Controller
 {
     public function __construct()
     {
-        require app_path('Hm').'/lib/config.inc.php';
+        require app_path('Hm').'/lib/config.php';
         $this->middleware('hack.monitors')->only('index');
     }
 

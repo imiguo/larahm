@@ -270,7 +270,7 @@ if (app('data')->frm['say'] == 'confirm') {
       }
   }
 
-  include app_path('Hm').'/inc/countries.inc';
+  include app_path('Hm').'/inc/countries.php';
   $ref = Cookie::get('referer');
   $q = 'select * from users where username = \''.$ref.'\'';
   $sth = db_query($q);

@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-include app_path('Hm').'/inc/index.plans.inc';
+include app_path('Hm').'/inc/index.plans.php';
 
 $q = 'select max(percent) as percent from referal';
 $sth = db_query($q);
