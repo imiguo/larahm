@@ -435,45 +435,6 @@ function end_info_table()
     return '</td></tr></table></td></tr></table>';
 }
 
-/**
- * 没有用到这个函数.
- *
- * @param $deposit_id
- * @param $amount
- */
-function pay_direct_return_deposit($deposit_id, $amount)
-{
-    if (app('data')->settings['use_auto_payment'] == 1) {
-        $q = 'select * from deposits where id = '.$deposit_id;
-        $sth = db_query($q);
-        $dep = mysql_fetch_array($sth);
-        $q = 'select * from users where id = '.$dep['user_id'];
-        $sth = db_query($q);
-        $user = mysql_fetch_array($sth);
-        if ($user['auto_withdraw'] != 1) {
-            return;
-        }
-
-        $q = 'select * from types where id = '.$dep['type_id'];
-        $sth = db_query($q);
-        $type = mysql_fetch_array($sth);
-        $amount = abs($amount);
-        $success_txt = 'Return principal from deposit $'.$amount.'. Auto-withdrawal to '.$user['username'].' from '.app('data')->settings['site_name'];
-        $error_txt = 'Auto-withdrawal error, tried to return '.$amount.' to e-gold account # '.$user['egold_account'].'. Error:';
-        list($res, $text, $batch) = send_money_to_egold('', $amount, $user['egold_account'], $success_txt, $error_txt);
-        if ($res == 1) {
-            $q = 'insert into history set
-            user_id = '.$user['id'].(',
-            amount = -'.$amount.',
-            actual_amount = -'.$amount.',
-            type=\'withdrawal\',
-            date = now(),
-        description = \'Auto-withdrawal retuned deposit to account ').$user['egold_account'].('. Batch is '.$batch.'\'');
-            db_query($q);
-        }
-    }
-}
-
 function pay_direct_earning($deposit_id, $amount, $date)
 {
 
