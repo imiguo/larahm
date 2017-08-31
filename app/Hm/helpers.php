@@ -84,7 +84,8 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound,
     $user_id = intval($user_id);
     $amount = sprintf('%.02f', $amount);
 
-    $datetime = Carbon::now()->subDays($ago);
+    app('data')->time = Carbon::now()->subDays($ago);
+    $datetime = app('data')->time;
 
     // 查找投资是否已经入库
     $q = 'select count(*) as cnt from history where ec = '.$ec.' && type = \'add_funds\' && payment_batch_num = \''.$batch.'\'';
@@ -228,6 +229,7 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound,
 
 function referral_commission($user_id, $amount, $ec)
 {
+    $datetime = app('data')->time;
     $ref_sum = 0;
     if (app('data')->settings['use_referal_program'] == 1) {
         $q = 'select * from users where id = '.$user_id;
@@ -257,15 +259,15 @@ function referral_commission($user_id, $amount, $ec)
                 if ($row['cnt'] == 1) {
                     $sum = app('data')->settings['solid_referral_commission_amount'];
                     $ref_sum += $sum;
-                    $q = 'insert into history set
-                        user_id = '.$ref.',
-                        amount = '.$sum.',
-                        actual_amount = '.$sum.',
-                        type = \'commissions\',
-                        description = \'Referral commission from '.$uinfo['username'].('\',
-                        ec = '.$ec.',
-                        date = now()');
-                    db_query($q);
+                    History::create([
+                        'user_id' => $ref,
+                        'amount' => $sum,
+                        'type' => 'commissions',
+                        'actual_amount' => $sum,
+                        'description' => 'Referral commission from '.$uinfo['username'],
+                        'ec' => $ec,
+                        'date' => $datetime,
+                    ]);
                     $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
                     $refinfo = mysql_fetch_array($rsth);
@@ -296,15 +298,15 @@ function referral_commission($user_id, $amount, $ec)
                 if ($row = mysql_fetch_array($sth)) {
                     $sum = $amount * $row['percent'] / 100;
                     $ref_sum += $sum;
-                    $q = 'insert into history set
-                            user_id = '.$ref.',
-                            amount = '.$sum.',
-                            actual_amount = '.$sum.',
-                            type = \'commissions\',
-                            description = \'Referral commission from '.$uinfo['username'].'\',
-                            ec = '.$ec.',
-                            date = now()';
-                    db_query($q);
+                    History::create([
+                        'user_id' => $ref,
+                        'amount' => $sum,
+                        'type' => 'commissions',
+                        'actual_amount' => $sum,
+                        'description' => 'Referral commission from '.$uinfo['username'],
+                        'ec' => $ec,
+                        'date' => $datetime,
+                    ]);
                     $q = 'select * from users where id = '.$ref;
                     $rsth = db_query($q);
                     $refinfo = mysql_fetch_array($rsth);
@@ -332,15 +334,15 @@ function referral_commission($user_id, $amount, $ec)
                     if (0 < $ref) {
                         $sum = $amount * app('data')->settings['ref'.$i.'_cms'] / 100;
                         $ref_sum += $sum;
-                        $q = 'insert into history set
-                                  user_id = '.$row['ref'].',
-                                  amount = '.$sum.',
-                                  actual_amount = '.$sum.',
-                                  type = \'commissions\',
-                                  description = \'Referral commission from '.$uinfo['username'].' '.$i.' level referral\',
-                                  ec = '.$ec.',
-                                  date = now()';
-                        db_query($q);
+                        History::create([
+                            'user_id' => $row['ref'],
+                            'amount' => $sum,
+                            'type' => 'commissions',
+                            'actual_amount' => $sum,
+                            'description' => 'Referral commission from '.$uinfo['username'].' '.$i.' level referral',
+                            'ec' => $ec,
+                            'date' => $datetime,
+                        ]);
                         continue;
                     }
                 }

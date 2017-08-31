@@ -10,6 +10,7 @@
  */
 
 use Illuminate\Support\Facades\Cookie;
+use Carbon\Carbon;
 
 ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 
@@ -17,6 +18,8 @@ app('data')->frm = request()->toArray();
 
 app('data')->env = array_merge($_ENV, $_SERVER);
 app('data')->env['HTTP_HOST'] = preg_replace('/^www\./', '', app('data')->env['HTTP_HOST']);
+
+app('data')->time = Carbon::now();
 
 $referer = isset(app('data')->env['HTTP_REFERER']) ? app('data')->env['HTTP_REFERER'] : null;
 $host = app('data')->env['HTTP_HOST'];
