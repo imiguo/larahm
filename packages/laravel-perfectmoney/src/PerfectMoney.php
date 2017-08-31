@@ -1,15 +1,15 @@
 <?php
+
 namespace entimm\LaravelPerfectMoney;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 
 /**
- * Class PerfectMoney
+ * Class PerfectMoney.
  */
-class PerfectMoney {
-
+class PerfectMoney
+{
     /**
      * @var string
      */
@@ -61,13 +61,14 @@ class PerfectMoney {
     }
 
     /**
-     * Get data from the url
+     * Get data from the url.
      *
-     * @param  string $url
-     * @param  array  $params
+     * @param string $url
+     * @param array  $params
+     *
+     * @throws PerfectMoneyException
      *
      * @return string
-     * @throws PerfectMoneyException
      */
     private function post($url, $params)
     {
@@ -77,10 +78,11 @@ class PerfectMoney {
     }
 
     /**
-     * get the balance for the wallet
+     * get the balance for the wallet.
+     *
+     * @throws PerfectMoneyException
      *
      * @return array
-     * @throws PerfectMoneyException
      */
     public function getBalance()
     {
@@ -88,29 +90,32 @@ class PerfectMoney {
         $content = $this->post('/acct/balance.asp', $this->params);
 
         // searching for hidden fields
-        if(!preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $content, $result, PREG_SET_ORDER)) throw new PerfectMoneyException('Invalid output');
-
+        if (! preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $content, $result, PREG_SET_ORDER)) {
+            throw new PerfectMoneyException('Invalid output');
+        }
         // putting data to array (return error, if have any)
         $data = [];
-        foreach($result as $item)
-        {
-            if($item[1] == 'ERROR') throw new PerfectMoneyException($item[2]);
-            else $data[$item[1]] = $item[2];
+        foreach ($result as $item) {
+            if ($item[1] == 'ERROR') {
+                throw new PerfectMoneyException($item[2]);
+            }
+            $data[$item[1]] = $item[2];
         }
 
         return $data;
     }
 
     /**
-     * Send Money
+     * Send Money.
      *
-     * @param   string $account
-     * @param   double $amount
-     * @param   string $description
-     * @param   string $payment_id
+     * @param string $account
+     * @param float  $amount
+     * @param string $description
+     * @param string $payment_id
+     *
+     * @throws PerfectMoneyException
      *
      * @return array
-     * @throws PerfectMoneyException
      */
     public function sendMoney($account, $amount, $description = '', $payment_id = '')
     {
@@ -125,13 +130,16 @@ class PerfectMoney {
         $content = $this->post('/acct/confirm.asp', $params);
 
         // searching for hidden fields
-        if(!preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $content, $result, PREG_SET_ORDER)) throw new PerfectMoneyException('Invalid output');
-
+        if (! preg_match_all("/<input name='(.*)' type='hidden' value='(.*)'>/", $content, $result, PREG_SET_ORDER)) {
+            throw new PerfectMoneyException('Invalid output');
+        }
         // putting data to array (return error, if have any)
         $data = [];
-        foreach($result as $item) {
-            if($item[1] == 'ERROR') throw new PerfectMoneyException($item[2]);
-            else $data[strtolower($item[1])] = $item[2];
+        foreach ($result as $item) {
+            if ($item[1] == 'ERROR') {
+                throw new PerfectMoneyException($item[2]);
+            }
+            $data[strtolower($item[1])] = $item[2];
         }
 
         return $data;
@@ -141,16 +149,17 @@ class PerfectMoney {
      * This script demonstrates querying account history
      * using PerfectMoney API interface.
      *
-     * @param   int $start_day
-     * @param   int $start_month
+     * @param int   $start_day
+     * @param int   $start_month
      * @param null  $start_year
-     * @param   int $end_day
-     * @param   int $end_month
-     * @param   int $end_year
+     * @param int   $end_day
+     * @param int   $end_month
+     * @param int   $end_year
      * @param array $data
      *
-     * @return array
      * @throws PerfectMoneyException
+     *
+     * @return array
      */
     public function getHistory(
         $start_day = null,
@@ -160,8 +169,7 @@ class PerfectMoney {
         $end_month = null,
         $end_year = null,
         $data = []
-    )
-    {
+    ) {
         $params = array_merge($this->params, [
             'startday' => $start_day ?: Carbon::now()->subYear(1)->day,
             'startmonth' => $start_month ?: Carbon::now()->subYear(1)->month,
@@ -196,10 +204,12 @@ class PerfectMoney {
 
             // Fetching history
             $return_data['history'] = [];
-            for($i=1; $i < count($lines); $i++) {
+            for ($i = 1; $i < count($lines); $i++) {
 
                 // Skip empty lines
-                if(empty($lines[$i])) break;
+                if (empty($lines[$i])) {
+                    break;
+                }
 
                 // Split line into items
                 $items = explode(',', $lines[$i]);

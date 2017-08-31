@@ -2,13 +2,11 @@
 
 namespace entimm\LaravelPayeer;
 
-use Illuminate\Http\Request;
-
 /**
- * Class Payeer
+ * Class Payeer.
  */
-class Payeer {
-
+class Payeer
+{
     private $api;
 
     private $config;
@@ -27,29 +25,31 @@ class Payeer {
     }
 
     /**
-     * Check of balance
+     * Check of balance.
      *
      * @return mixed|string
      */
     public function balance()
     {
         $balance = $this->api->getBalance();
+
         return $balance['balance']['USD']['BUDGET'];
     }
 
     /**
-     * Receiving available payment systems
+     * Receiving available payment systems.
      *
      * @return mixed|string
      */
     public function paySystems()
     {
         $balance = $this->api->getPaySystems();
+
         return $balance;
     }
 
     /**
-     * Payout
+     * Payout.
      *
      * @return mixed|string
      */
@@ -68,18 +68,19 @@ class Payeer {
     }
 
     /**
-     * Information on operation
+     * Information on operation.
      *
      * @return mixed|string
      */
     public function historyInfo($historyId)
     {
         $history = $this->api->getHistoryInfo($historyId);
+
         return $history;
     }
 
     /**
-     * Information on operation in shop
+     * Information on operation in shop.
      *
      * @return mixed|string
      */
@@ -89,11 +90,12 @@ class Payeer {
             'shopId' => $shopId,
             'orderId' => $orderId,
         ]);
+
         return $shopHistory;
     }
 
     /**
-     * Money transfer
+     * Money transfer.
      *
      * @return mixed|string
      */
@@ -116,7 +118,7 @@ class Payeer {
     }
 
     /**
-     * Checking user account
+     * Checking user account.
      */
     public function checkUser($userId)
     {
@@ -124,30 +126,31 @@ class Payeer {
     }
 
     /**
-     * Conversion rates
+     * Conversion rates.
      */
     public function exchangeRate()
     {
         $inputExchangeRate = $this->api->getExchangeRate(['output' => 'N']);
+
         return $inputExchangeRate;
     }
 
     /**
-     * API Merchant
+     * API Merchant.
      */
     public function merchant($orderId, $amount, $desc)
     {
-            $shop = [
+        $shop = [
                 'm_shop' => $config['shop_id'],
                 'm_orderid' => $orderId,
                 'm_amount' => number_format($amount, 2, '.', ''),
                 'm_curr' => 'USD',
                 'm_desc' => base64_encode($desc),
             ];
-            $shop['m_sign'] = strtoupper(hash('sha256',
+        $shop['m_sign'] = strtoupper(hash('sha256',
                 implode(':', array_merge($shop, [$config['shop_secret_key']]))));
 
-            $order = $this->api->merchant([
+        $order = $this->api->merchant([
                 //'merchantUrl' => 'https://payeer.com/merchant/',
                 //'processUrl' => 'https://payeer.com/merchant/',
                 'shop' => $shop,
@@ -161,6 +164,7 @@ class Payeer {
                 ],
                 //'ip' => $_SERVER['REMOTE_ADDR'],
             ]);
-            return $order;
+
+        return $order;
     }
 }

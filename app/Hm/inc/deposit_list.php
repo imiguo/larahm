@@ -16,7 +16,7 @@ $q = 'select * from types where status = \'on\'';
   while ($row = mysql_fetch_array($sth)) {
       $row['deposits'] = [];
       $q = 'select * from plans where parent = '.$row['id'].' order by id';
-      if (!($sth1 = db_query($q))) {
+      if (! ($sth1 = db_query($q))) {
       }
 
       $row['plans'] = [];
@@ -111,7 +111,7 @@ $q = 'select * from types where status = \'on\'';
       $sth1 = db_query($q);
       $row1 = mysql_fetch_array($sth1);
       $row['total_profit'] = number_format(abs($row1['sm']), 2);
-      if ((!$row['deposits'] and $row['closed'] != 0)) {
+      if ((! $row['deposits'] and $row['closed'] != 0)) {
           continue;
       }
 

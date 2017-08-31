@@ -5,10 +5,10 @@ namespace entimm\LaravelPayeer;
 use Illuminate\Http\Request;
 
 /**
- * Class Merchant
+ * Class Merchant.
  */
-class Merchant {
-
+class Merchant
+{
     private $config;
 
     public function __construct($config = [])
@@ -24,7 +24,7 @@ class Merchant {
     public function validatePayment()
     {
         if (app()->environment() != 'local' &&
-            !in_array(env('REMOTE_ADDR'), ['185.71.65.92', '185.71.65.189', '149.202.17.210'])) {
+            ! in_array(env('REMOTE_ADDR'), ['185.71.65.92', '185.71.65.189', '149.202.17.210'])) {
             return false;
         }
         $request = app('request');
@@ -45,11 +45,12 @@ class Merchant {
         }
         $params[] = $this->config['shop_secret_key'];
         $sign_hash = strtoupper(hash('sha256', implode(':', $params)));
+
         return $request->input('m_sign') == $sign_hash && $request->input('m_status') == 'success';
     }
 
     /**
-     * Render form
+     * Render form.
      *
      * @param array  $data
      * @param string $view
@@ -75,8 +76,8 @@ class Merchant {
 
         $viewData = compact('amount', 'shop_id', 'order_id', 'shop_sign', 'currency', 'memo');
 
-        if(view()->exists('payeer::' . $view)) {
-            return view('payeer::' . $view, $viewData);
+        if (view()->exists('payeer::'.$view)) {
+            return view('payeer::'.$view, $viewData);
         }
 
         return view('payeer::payeer-form', $viewData);

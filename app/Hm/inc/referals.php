@@ -103,7 +103,7 @@ view_assign('site_name', app('data')->settings['site_name']);
               ++$q_other;
           }
 
-          if (!$parents) {
+          if (! $parents) {
               break;
           }
 

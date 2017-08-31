@@ -3,7 +3,6 @@
 namespace entimm\LaravelPerfectMoney;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 
 class PerfectMoneyServiceProvider extends ServiceProvider
 {
@@ -11,7 +10,7 @@ class PerfectMoneyServiceProvider extends ServiceProvider
     {
         // Config
         $this->publishes([
-            __DIR__ . '/../config/perfectmoney.php' => config_path('perfectmoney.php'),
+            __DIR__.'/../config/perfectmoney.php' => config_path('perfectmoney.php'),
         ], 'config');
 
         // Views
@@ -26,7 +25,7 @@ class PerfectMoneyServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/perfectmoney.php', 'perfectmoney');
 
-        $this->app->singleton('perfectmoney', function() {
+        $this->app->singleton('perfectmoney', function () {
             return new PerfectMoney();
         });
     }

@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\EmptyException;
 use App\Models\User;
+use App\Exceptions\EmptyException;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\RedirectException;
 use Illuminate\Support\Facades\Cookie;

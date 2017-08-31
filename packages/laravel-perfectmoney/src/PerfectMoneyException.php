@@ -2,9 +2,8 @@
 
 namespace entimm\LaravelPerfectMoney;
 
-use \Exception;
+use Exception;
 
 class PerfectMoneyException extends Exception
 {
-
 }

@@ -5,10 +5,10 @@ namespace entimm\LaravelPerfectMoney;
 use Illuminate\Http\Request;
 
 /**
- * Class Merchant
+ * Class Merchant.
  */
-class Merchant {
-
+class Merchant
+{
     private $config;
 
     public function __construct($config = [])
@@ -19,20 +19,20 @@ class Merchant {
     public function validatePayment(Request $request)
     {
         $string = '';
-        $string .= $request->input('PAYMENT_ID') . ':';
-        $string .= $request->input('PAYEE_ACCOUNT') . ':';
-        $string .= $request->input('PAYMENT_AMOUNT') . ':';
-        $string .= $request->input('PAYMENT_UNITS') . ':';
-        $string .= $request->input('PAYMENT_BATCH_NUM') . ':';
-        $string .= $request->input('PAYER_ACCOUNT') . ':';
-        $string .= strtoupper(md5($this->config['alt_passphrase'])) . ':';
+        $string .= $request->input('PAYMENT_ID').':';
+        $string .= $request->input('PAYEE_ACCOUNT').':';
+        $string .= $request->input('PAYMENT_AMOUNT').':';
+        $string .= $request->input('PAYMENT_UNITS').':';
+        $string .= $request->input('PAYMENT_BATCH_NUM').':';
+        $string .= $request->input('PAYER_ACCOUNT').':';
+        $string .= strtoupper(md5($this->config['alt_passphrase'])).':';
         $string .= $request->input('TIMESTAMPGMT');
 
         return strtoupper(md5($string)) == $request->input('V2_HASH');
     }
 
     /**
-     * Render form
+     * Render form.
      *
      * @param array  $data
      * @param string $view
@@ -57,8 +57,8 @@ class Merchant {
         $viewData['payment_id'] = $payment_id;
 
         // Custom view
-        if(view()->exists('perfectmoney::' . $view)) {
-            return view('perfectmoney::' . $view, $viewData);
+        if (view()->exists('perfectmoney::'.$view)) {
+            return view('perfectmoney::'.$view, $viewData);
         }
 
         // Default view

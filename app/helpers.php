@@ -1,11 +1,11 @@
 <?php
 
-use App\Exceptions\HmException;
 use App\Models\Order;
+use App\Exceptions\HmException;
 use entimm\LaravelPayeer\Payeer;
 use entimm\LaravelAsmoney\Asmoney;
-use entimm\LaravelPerfectMoney\PerfectMoney;
 use Illuminate\Filesystem\Filesystem;
+use entimm\LaravelPerfectMoney\PerfectMoney;
 
 if (! function_exists('mysql_query')) {
     function mysql_query($query)
@@ -194,31 +194,39 @@ if (! function_exists('smarty_blade_block')) {
 }
 
 if (! function_exists('send_money_to_perfectmoney')) {
-    function send_money_to_perfectmoney($amount, $recipient, $memo) {
+    function send_money_to_perfectmoney($amount, $recipient, $memo)
+    {
         $config = psconfig_all('pm');
         $res = (new PerfectMoney($config))->sendMoney($recipient, abs($amount), $memo);
+
         return $res['payment_batch_num'];
     }
 }
 
 if (! function_exists('send_money_to_payeer')) {
-    function send_money_to_payeer($amount, $recipient, $memo) {
+    function send_money_to_payeer($amount, $recipient, $memo)
+    {
         $config = psconfig_all('pe');
+
         return (new Payeer($config))->transfer($recipient, abs($amount), $memo);
     }
 }
 
 if (! function_exists('send_money_to_bitcoin')) {
-    function send_money_to_bitcoin($amount, $recipient, $memo) {
+    function send_money_to_bitcoin($amount, $recipient, $memo)
+    {
         $config = psconfig_all('am');
+
         return (new Asmoney($config))->transferBTC($recipient, abs($amount), $memo);
     }
 }
 
 if (! function_exists('generate_id')) {
-    function generate_id() {
+    function generate_id()
+    {
         $userId = auth()->id();
         $gateNum = app('data')->identity > 0 ? 1 : 2;
+
         return implode('', [
             $gateNum,
             mt_rand(10, 99),
@@ -230,7 +238,8 @@ if (! function_exists('generate_id')) {
 }
 
 if (! function_exists('add_deposit_order')) {
-    function add_deposit_order($amount, $ps, $data) {
+    function add_deposit_order($amount, $ps, $data)
+    {
         $orderNo = generate_id();
         Order::create([
             'order_no' => $orderNo,
@@ -241,13 +250,14 @@ if (! function_exists('add_deposit_order')) {
             'type' => Order::TYPE_DEPOSIT,
             'status' => Order::STATUS_START,
         ]);
+
         return $orderNo;
     }
 }
 
 if (! function_exists('psconfig_all')) {
-    function psconfig_all($ps, $gate = '') {
-
+    function psconfig_all($ps, $gate = '')
+    {
         $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');
 
         return array_merge(config('ps')['common'][$ps], config('ps')[$gate][$ps]);
@@ -255,7 +265,8 @@ if (! function_exists('psconfig_all')) {
 }
 
 if (! function_exists('psconfig')) {
-    function psconfig($key, $gate = '') {
+    function psconfig($key, $gate = '')
+    {
         list($ps, $key) = explode('.', $key, 2);
 
         $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');

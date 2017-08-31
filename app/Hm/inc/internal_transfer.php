@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\RedirectException;
 use App\Exceptions\EmptyException;
+use App\Exceptions\RedirectException;
 
 if (app('data')->frm['complete']) {
     view_assign('fatal', 'completed');
@@ -18,7 +18,7 @@ if (app('data')->frm['complete']) {
     throw new EmptyException();
 }
 
-  if (!app('data')->settings['internal_transfer_enabled']) {
+  if (! app('data')->settings['internal_transfer_enabled']) {
       view_assign('fatal', 'forbidden');
       view_execute('internal_transfer.blade.php');
       throw new EmptyException();
@@ -150,7 +150,7 @@ if (app('data')->frm['complete']) {
       $q = 'select * from users where username = \''.$recipient.'\' and status = \'on\'';
       $sth = db_query($q);
       $user = mysql_fetch_array($sth);
-      if (!$user) {
+      if (! $user) {
           view_assign('say', 'user_not_found');
           view_execute('internal_transfer.blade.php');
           throw new EmptyException();
@@ -220,7 +220,7 @@ if (app('data')->frm['complete']) {
       $q = 'select * from users where username = \''.$recipient.'\' and status = \'on\'';
       $sth = db_query($q);
       $user = mysql_fetch_array($sth);
-      if (!$user) {
+      if (! $user) {
           view_assign('say', 'user_not_found');
           view_execute('internal_transfer.blade.php');
           throw new EmptyException();

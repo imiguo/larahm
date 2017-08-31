@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
+use Carbon\Carbon;
 use App\Models\Deposit;
 use App\Models\History;
-use Carbon\Carbon;
 
 function is_SSL()
 {
@@ -172,10 +172,10 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound,
         $deposit_id = $deposit->id;
         History::create([
             'user_id' => $user_id,
-            'amount' => - $amount,
+            'amount' => -$amount,
             'type' => 'deposit',
             'description' => 'Deposit to '.quote($name),
-            'actual_amount' => - $amount,
+            'actual_amount' => -$amount,
             'ec' => $ec,
             'date' => $datetime,
             'deposit_id' => $deposit_id,
@@ -437,7 +437,6 @@ function end_info_table()
 
 function pay_direct_earning($deposit_id, $amount, $date)
 {
-
 }
 
 function count_earning($u_id)
@@ -688,8 +687,8 @@ function count_earning($u_id)
                                     ec = ').$row['ec'].',
                                     date = \''.$row['last_pay_date'].('\' + interval '.$interval.',
                                         deposit_id = ').$row['id'];
-                                        db_query($q);
-                                        $q = 'update deposits set amount = amount + '.$comp_amount.',
+                                db_query($q);
+                                $q = 'update deposits set amount = amount + '.$comp_amount.',
                                     actual_amount = actual_amount + '.$comp_amount.'
                                     where id = '.$row['id'];
                                 db_query($q);

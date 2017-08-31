@@ -9,8 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
-use Illuminate\Support\Facades\Cookie;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cookie;
 
 ini_set('error_reporting', 'E_ALL & ~E_NOTICE & ~E_DEPRECATED');
 

@@ -25,7 +25,7 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     $q = 'select * from types where id = '.$h_id.' and closed = 0';
     $sth = db_query($q);
     $type = mysql_fetch_array($sth);
-    if (!$type) {
+    if (! $type) {
         view_assign('false_data', 1);
     } else {
         $plan_name = $type['name'];

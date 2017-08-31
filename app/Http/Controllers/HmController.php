@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PaymentReceive;
 use Illuminate\Http\Request;
+use App\Models\PaymentReceive;
 
 class HmController extends Controller
 {

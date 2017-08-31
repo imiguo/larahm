@@ -13,7 +13,7 @@ $amount = sprintf('%0.2f', app('data')->frm['amount']);
 $h_id = sprintf('%d', app('data')->frm['h_id']);
 if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     if (0.01 <= $amount) {
-        $orderNo = add_deposit_order($amount, 3,[
+        $orderNo = add_deposit_order($amount, 3, [
             'plan_id' => $h_id,
             'compound' => sprintf('%d', sprintf('%d', app('data')->frm['compound'])),
         ]);
@@ -26,7 +26,7 @@ if ((app('data')->settings['use_add_funds'] and $h_id == -1)) {
     $q = 'select * from types where id = '.$h_id.' and closed = 0';
     $sth = db_query($q);
     $type = mysql_fetch_array($sth);
-    if (!$type) {
+    if (! $type) {
         view_assign('false_data', 1);
     } else {
         $plan_name = $type['name'];

@@ -5,10 +5,10 @@ namespace entimm\LaravelPayeer;
 use GuzzleHttp\Client;
 
 /**
- * Class Api
+ * Class Api.
  */
-class Api {
-
+class Api
+{
     private $url = 'https://payeer.com/ajax/api/api.php';
 
     private $auth = [];
@@ -47,7 +47,7 @@ class Api {
 
         $content = json_decode($content, true);
 
-        if (isset($content['errors']) && !empty($content['errors'])) {
+        if (isset($content['errors']) && ! empty($content['errors'])) {
             throw new PayeerException($content['errors']);
         }
 
@@ -56,9 +56,9 @@ class Api {
 
     public function getPaySystems()
     {
-        $arPost = array(
+        $arPost = [
             'action' => 'getPaySystems',
-        );
+        ];
 
         $response = $this->getResponse($arPost);
 
@@ -73,6 +73,7 @@ class Api {
         try {
             $this->getResponse($arPost);
             $this->output = $arr;
+
             return true;
         } catch (PayeerException $e) {
             return false;
@@ -93,7 +94,7 @@ class Api {
     {
         $arPost = [
             'action' => 'historyInfo',
-            'historyId' => $historyId
+            'historyId' => $historyId,
         ];
 
         $response = $this->getResponse($arPost);
@@ -124,6 +125,7 @@ class Api {
     public function SetLang($language)
     {
         $this->language = $language;
+
         return $this;
     }
 
@@ -141,6 +143,7 @@ class Api {
         $arPost['action'] = 'checkUser';
         try {
             $this->getResponse($arPost);
+
             return true;
         } catch (PayeerException $e) {
             return false;

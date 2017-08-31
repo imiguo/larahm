@@ -3,7 +3,6 @@
 namespace entimm\LaravelAsmoney;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 
 class AsmoneyServiceProvider extends ServiceProvider
 {
@@ -11,7 +10,7 @@ class AsmoneyServiceProvider extends ServiceProvider
     {
         // Config
         $this->publishes([
-            __DIR__ . '/../config/asmoney.php' => config_path('asmoney.php'),
+            __DIR__.'/../config/asmoney.php' => config_path('asmoney.php'),
         ], 'config');
 
         // Views
@@ -26,7 +25,7 @@ class AsmoneyServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/asmoney.php', 'asmoney');
 
-        $this->app->singleton('asmoney', function() {
+        $this->app->singleton('asmoney', function () {
             return new Asmoney();
         });
     }

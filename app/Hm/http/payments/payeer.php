@@ -9,13 +9,13 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Exceptions\EmptyException;
 use App\Models\Order;
+use App\Exceptions\EmptyException;
 
 $request = app('request');
 
 // Rejecting queries from IP addresses not belonging to Payeer
-if (! in_array($request->getClientIp(), ['185.71.65.92', '185.71.65.189', '149.202.17.210', ])) {
+if (! in_array($request->getClientIp(), ['185.71.65.92', '185.71.65.189', '149.202.17.210'])) {
     throw new EmptyException();
 }
 if ($request->input('m_operation_id') && $request->input('m_sign')) {

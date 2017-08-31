@@ -3,7 +3,6 @@
 namespace entimm\LaravelPayeer;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 
 class PayeerServiceProvider extends ServiceProvider
 {
@@ -11,7 +10,7 @@ class PayeerServiceProvider extends ServiceProvider
     {
         // Config
         $this->publishes([
-            __DIR__ . '/../config/payeer.php' => config_path('payeer.php'),
+            __DIR__.'/../config/payeer.php' => config_path('payeer.php'),
         ], 'config');
 
         // Views
@@ -26,7 +25,7 @@ class PayeerServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/payeer.php', 'payeer');
 
-        $this->app->singleton('payeer', function() {
+        $this->app->singleton('payeer', function () {
             return new Payeer();
         });
     }

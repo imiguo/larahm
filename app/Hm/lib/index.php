@@ -277,8 +277,8 @@ function do_login_else(&$userinfo)
             $q = 'update users set last_access_time = now() where username=\''.$row['username'].'\'';
             $userinfo = $row;
 
-            $userinfo['name'] =  Auth::user()->name;
-            $userinfo['username'] =  Auth::user()->username;
+            $userinfo['name'] = Auth::user()->name;
+            $userinfo['username'] = Auth::user()->username;
 
             $userinfo['logged'] = 1;
             db_query($q);
