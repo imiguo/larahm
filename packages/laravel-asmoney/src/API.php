@@ -1,5 +1,7 @@
 <?php
 
+namespace entimm\LaravelAsmoney;
+
 class API
 {
     var $username;

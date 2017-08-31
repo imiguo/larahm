@@ -28,7 +28,7 @@
   "extra": {
       "laravel": {
           "providers": [
-              "entimm\\LaravelPerfectMoney\\PerfectMoney"
+              "entimm\\LaravelPerfectMoney\\PerfectMoneyServiceProvider"
           ]
       }
   }

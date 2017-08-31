@@ -1,6 +1,6 @@
 <?php
 
-namespace entimm\LaravelPayeer;
+namespace entimm\LaravelAsmoney;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;

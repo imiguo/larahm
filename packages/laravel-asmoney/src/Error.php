@@ -1,5 +1,7 @@
 <?php
 
+namespace entimm\LaravelAsmoney;
+
 abstract class APIerror
 {
     const OK = 0;
