@@ -167,8 +167,6 @@ return [
         /*
          * Package Service Providers...
          */
-        entimm\LaravelPayeer\PayeerServiceProvider::class,
-        entimm\LaravelPerfectMoney\PerfectMoneyServiceProvider::class,
 
         /*
          * Application Service Providers...

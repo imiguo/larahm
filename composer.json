@@ -6,10 +6,13 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "entimm/laravel-asmoney": "dev-master",
+        "entimm/laravel-payeer": "dev-master",
+        "entimm/laravel-perfectmoney": "dev-master",
         "fideloper/proxy": "~3.3",
+        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "guzzlehttp/guzzle": "^6.3",
         "smarty/smarty": "^3.1"
     },
     "require-dev": {
@@ -26,10 +29,7 @@
             "database/factories"
         ],
         "psr-4": {
-            "App\\": "app/",
-            "entimm\\LaravelPayeer\\": "app/Packages/LaravelPayeer/src/",
-            "entimm\\LaravelPerfectMoney\\": "app/Packages/LaravelPerfectMoney/src/",
-            "entimm\\LaravelAsmoney\\": "app/Packages/LaravelAsmoney/src/"
+            "App\\": "app/"
         },
         "files": [
             "app/helpers.php",
@@ -63,5 +63,19 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/laravel-perfectmoney/"
+        },
+        {
+            "type": "path",
+            "url": "packages/laravel-payeer/"
+        },
+        {
+            "type": "path",
+            "url": "packages/laravel-asmoney/"
+        }
+    ]
 }

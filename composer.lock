@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d33953a9352183d9c02b003bd660b091",
+    "content-hash": "0f18b50c4b3265f890131d1b6da7c981",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -240,6 +240,138 @@
                 "validator"
             ],
             "time": "2017-01-30T22:07:36+00:00"
+        },
+        {
+            "name": "entimm/laravel-asmoney",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/laravel-asmoney",
+                "reference": "d8d18348116c3e15fde8c13e441e84e9a7455db5",
+                "shasum": null
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "laravel/framework": "^5.0,<5.6",
+                "php": ">=5.6.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "entimm\\LaravelAsmoney\\AsmoneyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "entimm\\LaravelAsmoney\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "entimm",
+                    "email": "entimm@gmail.com"
+                }
+            ],
+            "description": "Asmoney Payments integration to Laravel 5",
+            "homepage": "https://github.com/entimm/laravel-asmoney",
+            "keywords": [
+                "api",
+                "asmoney",
+                "laravel"
+            ]
+        },
+        {
+            "name": "entimm/laravel-payeer",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/laravel-payeer",
+                "reference": "10e54f7fe77237ba0e517fc0bd64c7d4d6191c94",
+                "shasum": null
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "laravel/framework": "^5.0,<5.6",
+                "php": ">=5.6.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "entimm\\LaravelPayeer\\PayeerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "entimm\\LaravelPayeer\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "entimm",
+                    "email": "entimm@gmail.com"
+                }
+            ],
+            "description": "Payeer Payments integration to Laravel 5",
+            "homepage": "https://github.com/entimm/laravel-payeer",
+            "keywords": [
+                "api",
+                "laravel",
+                "payeer"
+            ]
+        },
+        {
+            "name": "entimm/laravel-perfectmoney",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/laravel-perfectmoney",
+                "reference": "66b2bcb4f27c0d0acabb40ea91ed90443ec583f2",
+                "shasum": null
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "laravel/framework": "^5.0,<5.6",
+                "php": ">=5.6.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "entimm\\LaravelPerfectMoney\\PerfectMoneyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "entimm\\LaravelPerfectMoney\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "entimm",
+                    "email": "entimm@gmail.com"
+                }
+            ],
+            "description": "Perfect Money Payments integration to Laravel 5",
+            "homepage": "https://github.com/entimm/laravel-perfectmoney",
+            "keywords": [
+                "api",
+                "laravel",
+                "perfect money"
+            ]
         },
         {
             "name": "erusev/parsedown",
@@ -5131,7 +5263,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "entimm/laravel-asmoney": 20,
+        "entimm/laravel-payeer": 20,
+        "entimm/laravel-perfectmoney": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
