@@ -26,10 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->environment() == 'local') {
-            $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
-        }
-
         $this->app->singleton('mysql', function () {
             return new mysqli(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
         });
