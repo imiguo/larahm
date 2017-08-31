@@ -1,10 +1,10 @@
 {
   "name": "entimm/laravel-asmoney",
   "type": "library",
-  "description": "Perfect Money Payments integration to Laravel 5",
+  "description": "Asmoney Payments integration to Laravel 5",
   "keywords": [
     "laravel",
-    "perfect money",
+    "asmoney",
     "api"
   ],
   "homepage": "https://github.com/entimm/laravel-asmoney",
@@ -17,7 +17,7 @@
   ],
   "require": {
     "php": ">=5.6.4",
-    "laravel/framework": "5.4.*",
+    "laravel/framework": "^5.0,<5.6",
     "guzzlehttp/guzzle": "^6.2"
   },
   "autoload": {
@@ -29,7 +29,7 @@
       "laravel": {
           "providers": [
               "entimm\\LaravelAsmoney\\Asmoney"
-          ],
+          ]
       }
   }
 }

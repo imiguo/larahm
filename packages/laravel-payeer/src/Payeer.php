@@ -17,7 +17,7 @@ class Payeer {
 
     public function __construct($config = [])
     {
-        $this->config = array_merge(config('payeer'), $config);
+        $this->config = array_merge(config('payeer', []), $config);
 
         $this->api = new Api(
             $this->config['account'],
