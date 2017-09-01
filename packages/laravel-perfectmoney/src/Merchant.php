@@ -13,20 +13,22 @@ class Merchant
 
     public function __construct($config = [])
     {
-        $this->config = array_merge(config('perfectmoney'), $config);
+        $this->config = array_merge(config('perfectmoney', []), $config);
     }
 
     public function validatePayment(Request $request)
     {
-        $string = '';
-        $string .= $request->input('PAYMENT_ID').':';
-        $string .= $request->input('PAYEE_ACCOUNT').':';
-        $string .= $request->input('PAYMENT_AMOUNT').':';
-        $string .= $request->input('PAYMENT_UNITS').':';
-        $string .= $request->input('PAYMENT_BATCH_NUM').':';
-        $string .= $request->input('PAYER_ACCOUNT').':';
-        $string .= strtoupper(md5($this->config['alt_passphrase'])).':';
-        $string .= $request->input('TIMESTAMPGMT');
+        $params = [
+            $request->input('PAYMENT_ID'),
+            $request->input('PAYEE_ACCOUNT'),
+            $request->input('PAYMENT_AMOUNT'),
+            $request->input('PAYMENT_UNITS'),
+            $request->input('PAYMENT_BATCH_NUM'),
+            $request->input('PAYER_ACCOUNT'),
+            strtoupper(md5($this->config['alt_passphrase'])),
+            $request->input('TIMESTAMPGMT'),
+        ];
+        $string = implode(':', $params);
 
         return strtoupper(md5($string)) == $request->input('V2_HASH');
     }
@@ -39,9 +41,11 @@ class Merchant
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function render($payment_amount, $payment_id = '', $view = 'perfectmoney')
+    public function render($payment_amount, $payment_id = '', $memo = '', $view = 'perfectmoney')
     {
         $viewData = [
+            'payment_id' => $payment_id,
+            'payment_amount' => $payment_amount,
             'payee_account' => $this->config['marchant_id'],
             'payee_name' => $this->config['marchant_name'],
             'payment_units' => $this->config['units'],
@@ -50,11 +54,8 @@ class Merchant
             'status_url' => $this->config['status_url'],
             'payment_url_method' => $this->config['payment_url_method'],
             'nopayment_url_method' => $this->config['nopayment_url_method'],
-            'memo' => $this->config['suggested_memo'],
+            'memo' => $memo ?: $this->config['suggested_memo'],
         ];
-        $viewData = array_merge($viewData, $data);
-        $viewData['payment_amount'] = $payment_amount;
-        $viewData['payment_id'] = $payment_id;
 
         // Custom view
         if (view()->exists('perfectmoney::'.$view)) {

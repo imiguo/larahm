@@ -100,19 +100,21 @@ class jsonRPCClient
 
         // prepares the request
         $request = [
-                        'method' => $method,
-                        'params' => $params,
-                        'id' => $currentId,
-                        ];
+            'method' => $method,
+            'params' => $params,
+            'id' => $currentId,
+        ];
         $request = json_encode($request);
         $this->debug && $this->debug .= '***** Request *****'."\n".$request."\n".'***** End Of request *****'."\n\n";
 
         // performs the HTTP POST
-        $opts = ['http' => [
-                            'method'  => 'POST',
-                            'header'  => 'Content-type: application/json',
-                            'content' => $request,
-                            ]];
+        $opts = [
+            'http' => [
+                'method'  => 'POST',
+                'header'  => 'Content-type: application/json',
+                'content' => $request,
+            ]
+        ];
         $context = stream_context_create($opts);
         if ($fp = fopen($this->url, 'r', false, $context)) {
             $response = '';
