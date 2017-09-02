@@ -2,6 +2,7 @@
 
 use App\Models\Order;
 use App\Exceptions\HmException;
+use App\Models\PlanGroup;
 use entimm\LaravelPayeer\Payeer;
 use entimm\LaravelAsmoney\Asmoney;
 use Illuminate\Filesystem\Filesystem;
@@ -273,5 +274,21 @@ if (! function_exists('psconfig')) {
         $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');
 
         return config('ps')[$gate][$ps][$key] ?? config('ps')['common'][$ps][$key];
+    }
+}
+
+if (! function_exists('plan_group_list')) {
+    function plan_group_all()
+    {
+        $groups = app('data')->identity ? [0, 1] : [0, 2];
+        return PlanGroup::whereIn('group', $groups)->with(['plans'])->get()->transform(function ($item) {
+            return [
+                'days' => $item->q_days,
+                'period' => $item->period(),
+                'percent' => $item->plans->max('percent'),
+                'min' => $item->plans->min('min_deposit'),
+                'max' => $item->plans->max('max_deposit'),
+            ];
+        })->sortBy('percent');
     }
 }

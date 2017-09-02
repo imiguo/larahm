@@ -53,15 +53,15 @@ VALUES
   (5, 1, 'Level E', 21, 0, 10.00, NULL, NULL, NULL);
 
 TRUNCATE TABLE `types`;
-INSERT INTO `types` (`id`, `name`, `description`, `q_days`, `min_deposit`, `max_deposit`, `period`, `status`, `return_profit`, `return_profit_percent`, `percent`, `pay_to_egold_directly`, `use_compound`, `work_week`, `parent`, `withdraw_principal`, `withdraw_principal_percent`, `withdraw_principal_duration`, `compound_min_deposit`, `compound_max_deposit`, `compound_percents_type`, `compound_min_percent`, `compound_max_percent`, `compound_percents`, `closed`, `withdraw_principal_duration_max`, `dsc`, `hold`, `delay`, `special`, `created_at`, `updated_at`)
+INSERT INTO `types` (`id`, `name`, `description`, `q_days`, `min_deposit`, `max_deposit`, `period`, `status`, `return_profit`, `return_profit_percent`, `percent`, `pay_to_egold_directly`, `use_compound`, `work_week`, `parent`, `withdraw_principal`, `withdraw_principal_percent`, `withdraw_principal_duration`, `compound_min_deposit`, `compound_max_deposit`, `compound_percents_type`, `compound_min_percent`, `compound_max_percent`, `compound_percents`, `closed`, `withdraw_principal_duration_max`, `dsc`, `hold`, `delay`, `group`, `created_at`, `updated_at`)
 VALUES
-    (1,'120% After1 Day',NULL,1,NULL,NULL,'d','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,1,NULL,NULL),
+    (1,'120% After 1 Day',NULL,1,NULL,NULL,'d','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,2,NULL,NULL),
     (2,'260% After 5 Day',NULL,5,NULL,NULL,'end','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,0,NULL,NULL),
     (3,'430% After 10 Days',NULL,10,NULL,NULL,'end','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,0,NULL,NULL),
     (4,'600% After 15 Day',NULL,15,NULL,NULL,'end','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,0,NULL,NULL),
     (5,'1100% After 20 Day',NULL,20,NULL,NULL,'end','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,0,NULL,NULL),
     (6,'1650% After 25 Day',NULL,25,NULL,NULL,'end','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,0,NULL,NULL),
-    (7,'2% weekly forever',NULL,365,NULL,NULL,'w','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,2,NULL,NULL);
+    (7,'2% weekly forever',NULL,365,NULL,NULL,'w','on','0',0.00,NULL,0,0,0,0,0,0.00,0,0.00,0.00,0,0.00,0.00,'0',0,0,'',0,0,1,NULL,NULL);
 
 TRUNCATE TABLE `plans`;
 INSERT INTO `plans` (`id`, `name`, `description`, `min_deposit`, `max_deposit`, `percent`, `status`, `parent`, `created_at`, `updated_at`)

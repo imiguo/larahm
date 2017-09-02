@@ -24,7 +24,8 @@ while ($row = mysql_fetch_array($sth)) {
     array_push($already_deposits, $row['type_id']);
 }
 
-$q = 'select * from types where status = \'on\' and closed = 0 order by id';
+$groups = app('data')->identity ? [0, 1] : [0, 2];
+$q = 'select * from types where status = \'on\' and closed = 0 and `group` in ('.implode(',', $groups).') order by `group` desc';
 $sth = db_query($q);
 $plans = [];
 $i = 0;
@@ -139,7 +140,6 @@ $deps[0] = 0;
 while ($row = mysql_fetch_array($sth)) {
     array_push($hold, ['ec' => $row[ec], 'amount' => number_format($row[am], 2)]);
 }
-
 view_assign('hold', $hold);
 view_assign('plans', $plans);
 view_assign('qplans', sizeof($plans));
