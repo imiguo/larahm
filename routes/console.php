@@ -20,3 +20,7 @@ Artisan::command('inspire', function () {
 Artisan::command('hm:refresh', function () {
     refresh_theme();
 })->describe('Refresh theme');
+
+Artisan::command('hm:count_earning', function () {
+    count_earning(-1);
+})->describe('Count earning');
