@@ -7,6 +7,7 @@ use App\Services\DataService;
 use App\Console\Commands\HmAdmin;
 use Illuminate\Support\Facades\Cache;
 use App\Console\Commands\BladeClearCommand;
+use App\Console\Commands\SmartyClearCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,6 +20,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         BladeClearCommand::class,
+        SmartyClearCommand::class,
         HmAdmin::class,
     ];
 
