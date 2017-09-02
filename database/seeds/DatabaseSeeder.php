@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
                 'date_register' => Carbon::now(),
                 'email' => 'test@gmail.com',
                 'status' => 'on',
+                'payeer_account' => 'P62095100',
                 'identity' => 0,
                 'created_at' => $now,
                 'updated_at' => $now,

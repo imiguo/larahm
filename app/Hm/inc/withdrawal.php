@@ -274,28 +274,6 @@ if (app('data')->frm['action'] == 'preview') {
                             if ($ec == 3) {
                                 $batch = send_money_to_bitcoin($to_withdraw, $userinfo['bitcoin_account'], $memo);
                             }
-                            $q = 'delete from history where id = '.$last_id;
-                            db_query($q);
-                            $d_account = [
-                                $userinfo['perfectmoney_account'],
-                                $userinfo['payeer_account'],
-                                $userinfo['bitcoin_account'],
-                            ];
-                            $q = 'insert into history set
-                                    user_id = '.$userinfo['id'].(',
-                                    amount = -'.$amount.',
-                                    actual_amount = -'.$amount.',
-                                    type=\'withdrawal\',
-                                    date = now(),
-                                    ec = '.$ec.',
-                                    description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
-                            db_query($q);
-                            $info['batch'] = $batch;
-                            $info['account'] = $d_account[$ec];
-                            $info['currency'] = app('data')->exchange_systems[$ec]['name'];
-                            send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
-                            send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
-                            throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
                         } catch (Exception $e) {
                             $username = $userinfo['username'];
                             PayError::create([
@@ -303,6 +281,28 @@ if (app('data')->frm['action'] == 'preview') {
                                 'error' => $e->getMessage(),
                             ]);
                         }
+                        $q = 'delete from history where id = '.$last_id;
+                        db_query($q);
+                        $d_account = [
+                            $userinfo['perfectmoney_account'],
+                            $userinfo['payeer_account'],
+                            $userinfo['bitcoin_account'],
+                        ];
+                        $q = 'insert into history set
+                                user_id = '.$userinfo['id'].(',
+                                amount = -'.$amount.',
+                                actual_amount = -'.$amount.',
+                                type=\'withdrawal\',
+                                date = now(),
+                                ec = '.$ec.',
+                                description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
+                        db_query($q);
+                        $info['batch'] = $batch;
+                        $info['account'] = $d_account[$ec];
+                        $info['currency'] = app('data')->exchange_systems[$ec]['name'];
+                        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+                        send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
+                        throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
                     }
                 }
             } else {
