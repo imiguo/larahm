@@ -295,6 +295,7 @@ if (app('data')->frm['action'] == 'preview') {
                                 type=\'withdrawal\',
                                 date = now(),
                                 ec = '.$ec.',
+                                payment_batch_num = '.$batch.',
                                 description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
                         db_query($q);
                         $info['batch'] = $batch;
