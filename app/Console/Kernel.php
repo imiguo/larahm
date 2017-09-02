@@ -8,6 +8,7 @@ use App\Console\Commands\HmAdmin;
 use Illuminate\Support\Facades\Cache;
 use App\Console\Commands\BladeClearCommand;
 use App\Console\Commands\SmartyClearCommand;
+use App\Console\Commands\DepositCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -22,6 +23,7 @@ class Kernel extends ConsoleKernel
         BladeClearCommand::class,
         SmartyClearCommand::class,
         HmAdmin::class,
+        DepositCommand::class,
     ];
 
     /**
