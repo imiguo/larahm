@@ -12,7 +12,7 @@ class DepositCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'hm:deposit {username} {amount} {ago=0} {plan_id=1} {ps=1} {batch?} {account?} {compound=0}';
+    protected $signature = 'hm:deposit {username} {amount} {--ago=0} {--plan=1} {--ps=1} {--batch=} {--account=} {--compound=0}';
 
     /**
      * The console command description.
@@ -40,12 +40,12 @@ class DepositCommand extends Command
     {
         $username = $this->argument('username');
         $amount = $this->argument('amount');
-        $plan_id = $this->argument('plan_id');
-        $ps = $this->argument('ps');
-        $batch = $this->argument('batch') ?: time().mt_rand(00, 99);
-        $account = $this->argument('account') ?: app('Faker\Generator')->name;
-        $ago = $this->argument('ago');
-        $compound = $this->argument('compound');
+        $plan_id = $this->option('plan');
+        $ps = $this->option('ps');
+        $batch = $this->option('batch') ?: time().mt_rand(00, 99);
+        $account = $this->option('account') ?: 't'.mt_rand(10000000, 99999999);
+        $ago = $this->option('ago');
+        $compound = $this->option('compound');
         $userId = User::where('username', $username)->value('id');
         if (! $userId) {
             $this->info('找不到这个用户');
