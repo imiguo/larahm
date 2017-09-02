@@ -12,7 +12,7 @@ class DepositCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'hm:deposit {username} {amount} {plan_id=1} {ps=1} {batch=""} {account=""} {ago=0} {compound=0}';
+    protected $signature = 'hm:deposit {username} {amount} {ago=0} {plan_id=1} {ps=1} {batch?} {account?} {compound=0}';
 
     /**
      * The console command description.
