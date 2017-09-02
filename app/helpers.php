@@ -227,13 +227,14 @@ if (! function_exists('generate_id')) {
         $userId = auth()->id();
         $gateNum = app('data')->identity > 0 ? 1 : 2;
 
-        return implode('', [
+        $id = implode('', [
             $gateNum,
             mt_rand(10, 99),
             substr(time(), 3),
             str_pad($userId % 100, 3, 0, STR_PAD_LEFT),
             mt_rand(100, 999),
         ]);
+        return $id;
     }
 }
 
