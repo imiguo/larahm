@@ -48,6 +48,7 @@ class CreateTypesTable extends Migration
             $table->text('dsc')->nullable();
             $table->integer('hold');
             $table->integer('delay');
+            $table->integer('special');
             $table->timestamps();
         });
     }
