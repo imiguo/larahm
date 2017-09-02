@@ -80,6 +80,8 @@ if (app('data')->frm['a'] == 'do_login') {
 }
 do_login_else($userinfo);
 
+app('view_data')->identity = app('data')->identity;
+
 if (($userinfo['logged'] == 1 and $userinfo['should_count'] == 1)) {
     count_earning($userinfo['id']);
 }
