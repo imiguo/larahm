@@ -7,6 +7,7 @@ use entimm\LaravelPayeer\Payeer;
 use entimm\LaravelAsmoney\Asmoney;
 use Illuminate\Filesystem\Filesystem;
 use entimm\LaravelPerfectMoney\PerfectMoney;
+use App\Models\Log;
 
 if (! function_exists('mysql_query')) {
     function mysql_query($query)
@@ -198,6 +199,17 @@ if (! function_exists('send_money_to_perfectmoney')) {
     function send_money_to_perfectmoney($amount, $recipient, $memo)
     {
         $config = psconfig_all('pm');
+
+        Log::create([
+            'type' => 'send_money_to_perfectmoney',
+            'data' => [
+                'gate' => app('data')->identity > 0 ? 'low' : 'high',
+                'amount' => $amount,
+                'recipient' => $recipient,
+                'memo' => $memo,
+            ],
+        ]);
+
         $res = (new PerfectMoney($config))->sendMoney($recipient, abs($amount), $memo);
 
         return $res['payment_batch_num'];
@@ -209,6 +221,16 @@ if (! function_exists('send_money_to_payeer')) {
     {
         $config = psconfig_all('pe');
 
+        Log::create([
+            'type' => 'send_money_to_payeer',
+            'data' => [
+                'gate' => app('data')->identity > 0 ? 'low' : 'high',
+                'amount' => $amount,
+                'recipient' => $recipient,
+                'memo' => $memo,
+            ],
+        ]);
+
         return (new Payeer($config))->transfer($recipient, abs($amount), $memo);
     }
 }
@@ -217,6 +239,16 @@ if (! function_exists('send_money_to_bitcoin')) {
     function send_money_to_bitcoin($amount, $recipient, $memo)
     {
         $config = psconfig_all('am');
+
+        Log::create([
+            'type' => 'send_money_to_bitcoin',
+            'data' => [
+                'gate' => app('data')->identity > 0 ? 'low' : 'high',
+                'amount' => $amount,
+                'recipient' => $recipient,
+                'memo' => $memo,
+            ],
+        ]);
 
         return (new Asmoney($config))->transferBTC($recipient, abs($amount), $memo);
     }
