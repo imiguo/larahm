@@ -268,6 +268,8 @@ if (! function_exists('generate_id')) {
             mt_rand(100, 999),
         ]);
 
+        bDump($id);
+
         return $id;
     }
 }

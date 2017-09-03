@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\PaymentReceive;
 
@@ -13,9 +14,17 @@ class HmController extends Controller
         $this->middleware('hack.monitors')->only('index');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $app_file = app_path('Hm').'/http/index.php';
+
+        bdump(app('data')->identity, 'identity');
+        bdump($request->cookie('identity'), 'cookie_identity');
+        if (Auth::check()) {
+            bdump(array_filter(Auth::user()->toArray(), function ($item) {
+                return !is_null($item);
+            }), 'userinfo');
+        }
 
         return hanlder_app($app_file);
     }
