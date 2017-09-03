@@ -29,4 +29,6 @@ return [
         'internal_transaction_spend'   => 'Spent on Internal Transaction',
         'internal_transaction_receive' => 'Received from Internal Transaction',
     ],
+
+    'auto_fake' => env('AUTO_FAKE', false),
 ];

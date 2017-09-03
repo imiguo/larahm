@@ -38,6 +38,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             app(DataService::class)->fakeDeposit();
         })->when(function () {
+            if (! config('hm.auto_fake')) {
+                return false;
+            }
             $time = Cache::sear('schedule.fakeDeposit', function () {
                 return Carbon::now()->addMinutes(mt_rand(10, 60));
             });
@@ -53,6 +56,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             app(DataService::class)->fakePayout();
         })->when(function () {
+            if (! config('hm.auto_fake')) {
+                return false;
+            }
             $time = Cache::sear('schedule.fakePayout', function () {
                 return Carbon::now()->addMinutes(mt_rand(30, 90));
             });
