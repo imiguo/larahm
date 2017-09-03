@@ -273,11 +273,11 @@ if (app('data')->frm['action'] == 'preview') {
                                 $batch = send_money_to_perfectmoney($to_withdraw, $payment_account, $memo);
                             }
                             if ($ec == 2) {
-                                $payment_account = $userinfo['perfectmoney_account'];
+                                $payment_account = $userinfo['payeer_account'];
                                 $batch = send_money_to_payeer($to_withdraw, $payment_account, $memo);
                             }
                             if ($ec == 3) {
-                                $payment_account = $userinfo['perfectmoney_account'];
+                                $payment_account = $userinfo['bitcoin_account'];
                                 $batch = send_money_to_bitcoin($to_withdraw, $payment_account, $memo);
                             }
                         } catch (Exception $e) {
