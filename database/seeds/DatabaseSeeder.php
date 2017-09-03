@@ -65,8 +65,22 @@ class DatabaseSeeder extends Seeder
         ];
         User::insert($users);
         $user = User::where(['id' => 2])->first();
-        $user->payeer_account = 'P62095100';
+        $user->payeer_account = config('ps.test_account.payeer');
+        $user->perfectmoney_account = config('ps.test_account.perfectmoney');
         $user->save();
+
+        Artisan::call('hm:deposit', [
+            'username' => 'test',
+            'amount' => 1000,
+            '--ago' => 5,
+            '--ps' => 1,
+        ]);
+        Artisan::call('hm:deposit', [
+            'username' => 'test',
+            'amount' => 1000,
+            '--ago' => 5,
+            '--ps' => 2,
+        ]);
 
         $fakeUsers = require 'fake_users.php';
         $fakeUsers = collect($fakeUsers)->map(function ($fakeUser) use ($now) {
