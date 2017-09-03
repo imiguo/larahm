@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'miadmin',
                 'password' => bcrypt('miadmin'),
                 'date_register' => Carbon::now(),
-                'email' => 'miadmin@gmail.com',
+                'email' => env('MAIL_FROM_ADDRESS'),
                 'status' => 'on',
                 'identity' => 0,
                 'created_at' => $now,
