@@ -403,13 +403,7 @@ function send_template_mail($email_id, $to, $from, $info)
     $subject = preg_replace('/#site_name#/', app('data')->settings['site_name'], $subject);
     $text = preg_replace('/#site_url#/', app('data')->settings['site_url'], $text);
     $subject = preg_replace('/#site_url#/', app('data')->settings['site_url'], $subject);
-    if (app('data')->settings['site_name'] == 'free') {
-        $fh = fopen('mails.txt', 'a');
-        fwrite($fh, 'TO: '.$to.'From: '.$from.'Subject: '.$subject.$text);
-        fclose($fh);
-    } else {
-        send_mail($to, $subject, $text, 'From: '.$from.'Reply-To: '.$from);
-    }
+    send_mail($to, $subject, $text, "From: {$from}\r\nReply-To: {$from}");
 }
 
 function start_info_table($size = '100%')

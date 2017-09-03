@@ -26,6 +26,9 @@ class MailService
 
     public static function RawSend($to, $subject, $text)
     {
-        mail($to, $subject, $text, 'From: '.config('mail.from.name').' <'.config('mail.from.address').'>');
+        Mail::raw($text, function ($message) use ($subject, $to) {
+            $message->setSubject($subject);
+            $message->setTo($to);
+        });
     }
 }
