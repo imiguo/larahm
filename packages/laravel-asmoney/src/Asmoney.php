@@ -24,8 +24,9 @@ class Asmoney
 
     public function balance()
     {
-        $r = $api->GetBalance('USD');
+        $r = $this->api->GetBalance('USD');
         if ($r['result'] == APIerror::OK) {
+
             return $r['value'];
         }
         throw new AsmoneyException($r['result']);
@@ -33,8 +34,9 @@ class Asmoney
 
     public function transactionInfo($batchNum)
     {
-        $r = $api->GetTransaction($batchNum);
+        $r = $this->api->GetTransaction($batchNum);
         if ($r['result'] == APIerror::OK) {
+
             return $r['value'];
         }
         throw new AsmoneyException($r['result']);
@@ -42,7 +44,7 @@ class Asmoney
 
     public function transferBTC($bitcoinAddr, $amount, $memo)
     {
-        $r = $api->TransferBTC($bitcoinAddr, $amount, 'USD', $memo);
+        $r = $this->api->TransferBTC($bitcoinAddr, $amount, 'USD', $memo);
         if ($r['result'] == APIerror::OK) {
             $batchno = $r['value'];
 
@@ -53,7 +55,7 @@ class Asmoney
 
     public function transferLitecoin($litecoinAddr, $amount, $memo)
     {
-        $r = $api->TransferLTC($litecoinAddr, $amount, 'USD', $memo);
+        $r = $this->api->TransferLTC($litecoinAddr, $amount, 'USD', $memo);
         if ($r['result'] == APIerror::OK) {
             $batchno = $r['value'];
 
@@ -64,9 +66,10 @@ class Asmoney
 
     public function history()
     {
-        $r = $api->GetHistory(0); // Skip n records from top
+        $r = $this->api->GetHistory(0); // Skip n records from top
         if ($r['result'] == APIerror::OK) {
-            return $batchno;
+
+            return $r['value'];
         }
         throw new AsmoneyException($r['result']);
     }

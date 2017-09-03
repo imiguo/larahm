@@ -112,9 +112,8 @@ class Payeer
             //'protectPeriod' => '3',
             //'protectCode' => '12345',
         ]);
-        if (empty($transfer['errors'])) {
-            return $transfer['historyId'];
-        }
+        
+        return $transfer['historyId'];
     }
 
     /**
