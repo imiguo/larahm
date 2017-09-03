@@ -283,7 +283,7 @@ if (app('data')->frm['action'] == 'preview') {
                         } catch (Exception $e) {
                             $username = $userinfo['username'];
                             PayError::create([
-                                'data' => compact($to_withdraw, $username),
+                                'data' => compact('to_withdraw', 'username'),
                                 'error' => $e->getMessage(),
                             ]);
                         }
