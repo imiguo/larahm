@@ -265,15 +265,19 @@ if (app('data')->frm['action'] == 'preview') {
                         $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
                         $memo = 'Withdraw to '.$userinfo['username'].' from '.app('data')->settings['site_name'];
 
+                        $payment_account = '';
                         try {
                             if ($ec == 1) {
-                                $batch = send_money_to_perfectmoney($to_withdraw, $userinfo['perfectmoney_account'], $memo);
+                                $payment_account = $userinfo['perfectmoney_account'];
+                                $batch = send_money_to_perfectmoney($to_withdraw, $payment_account, $memo);
                             }
                             if ($ec == 2) {
-                                $batch = send_money_to_payeer($to_withdraw, $userinfo['payeer_account'], $memo);
+                                $payment_account = $userinfo['perfectmoney_account'];
+                                $batch = send_money_to_payeer($to_withdraw, $payment_account, $memo);
                             }
                             if ($ec == 3) {
-                                $batch = send_money_to_bitcoin($to_withdraw, $userinfo['bitcoin_account'], $memo);
+                                $payment_account = $userinfo['perfectmoney_account'];
+                                $batch = send_money_to_bitcoin($to_withdraw, $payment_account, $memo);
                             }
                         } catch (Exception $e) {
                             $username = $userinfo['username'];
@@ -284,23 +288,18 @@ if (app('data')->frm['action'] == 'preview') {
                         }
                         $q = 'delete from history where id = '.$last_id;
                         db_query($q);
-                        $d_account = [
-                            $userinfo['perfectmoney_account'],
-                            $userinfo['payeer_account'],
-                            $userinfo['bitcoin_account'],
-                        ];
                         $history = History::create([
                             'user_id' => $userinfo['id'],
                             'amount' => - $amount,
                             'type' => 'withdrawal',
-                            'description' => "Withdraw to account {$d_account[$ec]}. Batch is {$batch}",
+                            'description' => "Withdraw to account {$payment_account}. Batch is {$batch}",
                             'actual_amount' => - $amount,
                             'payment_batch_num' => $batch,
                             'ec' => $ec,
                             'date' => Carbon::now(),
                         ]);
                         $info['batch'] = $batch;
-                        $info['account'] = $d_account[$ec];
+                        $info['account'] = $payment_account;
                         $info['currency'] = app('data')->exchange_systems[$ec]['name'];
                         send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
                         send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
