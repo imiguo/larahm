@@ -11,6 +11,7 @@
 
 use App\Models\PayError;
 use App\Exceptions\RedirectException;
+use App\Models\History;
 
 if (app('data')->frm['action'] == 'preview') {
     $ab = get_user_balance($userinfo['id']);
@@ -229,16 +230,16 @@ if (app('data')->frm['action'] == 'preview') {
                 throw new RedirectException('/?a=withdraw&say=less_min');
             }
 
-            $q = 'insert into history set
-                user_id = '.$userinfo['id'].(',
-                amount = -'.$amount.',
-                actual_amount = -'.$amount.',
-                type=\'withdraw_pending\',
-                date = now(),
-                ec = '.$ec.',
-                description = \''.$description.'\'');
-            $sth = db_query($q);
-            $last_id = mysql_insert_id();
+            $history = History::create([
+                'user_id' => $userinfo['id'],
+                'amount' => - $amount,
+                'type' => 'withdraw_pending',
+                'description' => $description,
+                'actual_amount' => - $amount,
+                'ec' => $ec,
+                'date' => Carbon::now(),
+            ]);
+            $last_id = $history->id;
             $info = [];
             $info['username'] = $userinfo['username'];
             $info['name'] = $userinfo['name'];
@@ -288,16 +289,16 @@ if (app('data')->frm['action'] == 'preview') {
                             $userinfo['payeer_account'],
                             $userinfo['bitcoin_account'],
                         ];
-                        $q = 'insert into history set
-                                user_id = '.$userinfo['id'].(',
-                                amount = -'.$amount.',
-                                actual_amount = -'.$amount.',
-                                type=\'withdrawal\',
-                                date = now(),
-                                ec = '.$ec.',
-                                payment_batch_num = '.$batch.',
-                                description = \'Withdraw to account ').$d_account[$ec].('. Batch is '.$batch.'\'');
-                        db_query($q);
+                        $history = History::create([
+                            'user_id' => $userinfo['id'],
+                            'amount' => - $amount,
+                            'type' => 'withdrawal',
+                            'description' => "Withdraw to account {$d_account[$ec]}. Batch is {$batch}",
+                            'actual_amount' => - $amount,
+                            'payment_batch_num' => $batch,
+                            'ec' => $ec,
+                            'date' => Carbon::now(),
+                        ]);
                         $info['batch'] = $batch;
                         $info['account'] = $d_account[$ec];
                         $info['currency'] = app('data')->exchange_systems[$ec]['name'];
