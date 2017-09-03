@@ -68,8 +68,6 @@ if (app('data')->frm['a'] == 'do_login') {
     }
 
     if (($userinfo['logged'] == 1 and $userinfo['id'] == 1)) {
-        add_log('Admin logged', 'Admin entered to admin area ip='.app('data')->env['REMOTE_ADDR']);
-
         $admin_url = env('ADMIN_URL');
         $html = "<head><title>HYIP Manager</title><meta http-equiv=\"Refresh\" content=\"1; URL={$admin_url}\"></head>";
         $html .= "<body><center><a href=\"{$admin_url}\">Go to admin area</a></center></body>";

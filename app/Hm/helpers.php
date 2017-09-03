@@ -47,13 +47,6 @@ function send_mail()
     db_query("insert sendmails (`to`, `subject`, `message`, `time`, `status`) values ('$to', '$subject', '$message', '$time', '$status')");
 }
 
-function add_log($subject, $message)
-{
-    $time = time();
-    $subject = mysql_real_escape_string($subject);
-    db_query("insert logs (`subject`, `message`, `time`) values('$subject', '$message', '$time')");
-}
-
 function genarate_token()
 {
     $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.';

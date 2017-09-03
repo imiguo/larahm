@@ -20,9 +20,8 @@ class CreateLogsTable extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('subject', 255);
-            $table->text('message')->nullable();
-            $table->integer('time')->nullable();
+            $table->string('type', 255);
+            $table->json('data')->nullable();
             $table->timestamps();
         });
     }
