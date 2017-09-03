@@ -31,7 +31,7 @@ $success = 0;
           if (! (db_query($q))) {
           }
 
-          send_template_mail('registration', $info['email'], app('data')->settings['opt_in_email'], $info);
+          send_template_mail('registration', $info['email'], $info);
           $ref = quote($info['ref']);
           $q = 'select * from users where id = \''.$ref.'\'';
           $sth = db_query($q);
@@ -42,7 +42,7 @@ $success = 0;
               $refminfo['ref_username'] = $info['username'];
               $refminfo['ref_name'] = $info['name'];
               $refminfo['ref_email'] = $info['email'];
-              send_template_mail('direct_signup_notification', $refinfo['email'], app('data')->settings['opt_in_email'], $refminfo);
+              send_template_mail('direct_signup_notification', $refinfo['email'], $refminfo);
           }
       }
   }

@@ -213,15 +213,9 @@ $id = $userinfo['id'];
       $info['amount_from'] = number_format($amount, 2);
       $info['currency_to'] = app('data')->exchange_systems[$to]['name'];
       $info['amount_to'] = number_format($exchange_amount, 2);
-      $q = 'select email from users where id = 1';
-      $sth = db_query($q);
-      $admin_email = '';
-      while ($row = mysql_fetch_array($sth)) {
-          $admin_email = $row['email'];
-      }
 
-      send_template_mail('exchange_admin_notification', $admin_email, app('data')->settings['system_email'], $info);
-      send_template_mail('exchange_user_notification', $userinfo[email], app('data')->settings['system_email'], $info);
+      send_template_mail('exchange_admin_notification', app('data')->settings['system_email'], $info);
+      send_template_mail('exchange_user_notification', $userinfo[email], $info);
       throw new RedirectException('/?a=exchange&display=ok');
   }
 

@@ -302,14 +302,14 @@ if (app('data')->frm['action'] == 'preview') {
                         $info['batch'] = $batch;
                         $info['account'] = $payment_account;
                         $info['currency'] = app('data')->exchange_systems[$ec]['name'];
-                        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
-                        send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
+                        send_template_mail('withdraw_user_notification', $userinfo['email'], $info);
+                        send_template_mail('withdraw_admin_notification', app('data')->settings['system_email'], $info);
                         throw new RedirectException('/?a=withdraw&say=processed&batch='.$batch);
                     }
                 }
             } else {
-                send_template_mail('withdraw_request_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
-                send_template_mail('withdraw_request_admin_notification', app('data')->settings['system_email'], app('data')->settings['system_email'], $info);
+                send_template_mail('withdraw_request_user_notification', $userinfo['email'], $info);
+                send_template_mail('withdraw_request_admin_notification', app('data')->settings['system_email'], $info);
             }
 
             throw new RedirectException('/?a=withdraw&say=processed');

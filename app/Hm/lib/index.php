@@ -79,7 +79,7 @@ function custom2_pay_withdraw()
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
         $info['currency'] = app('data')->exchange_systems[2]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+        send_template_mail('withdraw_user_notification', $userinfo['email'], $info);
     }
 }
 
@@ -119,7 +119,7 @@ function user3_pay_withdraw_payment()
         $info['paying_batch'] = $batch;
         $info['receiving_batch'] = $batch;
         $info['currency'] = app('data')->exchange_systems[4]['name'];
-        send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['system_email'], $info);
+        send_template_mail('withdraw_user_notification', $userinfo['email'], $info);
     }
 }
 
@@ -239,7 +239,7 @@ function do_login(&$userinfo)
             $info['name'] = $row['name'];
             $info['ip'] = app('data')->env['REMOTE_ADDR'];
             $info['max_tries'] = app('data')->settings['brute_force_max_tries'];
-            send_template_mail('brute_force_activation', $row['email'], app('data')->settings['system_email'], $info);
+            send_template_mail('brute_force_activation', $row['email'], $info);
             throw new RedirectException('/?a=login&say=invalid_login&username='.app('data')->frm['username']);
         }
         if (! app('hash')->check($password, $row['password'])) {

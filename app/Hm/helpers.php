@@ -9,6 +9,8 @@
  * with this source code in the file LICENSE.
  */
 
+use App\Models\User;
+use App\Services\MailService;
 use Carbon\Carbon;
 use App\Models\Deposit;
 use App\Models\History;
@@ -39,7 +41,7 @@ function send_mail()
     $row = mysql_fetch_assoc($sth);
     $status = 0;
     if (! isset($row['time']) || (time() - $row['time'] > 60)) {
-        call_user_func_array('mail', func_get_args());
+        MailService::RawSend($to, $subject, $message);
         $status = 1;
     }
     $subject = mysql_real_escape_string($subject);
@@ -213,8 +215,8 @@ function add_deposit($ec, $user_id, $amount, $batch, $account, $h_id, $compound,
     }
 
     if ($user['is_test'] != 1) {
-        send_template_mail('deposit_admin_notification', $admin_email, app('data')->settings['system_email'], $info);
-        send_template_mail('deposit_user_notification', $user['email'], app('data')->settings['system_email'], $info);
+        send_template_mail('deposit_admin_notification', $admin_email, $info);
+        send_template_mail('deposit_user_notification', $user['email'], $info);
     }
 
     return 1;
@@ -271,7 +273,6 @@ function referral_commission($user_id, $amount, $ec)
                     send_template_mail(
                         'referral_commision_notification',
                         $refinfo['email'],
-                        app('data')->settings['system_email'],
                         $refinfo
                     );
                 }
@@ -307,8 +308,7 @@ function referral_commission($user_id, $amount, $ec)
                     $refinfo['ref_username'] = $uinfo['username'];
                     $refinfo['ref_name'] = $uinfo['name'];
                     $refinfo['currency'] = app('data')->exchange_systems[$ec]['name'];
-                    send_template_mail('referral_commision_notification', $refinfo['email'], app('data')->settings['system_email'],
-                        $refinfo);
+                    send_template_mail('referral_commision_notification', $refinfo['email'], $refinfo);
                 }
             }
         }
@@ -375,35 +375,10 @@ function decode_pass_for_mysql($string)
     return $ret;
 }
 
-function send_template_mail($email_id, $to, $from, $info)
+function send_template_mail($email_id, $to, $info)
 {
-    $q = 'select * from emails where id = \''.$email_id.'\'';
-    $sth = db_query($q);
-    $row = mysql_fetch_array($sth);
-    if (! $row) {
-        return;
-    }
-
-    if (! $row['status']) {
-        return;
-    }
-
-    $text = $row['text'];
-    $subject = $row['subject'];
-    foreach ($info as $k => $v) {
-        if (is_array($v)) {
-            $v = $v[0];
-        }
-
-        $text = preg_replace('/#'.$k.'#/', $v, $text);
-        $subject = preg_replace('/#'.$k.'#/', $v, $subject);
-    }
-
-    $text = preg_replace('/#site_name#/', app('data')->settings['site_name'], $text);
-    $subject = preg_replace('/#site_name#/', app('data')->settings['site_name'], $subject);
-    $text = preg_replace('/#site_url#/', app('data')->settings['site_url'], $text);
-    $subject = preg_replace('/#site_url#/', app('data')->settings['site_url'], $subject);
-    send_mail($to, $subject, $text, "From: {$from}\r\nReply-To: {$from}");
+    $toUser = User::where(['email' => $to])->first();
+    MailService::templateSend($toUser, $email_id, $info);
 }
 
 function start_info_table($size = '100%')

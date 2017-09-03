@@ -107,7 +107,7 @@ if (app('data')->frm['action'] == 'edit_account') {
                 $info['username'] = $userinfo['username'];
                 $info['name'] = $userinfo['name'];
                 $info['ip'] = app('data')->env['REMOTE_ADDR'];
-                send_template_mail('account_update_confirmation', $userinfo['email'], app('data')->settings['system_email'], $info);
+                send_template_mail('account_update_confirmation', $userinfo['email'], $info);
                 throw new RedirectException('/?a=edit_account&action=confirm');
             }
         }
@@ -208,7 +208,7 @@ if (app('data')->frm['action'] == 'edit_account') {
                 app('data')->frm['email'] = $userinfo['email'];
             }
 
-            send_template_mail('change_account', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
+            send_template_mail('change_account', app('data')->frm['email'], $info);
         }
 
         throw new RedirectException('/?a=edit_account&say=changed');

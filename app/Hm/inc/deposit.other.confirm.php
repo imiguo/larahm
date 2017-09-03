@@ -161,7 +161,7 @@ $ok = 1;
       $q = 'select email from users where id = 1';
       $sth = db_query($q);
       $admin_row = mysql_fetch_array($sth);
-      send_template_mail('pending_deposit_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
+      send_template_mail('pending_deposit_admin_notification', $admin_row['email'], $info);
       if ($h_id == 0) {
           throw new RedirectException('/?a=add_funds&say=deposit_saved');
       }

@@ -27,7 +27,7 @@ $found_records = -1;
                   $info['name'] = $row['name'];
                   $info['ip'] = '[not logged]';
                   $info['max_tries'] = app('data')->settings['brute_force_max_tries'];
-                  send_template_mail('brute_force_activation', $row['email'], app('data')->settings['system_email'], $info);
+                  send_template_mail('brute_force_activation', $row['email'], $info);
               }
 
               $password = gen_confirm_code(8, 0);
@@ -48,7 +48,7 @@ $found_records = -1;
               $info['password'] = $password;
               $info['name'] = $row['name'];
               $info['ip'] = app('data')->env['REMOTE_ADDR'];
-              send_template_mail('forgot_password', $row['email'], app('data')->settings['system_email'], $info);
+              send_template_mail('forgot_password', $row['email'], $info);
           }
 
           $found_records = 1;

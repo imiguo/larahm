@@ -242,7 +242,7 @@ if (app('data')->frm['say'] == 'confirm') {
               $info['confirm_string'] = $confirm_string;
               $info['name'] = app('data')->frm['fullname'];
               $info['ip'] = app('data')->env['REMOTE_ADDR'];
-              send_template_mail('confirm_registration', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
+              send_template_mail('confirm_registration', app('data')->frm['email'], $info);
               throw new RedirectException('/?a=signup&say=confirm');
           }
           $q = 'select * from users where id = \''.$ref_id.'\'';
@@ -254,7 +254,7 @@ if (app('data')->frm['say'] == 'confirm') {
               $info['ref_username'] = app('data')->frm['username'];
               $info['ref_name'] = app('data')->frm['fullname'];
               $info['ref_email'] = app('data')->frm['email'];
-              send_template_mail('direct_signup_notification', $refinfo['email'], app('data')->settings['opt_in_email'], $info);
+              send_template_mail('direct_signup_notification', $refinfo['email'], $info);
           }
 
           $info = [];
@@ -262,7 +262,7 @@ if (app('data')->frm['say'] == 'confirm') {
           $info['password'] = $password;
           $info['name'] = app('data')->frm['fullname'];
           $info['ip'] = app('data')->env['REMOTE_ADDR'];
-          send_template_mail('registration', app('data')->frm['email'], app('data')->settings['opt_in_email'], $info);
+          send_template_mail('registration', app('data')->frm['email'], $info);
           throw new RedirectException('/?a=signup&say=done');
           throw new EmptyException();
       }

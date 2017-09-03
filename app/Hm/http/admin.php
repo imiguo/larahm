@@ -225,8 +225,8 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
         $q = 'select email from users where id = 1';
         $sth1 = db_query($q);
         $admin_row = mysql_fetch_array($sth1);
-        send_template_mail('deposit_approved_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
-        send_template_mail('deposit_approved_user_notification', $userinfo['email'], app('data')->settings['opt_in_email'], $info);
+        send_template_mail('deposit_approved_admin_notification', $admin_row['email'], $info);
+        send_template_mail('deposit_approved_user_notification', $userinfo['email'], $info);
     }
 
     $id = sprintf('%d', app('data')->frm['id']);
@@ -281,11 +281,11 @@ if (app('data')->frm['a'] == 'mass') {
                 $info['batch'] = 'n/a';
                 $info['paying_batch'] = 'n/a';
                 $info['receiving_batch'] = 'n/a';
-                send_template_mail('withdraw_user_notification', $userinfo['email'], app('data')->settings['opt_in_email'], $info);
+                send_template_mail('withdraw_user_notification', $userinfo['email'], $info);
                 $q = 'select email from users where id = 1';
                 $sth = db_query($q);
                 $admin_row = mysql_fetch_array($sth);
-                send_template_mail('withdraw_admin_notification', $admin_row['email'], app('data')->settings['opt_in_email'], $info);
+                send_template_mail('withdraw_admin_notification', $admin_row['email'], $info);
             }
         }
 
@@ -1015,7 +1015,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
                 $info = [];
                 $info['name'] = $row['username'];
                 $info['amount'] = number_format($amount, 2);
-                send_template_mail('bonus', $row['email'], app('data')->settings['system_email'], $info);
+                send_template_mail('bonus', $row['email'], $info);
             }
 
             throw new RedirectException($admin_url.'?a=addbonuse&say=done&id='.$id);
@@ -1064,7 +1064,7 @@ if ((app('data')->frm['a'] == 'addpenality' and app('data')->frm['action'] == 'a
         $info = [];
         $info['name'] = $row['username'];
         $info['amount'] = number_format($amount, 2);
-        send_template_mail('penalty', $row['email'], app('data')->settings['system_email'], $info);
+        send_template_mail('penalty', $row['email'], $info);
     }
 
     throw new RedirectException($admin_url.'?a=addpenality&say=done&id='.$id);
