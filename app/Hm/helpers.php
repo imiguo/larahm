@@ -9,11 +9,11 @@
  * with this source code in the file LICENSE.
  */
 
-use App\Models\User;
-use App\Services\MailService;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Deposit;
 use App\Models\History;
+use App\Services\MailService;
 
 function is_SSL()
 {

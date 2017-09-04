@@ -24,6 +24,7 @@ class PlanGroup extends Model
             'y' => 'yearly',
             'end' => 'after',
         ];
+
         return $list[$this->period];
     }
 }

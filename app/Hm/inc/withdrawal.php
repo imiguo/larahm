@@ -9,10 +9,10 @@
  * with this source code in the file LICENSE.
  */
 
+use Carbon\Carbon;
+use App\Models\History;
 use App\Models\PayError;
 use App\Exceptions\RedirectException;
-use App\Models\History;
-use Carbon\Carbon;
 
 if (app('data')->frm['action'] == 'preview') {
     $ab = get_user_balance($userinfo['id']);
@@ -233,10 +233,10 @@ if (app('data')->frm['action'] == 'preview') {
 
             $history = History::create([
                 'user_id' => $userinfo['id'],
-                'amount' => - $amount,
+                'amount' => -$amount,
                 'type' => 'withdraw_pending',
                 'description' => $description,
-                'actual_amount' => - $amount,
+                'actual_amount' => -$amount,
                 'ec' => $ec,
                 'date' => Carbon::now(),
             ]);
@@ -291,10 +291,10 @@ if (app('data')->frm['action'] == 'preview') {
                         db_query($q);
                         $history = History::create([
                             'user_id' => $userinfo['id'],
-                            'amount' => - $amount,
+                            'amount' => -$amount,
                             'type' => 'withdrawal',
                             'description' => "Withdraw to account {$payment_account}. Batch is {$batch}",
-                            'actual_amount' => - $amount,
+                            'actual_amount' => -$amount,
                             'payment_batch_num' => $batch,
                             'ec' => $ec,
                             'date' => Carbon::now(),
