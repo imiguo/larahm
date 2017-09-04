@@ -26,7 +26,6 @@ class Asmoney
     {
         $r = $this->api->GetBalance('USD');
         if ($r['result'] == APIerror::OK) {
-
             return $r['value'];
         }
         throw new AsmoneyException($r['result']);
@@ -36,7 +35,6 @@ class Asmoney
     {
         $r = $this->api->GetTransaction($batchNum);
         if ($r['result'] == APIerror::OK) {
-
             return $r['value'];
         }
         throw new AsmoneyException($r['result']);
@@ -68,7 +66,6 @@ class Asmoney
     {
         $r = $this->api->GetHistory(0); // Skip n records from top
         if ($r['result'] == APIerror::OK) {
-
             return $r['value'];
         }
         throw new AsmoneyException($r['result']);

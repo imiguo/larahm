@@ -113,7 +113,7 @@ class jsonRPCClient
                 'method'  => 'POST',
                 'header'  => 'Content-type: application/json',
                 'content' => $request,
-            ]
+            ],
         ];
         $context = stream_context_create($opts);
         if ($fp = fopen($this->url, 'r', false, $context)) {

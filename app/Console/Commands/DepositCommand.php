@@ -53,6 +53,7 @@ class DepositCommand extends Command
         $ret = add_deposit($ps, $userId, $amount, $batch, $account, $plan_id, $compound, $ago);
         if ($ret) {
             dump(compact('ps', 'userId', 'amount', 'batch', 'account', 'plan_id', 'compound', 'ago'));
+
             return;
         }
         $this->info('the deposit not success');

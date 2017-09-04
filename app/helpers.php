@@ -1,13 +1,13 @@
 <?php
 
+use App\Models\Log;
 use App\Models\Order;
-use App\Exceptions\HmException;
 use App\Models\PlanGroup;
+use App\Exceptions\HmException;
 use entimm\LaravelPayeer\Payeer;
 use entimm\LaravelAsmoney\Asmoney;
 use Illuminate\Filesystem\Filesystem;
 use entimm\LaravelPerfectMoney\PerfectMoney;
-use App\Models\Log;
 
 if (! function_exists('mysql_query')) {
     function mysql_query($query)
@@ -267,6 +267,7 @@ if (! function_exists('generate_id')) {
             str_pad($userId % 100, 3, 0, STR_PAD_LEFT),
             mt_rand(100, 999),
         ]);
+
         return $id;
     }
 }
@@ -313,6 +314,7 @@ if (! function_exists('plan_group_list')) {
     function plan_group_all()
     {
         $groups = app('data')->identity ? [0, 1] : [0, 2];
+
         return PlanGroup::whereIn('group', $groups)->with(['plans'])->get()->transform(function ($item) {
             return [
                 'days' => $item->q_days,
