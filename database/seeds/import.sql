@@ -1,30 +1,3 @@
-TRUNCATE TABLE `emails`;
-INSERT INTO `emails` (`id`, `name`, `subject`, `text`, `status`)
-VALUES
-  ('account_update_confirmation', 'Account Update Confirmation', 'Account Update Confirmation',
-   'Dear #name# (#username#),\n\nSomeone from IP address #ip# (most likely you) is trying to change your account data.\n\nTo confirm these changes please use this Confirmation Code:\n#confirmation_code#\n\nThank you.\n#site_name#\n#site_url#',
-   1),
-  ('bonus', 'Bonus Notification', 'Bonus Notification', 'Hello #name#,\r\n\r\nYou received a bonus: $#amount#\r\nYou can check your statistics here:\r\n#site_url#\r\n\r\nGood luck.', 1),
-  ('brute_force_activation', 'Account Activation after Brute Force', '#site_name# - Your account activation code.', 'Someone from IP #ip# has entered a password for your account \"#username#\" incorrectly #max_tries# times. System locked your accout until you activate it.\r\n\r\nClick here to activate your account :\r\n\r\n#site_url#?a=activate&code=#activation_code#\r\n\r\nThank you.\r\n#site_name#', 1),
-  ('change_account', 'Account Change Notification', 'Account Change Notification', 'Hello #name#,\r\n\r\nYour account data has been changed from ip #ip#\r\n\r\n\r\nNew information:\r\n\r\nPassword: #password#\r\nE-gold account: #egold#\r\nE-mail address: #email#\r\n\r\nContact us immediately if you did not authorize this change.\r\n\r\nThank you.', 1),
-  ('confirm_registration', 'Registration Confirmation', 'Confirm your registration', 'Hello #name#,\r\n\r\nThank you for registering in our program\r\nPlease confirm your registration or ignore this message.\r\n\r\nCopy and paste this link to your browser:\r\n#site_url#/?a=confirm_registration&c=#confirm_string#\r\n\r\nThank you.\r\n#site_name#', 1),
-  ('deposit_admin_notification', 'Administrator Deposit Notification', 'A deposit has been processed', 'User #username# deposit $#amount# #currency# to #plan#.\r\n\r\nAccount: #account#\r\nBatch: #batch#\r\nCompound: #compound#%.\r\nReferrers fee: $#ref_sum#', 1),
-  ('deposit_approved_admin_notification', 'Deposit Approved Admin Notification', 'Deposit has been approved', 'Deposit has been approved:\n\nUser: #username# (#name#)\nAmount: $#amount# of #currency#\nPlan: #plan#\nDate: #deposit_date#\n#fields#', 1),
-  ('deposit_approved_user_notification', 'Deposit Approved User Notification', 'Deposit has been approved', 'Dear #name#\n\nYour deposit has been approved:\n\nAmount: $#amount# of #currency#\nPlan: #plan#\n#fields#', 1),
-  ('deposit_user_notification', 'Deposit User Notification', 'Payment received', 'Dear #name# (#username#)\r\n\r\nWe have successfully recived your deposit $#amount# #currency# to #plan#.\r\n\r\nYour Account: #account#\r\nBatch: #batch#\r\nCompound: #compound#%.\r\n\r\n\r\nThank you.\r\n#site_name#\r\n#site_url#', 1),
-  ('direct_signup_notification', 'Direct Referral Signup', 'You have a new direct signup on #site_name#', 'Dear #name# (#username#)\n\nYou have a new direct signup on #site_name#\nUser: #ref_username#\nName: #ref_name#\nE-mail: #ref_email#\n\nThank you.', 1),
-  ('exchange_admin_notification', 'Exchange Admin Notification', 'Currency Exchange Processed', 'User #username# has exchanged $#amount_from# #currency_from# to $#amount_to# #currency_to#.', 0),
-  ('exchange_user_notification', 'Exchange User Notification', 'Currency Exchange Completed', 'Dear #name# (#username#).\r\n\r\nYou have successfully exchanged $#amount_from# #currency_from# to $#amount_to# #currency_to#.\r\n\r\nThank you.\r\n#site_name#\r\n#site_url#', 0),
-  ('forgot_password', 'Password Reminder', 'The password you requested', 'Hello #name#,\r\n\r\nSomeone (most likely you) requested your username and password from the IP #ip#.\r\nYour password has been changed!!!\r\n\r\nYou can log into our account with:\r\n\r\nUsername: #username#\r\nPassword: #password#\r\n\r\nHope that helps.', 1),
-  ('penalty', 'Penalty Notification', 'Penalty Notification', 'Hello #name#,\r\n\r\nYour account has been charged for $#amount#\r\nYou can check your statistics here:\r\n#site_url#\r\n\r\nGood luck.', 1),
-  ('pending_deposit_admin_notification', 'Deposit Request Admin Notification', 'Deposit Request Notification', 'User #username# save deposit $#amount# of #currency# to #plan#.\n\n#fields#', 1),
-  ('referral_commision_notification', 'Referral Comission Notification', '#site_name# Referral Comission', 'Dear #name# (#username#)\n\nYou have recived a referral comission of $#amount# #currency# from the #ref_name# (#ref_username#) deposit.\n\nThank you.', 1),
-  ('registration', 'Registration Completetion', 'Registration Info', 'Hello #name#,\r\n\r\nThank you for registration on our site.\r\n\r\nYour login information:\r\n\r\nLogin: #username#\r\nPassword: #password#\r\n\r\nYou can login here: #site_url#\r\n\r\nContact us immediately if you did not authorize this registration.\r\n\r\nThank you.', 1),
-  ('withdraw_admin_notification', 'Administrator Withdrawal Notification', 'Withdrawal has been sent', 'User #username# received $#amount# to #currency# account #account#. Batch is #batch#.', 1),
-  ('withdraw_request_admin_notification', 'Administrator Withdrawal Request Notification', 'Withdrawal Request has been sent', 'User #username# requested to withdraw $#amount# from IP #ip#.', 1),
-  ('withdraw_request_user_notification', 'User Withdrawal Request Notification', 'Withdrawal Request has been sent', 'Hello #name#,\r\n\r\n\r\nYou has requested to withdraw $#amount#.\r\nRequest IP address is #ip#.\r\n\r\n\r\nThank you.\r\n#site_name#\r\n#site_url#', 1),
-  ('withdraw_user_notification', 'User Withdrawal Notification', 'Withdrawal has been sent', 'Hello #name#.\r\n\r\n$#amount# has been successfully sent to your #currency# account #account#.\r\nTransaction batch is #batch#.\r\n\r\n#site_name#\r\n#site_url#', 1);
-
 TRUNCATE TABLE `processings`;
 INSERT INTO `processings` (`id`, `name`, `infofields`, `status`, `description`)
 VALUES
