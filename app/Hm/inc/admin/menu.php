@@ -67,9 +67,8 @@ echo '                   <table cellspacing=0 cellpadding=2 border=0 width="172"
 </tr><tr>
 
     <td class=menutxt><a href=?a=newsletter>Send a Newsletter</a></td>
-</tr><tr>
-    <td class=menutxt><a href=?a=edit_emails>Edit E-mail Templates</a></td>
-</tr><tr>
+</tr>
+<tr>
 <td class=menutxt>&nbsp;</td>
 </tr><tr>
 ';
@@ -110,7 +109,7 @@ echo '                   <table cellspacing=0 cellpadding=2 border=0 width="172"
 
 <td class=menutxt><a href=?a=logout>Logout</a></td>
 
-	
+
           ';
   echo '          </tr>
 				   </table>';

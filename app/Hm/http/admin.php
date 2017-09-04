@@ -492,23 +492,6 @@ obj.appendChild(menu);
 }
 
 /*
- * @action edit_emails_update_statuses
- */
-if ((app('data')->frm['a'] == 'edit_emails' and app('data')->frm['action'] == 'update_statuses')) {
-    $q = 'update emails set status = 0';
-    db_query($q);
-    $update_emails = app('data')->frm['emails'];
-    if (is_array($update_emails)) {
-        foreach ($update_emails as $email_id => $tmp) {
-            $q = 'update emails set status = 1 where id = \''.$email_id.'\'';
-            db_query($q);
-        }
-    }
-
-    throw new RedirectException($admin_url.'?a=edit_emails');
-}
-
-/*
  * @action send_bonuce_send_bonuce_confirm
  */
 if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == 'send_bonuce' or app('data')->frm['action'] == 'confirm'))) {
@@ -1718,9 +1701,6 @@ switch (app('data')->frm['a']) {
         break;
     case 'newsletter':
         include app_path('Hm').'/inc/admin/newsletter.php';
-        break;
-    case 'edit_emails':
-        include app_path('Hm').'/inc/admin/emails.php';
         break;
     case 'referal':
         include app_path('Hm').'/inc/admin/referal.php';
