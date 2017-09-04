@@ -8,7 +8,7 @@ class MailService
 {
     public static function send($user, $view, $subject, $data)
     {
-        Mail::to($user)->send(app('App\Mail\CommonMail', [
+        Mail::to($user)->queue(app('App\Mail\CommonMail', [
             'view' => $view,
             'subject'=> $subject,
             'data' => $data,
@@ -17,7 +17,7 @@ class MailService
 
     public static function templateSend($user, $templateId, $data)
     {
-        Mail::to($user)->send(app('App\Mail\CommonMail', [
+        Mail::to($user)->queue(app('App\Mail\CommonMail', [
             'view' => 'emails.'.$templateId,
             'subject' => config("mail_template.{$templateId}.subject", 'notification'),
             'data' => $data,

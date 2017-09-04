@@ -1,4 +1,4 @@
-Dear {{ $name }}
+Dear {{ $name }},
 
 Your deposit has been approved:
 

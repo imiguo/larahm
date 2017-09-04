@@ -73,4 +73,17 @@ return [
         'subject' => 'Withdrawal Request has been sent',
         'status' => 1,
     ],
+
+    'penalty' => [
+        'subject' => 'Penalty Notification',
+        'status' => 1,
+    ],
+    'exchange_admin_notification' => [
+        'subject' => 'Currency Exchange Processed',
+        'status' => 1,
+    ],
+    'exchange_user_notification' => [
+        'subject' => 'Currency Exchange Completed',
+        'status' => 1,
+    ],
 ];

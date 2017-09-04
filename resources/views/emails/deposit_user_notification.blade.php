@@ -1,4 +1,4 @@
-Dear {{ $name }} ({{ $username }})
+Dear {{ $name }} ({{ $username }}),
 
 We have successfully recived your deposit ${{ $amount }} {{ $currency }} to {{ $plan }}.
 

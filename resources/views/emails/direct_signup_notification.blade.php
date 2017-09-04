@@ -1,4 +1,4 @@
-Dear {{ $name }} ({{ $username }})
+Dear {{ $name }} ({{ $username }}),
 
 You have a new direct signup on {{ config('app.name') }}
 User: {{ $ref_username }}

@@ -31,24 +31,6 @@ function is_SSL()
     return false;
 }
 
-function send_mail()
-{
-    $to = func_get_arg(0);
-    $subject = func_get_arg(1);
-    $message = func_get_arg(2);
-    $time = time();
-    $sth = db_query("select time from sendmails where `to` = '$to' and `status` = 1 order by `time` desc limit 1");
-    $row = mysql_fetch_assoc($sth);
-    $status = 0;
-    if (! isset($row['time']) || (time() - $row['time'] > 60)) {
-        MailService::RawSend($to, $subject, $message);
-        $status = 1;
-    }
-    $subject = mysql_real_escape_string($subject);
-    $message = mysql_real_escape_string($message);
-    db_query("insert sendmails (`to`, `subject`, `message`, `time`, `status`) values ('$to', '$subject', '$message', '$time', '$status')");
-}
-
 function genarate_token()
 {
     $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.';
@@ -373,6 +355,28 @@ function decode_pass_for_mysql($string)
     $ret = base64_decode($string);
 
     return $ret;
+}
+
+function send_mail()
+{
+    $to = func_get_arg(0);
+    $subject = func_get_arg(1);
+    $message = func_get_arg(2);
+    $time = time();
+    $sth = db_query("select time from sendmails where `to` = '$to' and `status` = 1 order by `time` desc limit 1");
+    $row = mysql_fetch_assoc($sth);
+    $status = 0;
+    if (! isset($row['time']) || (time() - $row['time'] > 60)) {
+        $toUser = User::where(['email' => $to])->first();
+        $data = [
+            'content' => $message,
+        ];
+        MailService::send($toUser, 'emails.content', $subject, $data);
+        $status = 1;
+    }
+    $subject = mysql_real_escape_string($subject);
+    $message = mysql_real_escape_string($message);
+    db_query("insert sendmails (`to`, `subject`, `message`, `time`, `status`) values ('$to', '$subject', '$message', '$time', '$status')");
 }
 
 function send_template_mail($email_id, $to, $info)
