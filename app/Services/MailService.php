@@ -17,6 +17,9 @@ class MailService
 
     public static function templateSend($user, $templateId, $data)
     {
+        if (! config("mail_template.{$templateId}.status")) {
+            return;
+        }
         Mail::to($user)->queue(app('App\Mail\CommonMail', [
             'view' => 'emails.'.$templateId,
             'subject' => config("mail_template.{$templateId}.subject", 'notification'),
