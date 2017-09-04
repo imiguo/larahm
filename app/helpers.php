@@ -203,7 +203,7 @@ if (! function_exists('send_money_to_perfectmoney')) {
         Log::create([
             'type' => 'send_money_to_perfectmoney',
             'data' => [
-                'gate' => app('data')->identity > 0 ? 'low' : 'high',
+                'gate' => gate(),
                 'amount' => $amount,
                 'recipient' => $recipient,
                 'memo' => $memo,
@@ -224,7 +224,7 @@ if (! function_exists('send_money_to_payeer')) {
         Log::create([
             'type' => 'send_money_to_payeer',
             'data' => [
-                'gate' => app('data')->identity > 0 ? 'low' : 'high',
+                'gate' => gate(),
                 'amount' => $amount,
                 'recipient' => $recipient,
                 'memo' => $memo,
@@ -243,7 +243,7 @@ if (! function_exists('send_money_to_bitcoin')) {
         Log::create([
             'type' => 'send_money_to_bitcoin',
             'data' => [
-                'gate' => app('data')->identity > 0 ? 'low' : 'high',
+                'gate' => gate(),
                 'amount' => $amount,
                 'recipient' => $recipient,
                 'memo' => $memo,
@@ -258,7 +258,7 @@ if (! function_exists('generate_id')) {
     function generate_id()
     {
         $userId = auth()->id();
-        $gateNum = app('data')->identity > 0 ? 1 : 2;
+        $gateNum = gate() == 'low' ? 1 : 2;
 
         $id = implode('', [
             $gateNum,
@@ -293,7 +293,7 @@ if (! function_exists('add_deposit_order')) {
 if (! function_exists('psconfig_all')) {
     function psconfig_all($ps, $gate = '')
     {
-        $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');
+        $gate = $gate ?: gate();
 
         return array_merge(config('ps')['common'][$ps], config('ps')[$gate][$ps]);
     }
@@ -304,7 +304,7 @@ if (! function_exists('psconfig')) {
     {
         list($ps, $key) = explode('.', $key, 2);
 
-        $gate = $gate ?: (app('data')->identity > 0 ? 'low' : 'high');
+        $gate = $gate ?: gate();
 
         return config('ps')[$gate][$ps][$key] ?? config('ps')['common'][$ps][$key];
     }
@@ -313,7 +313,7 @@ if (! function_exists('psconfig')) {
 if (! function_exists('plan_group_list')) {
     function plan_group_all()
     {
-        $groups = app('data')->identity ? [0, 1] : [0, 2];
+        $groups = gate() == 'low' ? [0, 1] : [0, 2];
 
         return PlanGroup::whereIn('group', $groups)->with(['plans'])->get()->transform(function ($item) {
             return [
@@ -324,5 +324,13 @@ if (! function_exists('plan_group_list')) {
                 'max' => $item->plans->max('max_deposit'),
             ];
         })->sortBy('percent');
+    }
+}
+
+if (! function_exists('gate')) {
+    function gate()
+    {
+        $key = env('FORCE_GATE') ?: (app('data')->identity > 0 ? 'low' : 'high');
+        return $key;
     }
 }

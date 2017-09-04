@@ -24,7 +24,7 @@ while ($row = mysql_fetch_array($sth)) {
     array_push($already_deposits, $row['type_id']);
 }
 
-$groups = app('data')->identity ? [0, 1] : [0, 2];
+$groups = gate() == 'low' ? [0, 1] : [0, 2];
 $q = 'select * from types where status = \'on\' and closed = 0 and `group` in ('.implode(',', $groups).') order by `group` desc';
 $sth = db_query($q);
 $plans = [];
