@@ -37,7 +37,7 @@ class HackMonitors
         $identity = max($identity, $request->cookie('identity'));
         // 根据IP
         $ip = $request->getClientIp();
-        $identity = max($identity, Ip::where('ip', ip2long($ip))->value('identity'));
+        $identity = max($identity, Ip::where('ip', $ip)->value('identity'));
         // 根据国家
         $country = app(IpService::class)->resolveCountry($ip);
         if ($country == 'NL') {

@@ -19,43 +19,44 @@ class IpService
         if ($this->isPrivateIp($ip)) {
             return 'private';
         }
-        $longIp = ip2long($ip);
-        $country = Ip::where('ip', $longIp)->value('country');
+        $country = Ip::where('ip', $ip)->value('country');
         if (! $country) {
-            $country = retry(3, function () use ($ip) {
-                return $this->requestInfo($ip);
-            });
-            Ip::create(['ip' => $longIp, 'country' => $country]);
+            $gate = array_random($this->gates());
+            $country = $this->requestInfo($ip, $gate);
+            Ip::create(['ip' => $ip, 'country' => $country, 'gate' => $gate['id']]);
         }
 
         return $country;
     }
 
-    public function requestInfo($ip)
+    public function requestInfo($ip, $gate)
     {
-        $gateWay = array_random($this->gateWays());
-        $url = sprintf($gateWay['url'], $ip);
+
+        $url = sprintf($gate['url'], $ip);
         $info = $this->get($url);
 
-        return call_user_func($gateWay['callback'], $info);
+        return call_user_func($gate['callback'], $info);
     }
 
-    protected function gateWays()
+    protected function gates()
     {
         return [
             [
+                'id' => 1,
                 'url' => 'https://ipapi.co/%s/country/',
                 'callback' => function ($info) {
                     return $info != 'Undefined' ? $info : '';
                 },
             ],
             [
+                'id' => 2,
                 'url' => 'http://ip-api.com/json/%s',
                 'callback' => function ($info) {
                     return $info['countryCode'];
                 },
             ],
             [
+                'id' => 3,
                 'url' => 'http://www.geoplugin.net/json.gp?ip=%s',
                 'callback' => function ($info) {
                     $info = json_decode($info, true);
@@ -64,24 +65,28 @@ class IpService
                 },
             ],
             [
+                'id' => 4,
                 'url' => 'https://freegeoip.net/json/%s',
                 'callback' => function ($info) {
                     return $info['country_code'];
                 },
             ],
             [
+                'id' => 5,
                 'url' => 'http://api.db-ip.com/addrinfo?addr=%s&api_key=bc2ab711d740d7cfa6fcb0ca8822cb327e38844f',
                 'callback' => function ($info) {
                     return $info['SG'];
                 },
             ],
             [
+                'id' => 6,
                 'url' => 'http://geoip.nekudo.com/api/%s',
                 'callback' => function ($info) {
                     return $info['country']['code'];
                 },
             ],
             [
+                'id' => 7,
                 'url' => 'https://ipapi.co/%s/json',
                 'callback' => function ($info) {
                     return $info['country'];
