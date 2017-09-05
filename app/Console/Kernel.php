@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel
                 return false;
             }
             $time = Cache::sear('schedule.fakeDeposit', function () {
-                return Carbon::now()->addMinutes(mt_rand(10, 60));
+                return Carbon::now()->addMinutes(mt_rand(...explode(',', env('FAKE_DEPOSIT_INTERVAL'))));
             });
             if (Carbon::now()->greaterThan($time)) {
                 Cache::forget('schedule.fakeDeposit');
@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
                 return false;
             }
             $time = Cache::sear('schedule.fakePayout', function () {
-                return Carbon::now()->addMinutes(mt_rand(30, 90));
+                return Carbon::now()->addMinutes(mt_rand(...explode(',', env('FAKE_PAYOUT_INTERVAL'))));
             });
             if (Carbon::now()->greaterThan($time)) {
                 Cache::forget('schedule.fakePayout');
