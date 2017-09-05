@@ -78,13 +78,13 @@ class DataService
         return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
     }
 
-    public function fakeDeposit($amount = 0)
+    public function fakeDeposit($amount = 0, $ps = 0)
     {
         $user = FakeUser::inRandomOrder()->first();
         $history = FakeHistory::create([
             'user_id' => $user->id,
             'amount' => $amount ?: $this->generateAmount(),
-            'payment' => $user->payment ?: $this->generatePayment(),
+            'payment' => $ps ?: ($user->payment ?: $this->generatePayment()),
             'type' => 1,
             'created_at' => Carbon::now(),
         ]);
@@ -95,7 +95,7 @@ class DataService
         return $history->toArray();
     }
 
-    public function fakePayout($amount = 0)
+    public function fakePayout($amount = 0, $ps = 0)
     {
         if (FakeHistory::where('type', 1)->count() < 30) {
             return;
@@ -114,7 +114,7 @@ class DataService
         $history = FakeHistory::create([
             'user_id' => $user->id,
             'amount' => $amount,
-            'payment' => $user->payment,
+            'payment' => $ps ?: $user->payment,
             'type' => 2,
             'created_at' => Carbon::now(),
         ]);
