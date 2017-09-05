@@ -39,18 +39,27 @@ class DepositCommand extends Command
     public function handle()
     {
         $username = $this->argument('username');
-        $amount = $this->argument('amount');
-        $plan_id = $this->option('plan');
-        $ps = $this->option('ps');
-        $batch = $this->option('batch') ?: time().mt_rand(00, 99);
-        $account = $this->option('account') ?: 't'.mt_rand(10000000, 99999999);
-        $ago = $this->option('ago');
-        $compound = $this->option('compound');
-        $userId = User::where('username', $username)->value('id');
-        if (! $userId) {
+        $user = User::where('username', $username)->first();
+        if (! $user) {
             $this->info('找不到这个用户');
         }
-        $ret = add_deposit($ps, $userId, $amount, $batch, $account, $plan_id, $compound, $ago);
+
+        $amount = $this->argument('amount');
+        $plan_id = $this->option('plan');
+
+        $batch = $this->option('batch') ?: time().mt_rand(00, 99);
+        $psList = [
+            1 => 'perfectmoney_account',
+            2 => 'payeer_account',
+            3 => 'bitcoin_account',
+        ];
+        $ps = $this->option('ps');
+        $psField = $psList[$ps];
+        $account = $this->option('account') ?: ($user->$psField ?: 't'.mt_rand(10000000, 99999999));
+        $ago = $this->option('ago');
+        $compound = $this->option('compound');
+
+        $ret = add_deposit($ps, $user->id, $amount, $batch, $account, $plan_id, $compound, $ago);
         if ($ret) {
             dump(compact('ps', 'userId', 'amount', 'batch', 'account', 'plan_id', 'compound', 'ago'));
 
