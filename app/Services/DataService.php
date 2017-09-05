@@ -28,6 +28,7 @@ class DataService
                     'amount' => number_format($item->amount, 2),
                     'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
+                    'timestamp' => strtotime($item->created_at),
                 ];
             })->toBase();
         $histories = History::select(['user_id', 'amount', 'ec', 'date'])
@@ -41,10 +42,13 @@ class DataService
                     'amount' => number_format(abs($item->amount), 2),
                     'payment' => self::paymentMap[$item->ec],
                     'time' => $item->date,
+                    'timestamp' => strtotime($item->date),
                 ];
             });
 
-        return $fakes->merge($histories->toArray())->sortByDesc('time')->take($limit)->sort('time');
+        return $fakes->merge($histories->toArray())->take($limit)->sort(function ($a, $b) {
+            return $a['timestamp'] > $b['timestamp'];
+        });
     }
 
     public function payouts($limit = 20)
@@ -59,6 +63,7 @@ class DataService
                     'amount' => number_format($item->amount, 2),
                     'payment' => self::paymentMap[$item->payment],
                     'time' => $item->created_at,
+                    'timestamp' => strtotime($item->created_at),
                 ];
             })->toBase();
         $histories = History::select(['user_id', 'amount', 'ec', 'date'])
@@ -72,10 +77,13 @@ class DataService
                     'amount' => number_format(abs($item->amount), 2),
                     'payment' => self::paymentMap[$item->ec],
                     'time' => $item->date,
+                    'timestamp' => strtotime($item->date),
                 ];
             });
 
-        return $fakes->union($histories)->sortByDesc('time')->take($limit)->sort('time');
+        return $fakes->union($histories)->take($limit)->sort(function ($a, $b) {
+            return $a['timestamp'] > $b['timestamp'];
+        });
     }
 
     public function fakeDeposit($amount = 0, $ps = 0)
