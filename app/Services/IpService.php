@@ -31,7 +31,6 @@ class IpService
 
     public function requestInfo($ip, $gate)
     {
-
         $url = sprintf($gate['url'], $ip);
         $info = $this->get($url);
 

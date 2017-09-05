@@ -331,6 +331,7 @@ if (! function_exists('gate')) {
     function gate()
     {
         $key = env('FORCE_GATE') ?: (app('data')->identity > 0 ? 'low' : 'high');
+
         return $key;
     }
 }
