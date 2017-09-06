@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use Auth;
 use App\Models\Ip;
 use App\Traits\HttpRequest;
-use Auth;
 
 class IpService
 {
@@ -84,6 +84,7 @@ class IpService
                 'url' => 'http://api.db-ip.com/addrinfo?addr=%s&api_key=bc2ab711d740d7cfa6fcb0ca8822cb327e38844f',
                 'callback' => function ($info) {
                     $info = json_decode($info, true);
+
                     return $info['country'];
                 },
             ],
