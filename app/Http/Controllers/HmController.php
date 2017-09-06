@@ -10,7 +10,7 @@ class HmController extends Controller
     public function __construct()
     {
         require app_path('Hm').'/lib/config.php';
-        $this->middleware('hack.monitors')->only('index');
+        $this->middleware('hm.hack_monitors')->only('index');
     }
 
     public function index()

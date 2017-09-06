@@ -59,6 +59,6 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'hack.monitors' => \App\Http\Middleware\HackMonitors::class,
+        'hm.hack_monitors' => \App\Http\Middleware\HackMonitors::class,
     ];
 }
