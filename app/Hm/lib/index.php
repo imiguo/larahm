@@ -275,10 +275,14 @@ function do_login_else(&$userinfo)
         $sth = db_query($q);
         if ($row = mysql_fetch_array($sth)) {
             $q = 'update users set last_access_time = now() where username=\''.$row['username'].'\'';
-            $userinfo = $row;
-
-            $userinfo['name'] = Auth::user()->name;
-            $userinfo['username'] = Auth::user()->username;
+            $userinfo = array_merge($row, array_only(Auth::user()->toArray(), [
+                'name',
+                'username',
+                'email',
+                'perfectmoney_account',
+                'payeer_account',
+                'bitcoin_account',
+            ]));
 
             $userinfo['logged'] = 1;
             db_query($q);
