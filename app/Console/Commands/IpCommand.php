@@ -39,7 +39,7 @@ class IpCommand extends Command
      */
     public function handle()
     {
-        $ips = Ip::where('country', '{')->pluck('ip');
+        $ips = Ip::whereNull('country')->orWhere('country', '')->pluck('ip');
         dump($ips);
         foreach ($ips as $ip) {
             app(IpService::class)->requestInfo($ip);
