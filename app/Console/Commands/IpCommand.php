@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Ip;
-use Illuminate\Console\Command;
 use App\Services\IpService;
+use Illuminate\Console\Command;
 
 class IpCommand extends Command
 {
