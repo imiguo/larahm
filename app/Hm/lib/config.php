@@ -31,9 +31,3 @@ app('data')->exchange_systems = config('hm.payments');
 app('data')->settings = get_settings();
 
 app('data')->settings['site_url'] = (is_SSL() ? 'https://' : 'http://').$_SERVER['HTTP_HOST'];
-
-$ip = app('data')->env['REMOTE_ADDR'];
-$time = time();
-$url = app('data')->env['REQUEST_URI'];
-$agent = app('data')->env['HTTP_USER_AGENT'];
-$ret = db_query("insert visit (`ip`, `time`, `url`, `agent`) values('$ip', '$time', '$url', '$agent')");

@@ -21,9 +21,11 @@ class CreateVisitTable extends Migration
         Schema::create('visit', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ip', 20)->nullable();
+            $table->string('username')->nullable();
             $table->integer('time')->nullable();
             $table->string('url', 255)->nullable();
             $table->string('agent', 255)->nullable();
+            $table->json('data', 255)->nullable();
             $table->timestamps();
         });
     }
