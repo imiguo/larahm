@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Ip;
 use App\Traits\HttpRequest;
+use Auth;
 
 class IpService
 {
@@ -33,7 +34,14 @@ class IpService
         $url = sprintf($gate['url'], $ip);
         $info = $this->get($url);
         $country = call_user_func($gate['callback'], $info);
-        Ip::updateOrCreate(['ip' => $ip], ['country' => $country, 'gate' => $gate['id']]);
+
+        Ip::updateOrCreate(['ip' => $ip],
+            [
+                'country' => $country,
+                'gate' => $gate['id'],
+                'identity' => Auth::check() ? Auth::user()->identity : 0,
+            ]
+        );
 
         return $country;
     }
