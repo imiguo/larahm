@@ -105,7 +105,7 @@ class DataService
 
     public function fakePayout($amount = 0, $ps = 0)
     {
-        if (FakeHistory::where('type', 1)->count() < 30) {
+        if (! env('ENBLE_FAKE_PAYOUT')) {
             return;
         }
         $user = FakeUser::where('amount', '>', 0)->inRandomOrder()->first();
