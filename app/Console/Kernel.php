@@ -72,6 +72,8 @@ class Kernel extends ConsoleKernel
 
             return false;
         });
+
+        $schedule->command('hm:ip')->everyMinute();
     }
 
     /**
