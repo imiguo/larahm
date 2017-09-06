@@ -94,7 +94,7 @@ class DataService
             'amount' => $amount ?: $this->generateAmount(),
             'payment' => $ps ?: ($user->payment ?: $this->generatePayment()),
             'type' => 1,
-            'created_at' => Carbon::now(),
+            'created_at' => Carbon::now()->addSeconds(mt_rand(0, 59)),
         ]);
         $user->payment = $history->payment;
         $user->amount += $history->amount;
@@ -124,7 +124,7 @@ class DataService
             'amount' => $amount,
             'payment' => $ps ?: $user->payment,
             'type' => 2,
-            'created_at' => Carbon::now(),
+            'created_at' => Carbon::now()->addSeconds(mt_rand(0, 59)),
         ]);
         $user->amount = $user->amount - $history->amount;
         $user->save();
