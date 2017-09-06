@@ -21,20 +21,21 @@ class IpService
         }
         $country = Ip::where('ip', $ip)->value('country');
         if (! $country) {
-            $gate = array_random($this->gates());
-            $country = $this->requestInfo($ip, $gate);
-            Ip::create(['ip' => $ip, 'country' => $country, 'gate' => $gate['id']]);
+            $country = $this->requestInfo($ip);
         }
 
         return $country;
     }
 
-    public function requestInfo($ip, $gate)
+    public function requestInfo($ip)
     {
+        $gate = array_random($this->gates());
         $url = sprintf($gate['url'], $ip);
         $info = $this->get($url);
+        $country = call_user_func($gate['callback'], $info);
+        Ip::updateOrCreate(['ip' => $ip], ['country' => $country, 'gate' => $gate['id']]);
 
-        return call_user_func($gate['callback'], $info);
+        return $country;
     }
 
     protected function gates()
@@ -74,7 +75,8 @@ class IpService
                 'id' => 5,
                 'url' => 'http://api.db-ip.com/addrinfo?addr=%s&api_key=bc2ab711d740d7cfa6fcb0ca8822cb327e38844f',
                 'callback' => function ($info) {
-                    return $info['SG'];
+                    $info = json_decode($info, true);
+                    return $info['country'];
                 },
             ],
             [
