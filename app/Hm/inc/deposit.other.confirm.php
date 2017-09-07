@@ -188,4 +188,4 @@ $ok = 1;
   view_assign('compounding', $compound);
   view_assign('type', app('data')->frm['type']);
   view_assign('cname', app('data')->exchange_systems[$ps]['name']);
-  view_execute('deposit.other.confirm.blade.php');
+  view_execute('deposit_other_confirm.blade.php');

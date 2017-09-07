@@ -214,4 +214,4 @@ $ok = 1;
   view_assign('h_id', $h_id);
   view_assign('amount', number_format($amount, 2));
   view_assign('famount', $amount);
-  view_execute('deposit.account.confirm.blade.php');
+  view_execute('deposit_account.confirm.blade.php');

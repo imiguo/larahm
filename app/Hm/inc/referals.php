@@ -118,7 +118,7 @@ view_assign('site_name', app('data')->settings['site_name']);
   view_assign('referals', $referals);
   view_assign('cnt_other_active', $q_other_active);
   view_assign('cnt_other', $q_other);
-  $q = 'select * from users where id = '.$userinfo['ref'];
+  $q = "select * from users where id = '{$userinfo['ref']}'";
   $sth = db_query($q);
   $row1 = mysql_fetch_array($sth);
   $upline = $row1;
