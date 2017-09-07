@@ -13,40 +13,37 @@ use App\Exceptions\RedirectException;
 
 if (app('data')->frm['action'] == 'send') {
     $from = ($userinfo['logged'] ? $userinfo['email'] : app('data')->frm['email']);
-    $message = app('data')->settings['site_name'].' Support request from '.date('l dS of F Y h:i:s A').'
-
----------------------------------------------------------------';
-    $message .= app('data')->frm['message'];
-    $message .= '
-
----------------------------------------------------------------';
-    $message .= 'User Additional Info :';
+    $message = app('data')->settings['site_name'].' Support request from '.date('l dS of F Y h:i:s A').PHP_EOL;
+    $message .= '---------------------------------------------------------------'.PHP_EOL;
+    $message .= app('data')->frm['message'].PHP_EOL;
+    $message .= '---------------------------------------------------------------'.PHP_EOL;
+    $message .= 'User Additional Info :'.PHP_EOL;
     if ($userinfo['logged'] == 1) {
         $accounting = [];
         $accounting = get_user_balance($userinfo['id']);
-        $message .= 'User      : '.$userinfo['username'].'';
-        $message .= 'User Name : '.$userinfo['name'].'';
-        $message .= 'E-Mail    : '.$userinfo['email'].'';
+        $message .= 'User      : '.$userinfo['username'].PHP_EOL;
+        $message .= 'User Name : '.$userinfo['name'].PHP_EOL;
+        $message .= 'E-Mail    : '.$userinfo['email'].PHP_EOL;
         if (psconfig('pm.marchant_id')) {
-            $message .= 'PerfectMoney Acc : '.$userinfo['perfectmoney_account'].'';
+            $message .= 'PerfectMoney Acc : '.$userinfo['perfectmoney_account'].PHP_EOL;
         }
         if (psconfig('pe.shop_id')) {
-            $message .= 'Payeer Acc : '.$userinfo['payeer_account'].'';
+            $message .= 'Payeer Acc : '.$userinfo['payeer_account'].PHP_EOL;
         }
         if (psconfig('as.user_name')) {
-            $message .= 'Bitcoin Acc : '.$userinfo['bitcoin_account'].'';
+            $message .= 'Bitcoin Acc : '.$userinfo['bitcoin_account'].PHP_EOL;
         }
 
-        $message .= 'Status    : '.$userinfo['status'].'';
-        $message .= 'Active Deposits  : $'.sprintf('%.02f', $accounting['active_deposit']).'';
+        $message .= 'Status    : '.$userinfo['status'].PHP_EOL;
+        $message .= 'Active Deposits  : $'.sprintf('%.02f', $accounting['active_deposit']).PHP_EOL;
     } else {
-        $message .= 'User Name : '.app('data')->frm['name'].'';
-        $message .= 'E-Mail    : '.app('data')->frm['email'].'';
-        $message .= 'Not Registered/Logged user';
+        $message .= 'User Name : '.app('data')->frm['name'].PHP_EOL;
+        $message .= 'E-Mail    : '.app('data')->frm['email'].PHP_EOL;
+        $message .= 'Not Registered/Logged user'.PHP_EOL;
     }
 
-    $message .= 'IP Address: '.$_SERVER['REMOTE_ADDR'].'';
-    $message .= 'Language  : '.$_SERVER['HTTP_ACCEPT_LANGUAGE'].'';
+    $message .= 'IP Address: '.$_SERVER['REMOTE_ADDR'].PHP_EOL;
+    $message .= 'Language  : '.$_SERVER['HTTP_ACCEPT_LANGUAGE'].PHP_EOL;
     $q = 'select * from users where id = 1';
     $sth = db_query($q);
     $admin_email = '';
