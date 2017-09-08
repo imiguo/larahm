@@ -127,16 +127,15 @@ if ((app('data')->frm['a'] == 'pending_deposit_details' and app('data')->frm['ac
 if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['action'] == 'movetodeposit' or app('data')->frm['action'] == 'movetoaccount')) and app('data')->frm['confirm'] == 'yes')) {
     $deposit_id = $id = sprintf('%d', app('data')->frm['id']);
     $q = 'select
-          pending_deposits.*,
-          users.username
+              pending_deposits.*,
+              users.username
         from
           pending_deposits,
           users
         where
           pending_deposits.user_id = users.id and
           pending_deposits.id = '.$id.' and
-          pending_deposits.status != \'processed\'
-       ';
+          pending_deposits.status != \'processed\'';
     $sth = db_query($q);
     $amount = sprintf('%0.2f', app('data')->frm['amount']);
     while ($row = mysql_fetch_array($sth)) {
@@ -150,13 +149,13 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
         }
 
         $q = 'insert into history set
-            user_id = '.$row['user_id'].(',
-            date = now(),
-            amount = '.$amount.',
-            actual_amount = '.$amount.',
-            type=\'add_funds\',
-            description=\'').quote(app('data')->exchange_systems[$row['ec']]['name']).' transfer received\',
-            ec = '.$row['ec'];
+                user_id = '.$row['user_id'].(',
+                date = now(),
+                amount = '.$amount.',
+                actual_amount = '.$amount.',
+                type=\'add_funds\',
+                description=\'').quote(app('data')->exchange_systems[$row['ec']]['name']).' transfer received\',
+                ec = '.$row['ec'];
         db_query($q);
         if ((app('data')->frm['action'] == 'movetodeposit' and 0 < $row[type_id])) {
             $q = 'select name, delay from types where id = '.$row['type_id'];
@@ -168,28 +167,27 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
             }
 
             $q = 'insert into deposits set
-              user_id = '.$row['user_id'].',
-              type_id = '.$row['type_id'].(',
-              deposit_date = now(),
-              last_pay_date = now() + interval '.$delay.' day,
-              status = \'on\',
-              q_pays = 0,
-              amount = '.$amount.',
-              actual_amount = '.$amount.',
-              ec = '.$ps.',
-              compound = '.$compound);
+                      user_id = '.$row['user_id'].',
+                      type_id = '.$row['type_id'].(',
+                      deposit_date = now(),
+                      last_pay_date = now() + interval '.$delay.' day,
+                      status = \'on\',
+                      q_pays = 0,
+                      amount = '.$amount.',
+                      actual_amount = '.$amount.',
+                      ec = '.$ps.',
+                      compound = '.$compound);
             db_query($q);
             $deposit_id = mysql_insert_id();
             $q = 'insert into history set
-              user_id = '.$row['user_id'].(',
-              date = now(),
-              amount = -'.$amount.',
-              actual_amount = -'.$amount.',
-              type=\'deposit\',
-              description=\'Deposit to ').quote($row1[name]).('\',
-              ec = '.$ps.',
-              deposit_id = '.$deposit_id.'
-           ');
+                      user_id = '.$row['user_id'].(',
+                      date = now(),
+                      amount = -'.$amount.',
+                      actual_amount = -'.$amount.',
+                      type=\'deposit\',
+                      description=\'Deposit to ').quote($row1[name]).('\',
+                      ec = '.$ps.',
+                      deposit_id = '.$deposit_id);
             db_query($q);
             $ref_sum = referral_commission($row['user_id'], $amount, $ps);
         }
@@ -214,7 +212,7 @@ if (((app('data')->frm['a'] == 'pending_deposit_details' and (app('data')->frm['
         $infofields = unserialize($fields);
         $f = '';
         foreach ($pfields as $id => $name) {
-            $f .= $name.': '.stripslashes($infofields[$id]).'';
+            $f .= $name.': '.stripslashes($infofields[$id]);
         }
 
         $info['fields'] = $f;
@@ -258,13 +256,13 @@ if (app('data')->frm['a'] == 'mass') {
             $sth = db_query($q);
             while ($row = mysql_fetch_array($sth)) {
                 $q = 'insert into history set
-		user_id = '.$row['user_id'].',
-		amount = -'.abs($row['actual_amount']).',
-		actual_amount = -'.abs($row['actual_amount']).',
-		type = \'withdrawal\',
-		date = now(),
-		description = \'Withdrawal processed\',
-		ec = '.$row['ec'];
+                        user_id = '.$row['user_id'].',
+                        amount = -'.abs($row['actual_amount']).',
+                        actual_amount = -'.abs($row['actual_amount']).',
+                        type = \'withdrawal\',
+                        date = now(),
+                        description = \'Withdrawal processed\',
+                        ec = '.$row['ec'];
                 db_query($q);
                 $q = 'delete from history where id = '.$row['id'];
                 db_query($q);
@@ -307,12 +305,8 @@ if (app('data')->frm['a'] == 'mass') {
             $s .= ','.$kk;
         }
 
-        $q = 'select
-		h.*,
-        u.perfectmoney_account,
-        u.payeer_account,
-		u.bitcoin_account,
-              from history as h, users as u where h.id in ('.$s.') and u.id = h.user_id order by ec';
+        $q = 'select h.*, u.perfectmoney_account, u.payeer_account, u.bitcoin_account,
+                from history as h, users as u where h.id in ('.$s.') and u.id = h.user_id order by ec';
         $sth = db_query($q);
         while ($row = mysql_fetch_array($sth)) {
             if ($ec != $row['ec']) {
@@ -344,7 +338,7 @@ if (app('data')->frm['a'] == 'mass') {
             }
 
             $to_withdraw = sprintf('%.02f', floor($to_withdraw * 100) / 100);
-            echo $ac.','.abs($to_withdraw).'';
+            echo $ac.','.abs($to_withdraw);
         }
 
         throw new EmptyException();
@@ -369,14 +363,14 @@ if ((app('data')->frm['a'] == 'referal' and app('data')->frm['action'] == 'chang
                 $percent_weekly = sprintf('%0.2f', app('data')->frm['ref_percent_weekly'][$i]);
                 $percent_monthly = sprintf('%0.2f', app('data')->frm['ref_percent_monthly'][$i]);
                 $q = 'insert into referal set
-  	level = 1,
-  	name= \''.$qname.'\',
-  	from_value = '.$from.',
-  	to_value= '.$to.',
-  	percent = '.$percent.',
-  	percent_daily = '.$percent_daily.',
-  	percent_weekly = '.$percent_weekly.',
-  	percent_monthly = '.$percent_monthly;
+                        level = 1,
+                        name= \''.$qname.'\',
+                        from_value = '.$from.',
+                        to_value= '.$to.',
+                        percent = '.$percent.',
+                        percent_daily = '.$percent_daily.',
+                        percent_weekly = '.$percent_weekly.',
+                        percent_monthly = '.$percent_monthly;
                 db_query($q);
                 continue;
             }
@@ -420,75 +414,6 @@ if (app('data')->frm['a'] == 'deleterate') {
     }
 
     throw new RedirectException($admin_url.'?a=rates');
-}
-
-/*
- * @action newsletter_newsletter
- */
-if ((app('data')->frm['a'] == 'newsletter' and app('data')->frm['action'] == 'newsletter')) {
-    if (app('data')->frm['to'] == 'user') {
-        $q = 'select * from users where username = \''.quote(app('data')->frm['username']).'\'';
-    } else {
-        if (app('data')->frm['to'] == 'all') {
-            $q = 'select * from users where id > 1';
-        } else {
-            if (app('data')->frm['to'] == 'active') {
-                $q = 'select users.* from users, deposits where users.id > 1 and deposits.user_id = users.id group by users.id';
-            } else {
-                if (app('data')->frm['to'] == 'passive') {
-                    $q = 'select u.* from users as u left outer join deposits as d on u.id = d.user_id where u.id > 1 and d.user_id is NULL';
-                } else {
-                    throw new RedirectException($admin_url.'?a=newsletter&say=someerror');
-                }
-            }
-        }
-    }
-
-    $sth = db_query($q);
-    $flag = 0;
-    $total = 0;
-    echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>HYIP Manager Pro. Auto-payment, mass payment included.</title>
-<link href="images/adminstyle.css" rel="stylesheet" type="text/css">
-</head>
-<body bgcolor="#FFFFF2" link="#666699" vlink="#666699" alink="#666699" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" >
-<center>';
-    echo '<br><br><br><br><br><div id=\'newsletterplace\'></div>';
-    echo '<div id=self_menu0></div>';
-    $description = app('data')->frm['description'];
-    if (app('data')->settings['demomode'] != 1) {
-        set_time_limit(9999999);
-        while ($row = mysql_fetch_array($sth)) {
-            $flag = 1;
-            ++$total;
-            $mailcont = $description;
-            $mailcont = ereg_replace('#username#', $row['username'], $mailcont);
-            $mailcont = ereg_replace('#name#', $row['name'], $mailcont);
-            $mailcont = ereg_replace('#date_register#', $row['date_register'], $mailcont);
-            $mailcont = ereg_replace('#payeer_account#', $row['payeer_account'], $mailcont);
-            $mailcont = ereg_replace('#bitcoin_account#', $row['bitcoin_account'], $mailcont);
-            $mailcont = ereg_replace('#perfectmoney_account#', $row['perfectmoney_account'], $mailcont);
-            $mailcont = ereg_replace('#email#', $row['email'], $mailcont);
-            send_mail($row['email'], app('data')->frm['subject'], $mailcont, 'From: '.app('data')->settings['system_email'].'
-Reply-To: '.app('data')->settings['system_email']);
-            echo '<script>var obj = document.getElementById(\'newsletterplace\');
-var menulast = document.getElementById(\'self_menu'.($total - 1).'\');
-menulast.style.display=\'none\';</script>';
-            echo '<div id=\'self_menu'.$total.'\'>Just sent to '.$row[email].('<br>Total '.$total.' messages sent.</div>');
-            echo '<script>var menu = document.getElementById(\'self_menu'.$total.'\');
-obj.appendChild(menu);
-</script>';
-            flush();
-        }
-    }
-
-    if ($flag == 1) {
-    }
-
-    echo '<br><br><br>Sent '.$total.'.</center></body></html>';
-    throw new EmptyException();
 }
 
 /*
@@ -541,13 +466,13 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
                 $flag = 1;
                 $total += $amount;
                 $q = 'insert into history set
-    	user_id = '.$row['id'].(',
-    	amount = '.$amount.',
-    	description = \''.$description.'\',
-    	type=\'bonus\',
-    	actual_amount = '.$amount.',
-    	ec = '.$ec.',
-    	date = now()');
+                        user_id = '.$row['id'].',
+                        amount = '.$amount.',
+                        description = \''.$description.'\',
+                        type=\'bonus\',
+                        actual_amount = '.$amount.',
+                        ec = '.$ec.',
+                        date = now()';
                 db_query($q);
                 if ($deposit) {
                     $delay = $type['delay'] - 1;
@@ -557,28 +482,26 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
 
                     $user_id = $row['id'];
                     $q = 'insert into deposits set
-               user_id = '.$user_id.',
-               type_id = '.$hyip_id.',
-               deposit_date = now(),
-               last_pay_date = now()+ interval '.$delay.' day,
-               status = \'on\',
-               q_pays = 0,
-               amount = \''.$amount.'\',
-               actual_amount = \''.$amount.'\',
-               ec = '.$ec.'
-               ';
+                            user_id = '.$user_id.',
+                            type_id = '.$hyip_id.',
+                            deposit_date = now(),
+                            last_pay_date = now()+ interval '.$delay.' day,
+                            status = \'on\',
+                            q_pays = 0,
+                            amount = \''.$amount.'\',
+                            actual_amount = \''.$amount.'\',
+                            ec = '.$ec;
                     db_query($q);
                     $deposit_id = mysql_insert_id();
                     $q = 'insert into history set
-               user_id = '.$user_id.',
-               amount = \'-'.$amount.'\',
-               type = \'deposit\',
-               description = \'Deposit to '.quote($type['name']).('\',
-               actual_amount = -'.$amount.',
-               ec = '.$ec.',
-               date = now(),
-             deposit_id = '.$deposit_id.'
-               ');
+                            user_id = '.$user_id.',
+                            amount = \'-'.$amount.'\',
+                            type = \'deposit\',
+                            description = \'Deposit to '.quote($type['name']).('\',
+                            actual_amount = -'.$amount.',
+                            ec = '.$ec.',
+                            date = now(),
+                            deposit_id = '.$deposit_id);
                     db_query($q);
                     if (app('data')->settings['banner_extension'] == 1) {
                         $imps = 0;
@@ -616,8 +539,7 @@ if ((app('data')->frm['a'] == 'send_bonuce' and (app('data')->frm['action'] == '
         app('data')->env['HTTP_HOST'] = preg_replace('/www\\./', '', app('data')->env['HTTP_HOST']);
         $conf_email .= '@'.app('data')->env['HTTP_HOST'];
         $code = get_rand_md5(8);
-        send_mail($conf_email, 'Bonus Confirmation Code', 'Code is: '.$code, 'From: '.app('data')->settings['system_email'].'
-Reply-To: '.app('data')->settings['system_email']);
+        send_mail($conf_email, 'Bonus Confirmation Code', 'Code is: '.$code, 'From: '.app('data')->settings['system_email'].' Reply-To: '.app('data')->settings['system_email']);
         $code = get_rand_md5(23).md5($code).get_rand_md5(32);
         session(['code' => $code]);
     }
@@ -659,13 +581,13 @@ if ((app('data')->frm['a'] == 'send_penality' and app('data')->frm['action'] == 
         $flag = 1;
         $total += $amount;
         $q = 'insert into history set
-	user_id = '.$row['id'].(',
-	amount = -'.$amount.',
-	description = \''.$description.'\',
-	type=\'penality\',
-	actual_amount = -'.$amount.',
-	ec = '.$ec.',
-	date = now()');
+                user_id = '.$row['id'].(',
+                amount = -'.$amount.',
+                description = \''.$description.'\',
+                type=\'penality\',
+                actual_amount = -'.$amount.',
+                ec = '.$ec.',
+                date = now()');
         db_query($q);
     }
 
@@ -889,12 +811,12 @@ if ((app('data')->frm['a'] == 'releasedeposits' and app('data')->frm['action'] =
             $release_deposit = sprintf('%-.2f', $vv);
             if ($release_deposit <= $row['actual_amount']) {
                 $q = 'insert into history set
-    		user_id = '.$u_id.',
-	    	amount = '.$release_deposit.',
-    		type = \'early_deposit_release\',
-	    	actual_amount = '.$release_deposit.',
-        ec = '.$row['ec'].',
-	    	date = now()';
+                        user_id = '.$u_id.',
+                        amount = '.$release_deposit.',
+                        type = \'early_deposit_release\',
+                        actual_amount = '.$release_deposit.',
+                        ec = '.$row['ec'].',
+                        date = now()';
                 db_query($q);
                 $dif = floor(($row['actual_amount'] - $release_deposit) * 100) / 100;
                 if ($dif == 0) {
@@ -937,13 +859,13 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
             $description = quote(app('data')->frm['desc']);
             $ec = sprintf('%d', app('data')->frm['ec']);
             $q = 'insert into history set
-              user_id = '.$id.',
-              amount = '.$amount.',
-              ec = '.$ec.',
-              actual_amount = '.$amount.',
-              type = \'bonus\',
-              date = now(),
-              description = \''.$description.'\'';
+                      user_id = '.$id.',
+                      amount = '.$amount.',
+                      ec = '.$ec.',
+                      actual_amount = '.$amount.',
+                      type = \'bonus\',
+                      date = now(),
+                      description = \''.$description.'\'';
             if (! (db_query($q))) {
             }
 
@@ -955,28 +877,26 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
 
                 $user_id = $id;
                 $q = 'insert into deposits set
-             user_id = '.$user_id.',
-             type_id = '.$hyip_id.',
-             deposit_date = now(),
-             last_pay_date = now()+ interval '.$delay.' day,
-             status = \'on\',
-             q_pays = 0,
-             amount = \''.$amount.'\',
-             actual_amount = \''.$amount.'\',
-             ec = '.$ec.'
-             ';
+                         user_id = '.$user_id.',
+                         type_id = '.$hyip_id.',
+                         deposit_date = now(),
+                         last_pay_date = now()+ interval '.$delay.' day,
+                         status = \'on\',
+                         q_pays = 0,
+                         amount = \''.$amount.'\',
+                         actual_amount = \''.$amount.'\',
+                         ec = '.$ec;
                 db_query($q);
                 $deposit_id = mysql_insert_id();
                 $q = 'insert into history set
-             user_id = '.$user_id.',
-             amount = \'-'.$amount.'\',
-             type = \'deposit\',
-             description = \'Deposit to '.quote($type['name']).('\',
-             actual_amount = -'.$amount.',
-             ec = '.$ec.',
-             date = now(),
-           deposit_id = '.$deposit_id.'
-             ');
+                        user_id = '.$user_id.',
+                        amount = \'-'.$amount.'\',
+                        type = \'deposit\',
+                        description = \'Deposit to '.quote($type['name']).('\',
+                        actual_amount = -'.$amount.',
+                        ec = '.$ec.',
+                        date = now(),
+                        deposit_id = '.$deposit_id);
                 db_query($q);
                 if (app('data')->settings['banner_extension'] == 1) {
                     $imps = 0;
@@ -1014,8 +934,7 @@ if ((app('data')->frm['a'] == 'addbonuse' and (app('data')->frm['action'] == 'ad
         app('data')->env['HTTP_HOST'] = preg_replace('/www\\./', '', app('data')->env['HTTP_HOST']);
         $conf_email .= '@'.app('data')->env['HTTP_HOST'];
         $code = get_rand_md5(8);
-        send_mail($conf_email, 'Bonus Confirmation Code', 'Code is: '.$code, 'From: '.app('data')->settings['system_email'].'
-Reply-To: '.app('data')->settings['system_email']);
+        send_mail($conf_email, 'Bonus Confirmation Code', 'Code is: '.$code, 'From: '.app('data')->settings['system_email'].' Reply-To: '.app('data')->settings['system_email']);
         $code = get_rand_md5(23).md5($code).get_rand_md5(32);
         session(['code' => $code]);
     }
@@ -1030,15 +949,14 @@ if ((app('data')->frm['a'] == 'addpenality' and app('data')->frm['action'] == 'a
     $description = quote(app('data')->frm['desc']);
     $ec = sprintf('%d', app('data')->frm['ec']);
     $q = 'insert into history set
-	user_id = '.$id.',
-	amount = -'.$amount.',
-	actual_amount = -'.$amount.',
-	ec = '.$ec.',
-	type = \'penality\',
-	date = now(),
-	description = \''.$description.'\'';
-    if (! (db_query($q))) {
-    }
+            user_id = '.$id.',
+            amount = -'.$amount.',
+            actual_amount = -'.$amount.',
+            ec = '.$ec.',
+            type = \'penality\',
+            date = now(),
+            description = \''.$description.'\'';
+    db_query($q);
 
     if (app('data')->frm['inform'] == 1) {
         $q = 'select * from users where id = '.$id;
@@ -1075,7 +993,7 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
     $username = quote(app('data')->frm['username']);
     $q = 'select * from users where id <> '.$id.' and username = \''.$username.'\'';
     $sth = db_query($q);
-    ($row = mysql_fetch_array($sth));
+    $row = mysql_fetch_array($sth);
     if ($row) {
         throw new RedirectException($admin_url.'?a=editaccount&say=userexists&id='.app('data')->frm['id']);
     }
@@ -1105,19 +1023,19 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         }
 
         $q = 'insert into users set
-  	name = \''.$name.'\',
-  	username = \''.$username.'\',
-	password = \''.$password.'\',
-    perfectmoney_account = \''.$perfectmoney.'\',
-    payeer_account = \''.$payeer.'\',
-    bitcoin_account = \''.$bitcoin.'\',
-  	email = \''.$email.'\',
-  	status = \''.$status.'\',
-    auto_withdraw = '.$auto_withdraw.',
-    admin_auto_pay_earning = '.$admin_auto_pay_earning.',
-    user_auto_pay_earning = '.$admin_auto_pay_earning.',
-    pswd = \''.$pswd.'\',
-    date_register = now()';
+                name = \''.$name.'\',
+                username = \''.$username.'\',
+                password = \''.$password.'\',
+                perfectmoney_account = \''.$perfectmoney.'\',
+                payeer_account = \''.$payeer.'\',
+                bitcoin_account = \''.$bitcoin.'\',
+                email = \''.$email.'\',
+                status = \''.$status.'\',
+                auto_withdraw = '.$auto_withdraw.',
+                admin_auto_pay_earning = '.$admin_auto_pay_earning.',
+                user_auto_pay_earning = '.$admin_auto_pay_earning.',
+                pswd = \''.$pswd.'\',
+                date_register = now()';
         db_query($q);
         app('data')->frm['id'] = mysql_insert_id();
     } else {
@@ -1133,11 +1051,10 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         $edit_location = '';
         if (app('data')->settings['use_user_location']) {
             $edit_location = 'address = \''.$address.'\',
-                        city = \''.$city.'\',
-                        state = \''.$state.'\',
-                        zip = \''.$zip.'\',
-                        country = \''.$country.'\',
-                       ';
+                city = \''.$city.'\',
+                state = \''.$state.'\',
+                zip = \''.$zip.'\',
+                country = \''.$country.'\',';
         }
 
         $username = quote(app('data')->frm['username']);
@@ -1156,18 +1073,18 @@ if ((app('data')->frm['a'] == 'editaccount' and app('data')->frm['action'] == 'e
         }
 
         $q = 'update users set
-  	name = \''.$name.'\',
-    '.$edit_location.'
-  	username = \''.$username.'\',
-    perfectmoney_account = \''.$perfectmoney.'\',
-    payeer_account = \''.$payeer.'\',
-    bitcoin_account = \''.$bitcoin.'\',
-  	email = \''.$email.'\',
-  	status = \''.$status.'\',
-    auto_withdraw = '.$auto_withdraw.',
-    admin_auto_pay_earning = '.$admin_auto_pay_earning.',
-    user_auto_pay_earning = '.$user_auto_pay_earning.'
-  	where id = '.$id.' and id <> 1';
+                name = \''.$name.'\',
+                '.$edit_location.'
+                username = \''.$username.'\',
+                perfectmoney_account = \''.$perfectmoney.'\',
+                payeer_account = \''.$payeer.'\',
+                bitcoin_account = \''.$bitcoin.'\',
+                email = \''.$email.'\',
+                status = \''.$status.'\',
+                auto_withdraw = '.$auto_withdraw.',
+                admin_auto_pay_earning = '.$admin_auto_pay_earning.',
+                user_auto_pay_earning = '.$user_auto_pay_earning.'
+                where id = '.$id.' and id <> 1';
         db_query($q);
         if ($password != '') {
             $pswd = quote($password);
@@ -1274,29 +1191,28 @@ if (app('data')->frm['action'] == 'add_hyip') {
     $hold = sprintf('%d', app('data')->frm[hold]);
     $delay = sprintf('%d', app('data')->frm[delay]);
     $q = 'insert into types set
-	name=\''.quote(app('data')->frm['hname']).('\',
-	q_days = '.$q_days.',
-	period = \'').quote(app('data')->frm['hperiod']).'\',
-	status = \''.quote(app('data')->frm['hstatus']).('\',
-	return_profit = \''.$return_profit.'\',
-	return_profit_percent = '.$return_profit_percent.',
-	use_compound = '.$use_compound.',
-	work_week = '.$work_week.',
-	parent = '.$parent.',
-	withdraw_principal = '.$withdraw_principal.',
-	withdraw_principal_percent = '.$withdraw_principal_percent.',
-	withdraw_principal_duration = '.$withdraw_principal_duration.',
-	withdraw_principal_duration_max = '.$withdraw_principal_duration_max.',
-	compound_min_deposit = '.$compound_min_deposit.',
-	compound_max_deposit = '.$compound_max_deposit.',
-	compound_percents_type = '.$compound_percents_type.',
-	compound_min_percent = '.$compound_min_percent.',
-	compound_max_percent = '.$compound_max_percent.',
-	compound_percents = \''.$compound_percents.'\',
-	dsc = \''.$desc.'\',
-	hold = '.$hold.',
-	delay = '.$delay.'
-  ');
+            name=\''.quote(app('data')->frm['hname']).('\',
+            q_days = '.$q_days.',
+            period = \'').quote(app('data')->frm['hperiod']).'\',
+            status = \''.quote(app('data')->frm['hstatus']).('\',
+            return_profit = \''.$return_profit.'\',
+            return_profit_percent = '.$return_profit_percent.',
+            use_compound = '.$use_compound.',
+            work_week = '.$work_week.',
+            parent = '.$parent.',
+            withdraw_principal = '.$withdraw_principal.',
+            withdraw_principal_percent = '.$withdraw_principal_percent.',
+            withdraw_principal_duration = '.$withdraw_principal_duration.',
+            withdraw_principal_duration_max = '.$withdraw_principal_duration_max.',
+            compound_min_deposit = '.$compound_min_deposit.',
+            compound_max_deposit = '.$compound_max_deposit.',
+            compound_percents_type = '.$compound_percents_type.',
+            compound_min_percent = '.$compound_min_percent.',
+            compound_max_percent = '.$compound_max_percent.',
+            compound_percents = \''.$compound_percents.'\',
+            dsc = \''.$desc.'\',
+            hold = '.$hold.',
+            delay = '.$delay);
     if (! (db_query($q))) {
     }
 
@@ -1309,11 +1225,11 @@ if (app('data')->frm['action'] == 'add_hyip') {
             $max_amount = sprintf('%0.2f', app('data')->frm['rate_max_amount'][$i]);
             $percent = sprintf('%0.2f', app('data')->frm['rate_percent'][$i]);
             $q = 'insert into plans set
-		parent='.$parent.',
-		name=\''.$name.'\',
-		min_deposit = '.$min_amount.',
-		max_deposit = '.$max_amount.',
-		percent = '.$percent;
+                    parent='.$parent.',
+                    name=\''.$name.'\',
+                    min_deposit = '.$min_amount.',
+                    max_deposit = '.$max_amount.',
+                    percent = '.$percent;
             if (! (db_query($q))) {
             }
 
@@ -1379,35 +1295,31 @@ if (app('data')->frm['action'] == 'edit_hyip') {
     $hold = sprintf('%d', app('data')->frm[hold]);
     $delay = sprintf('%d', app('data')->frm[delay]);
     $q = 'update types set
-	name=\''.quote(app('data')->frm['hname']).('\',
-	q_days = '.$q_days.',
-	period = \'').quote(app('data')->frm['hperiod']).'\',
-	status = \''.quote(app('data')->frm['hstatus']).('\',
-	return_profit = \''.$return_profit.'\',
-	return_profit_percent = '.$return_profit_percent.',
-	use_compound = '.$use_compound.',
-	work_week = '.$work_week.',
-	parent = '.$parent.',
-  withdraw_principal = '.$withdraw_principal.',
-  withdraw_principal_percent = '.$withdraw_principal_percent.',
-  withdraw_principal_duration = '.$withdraw_principal_duration.',
-  withdraw_principal_duration_max = '.$withdraw_principal_duration_max.',
-  compound_min_deposit = '.$compound_min_deposit.',
-  compound_max_deposit = '.$compound_max_deposit.',
-  compound_percents_type = '.$compound_percents_type.',
-  compound_min_percent = '.$compound_min_percent.',
-  compound_max_percent = '.$compound_max_percent.',
-  compound_percents = \''.$compound_percents.'\',
-  closed = '.$closed.',
-
-  dsc=\''.$desc.'\',
-  hold = '.$hold.',
-  delay = '.$delay.'
-
-	 where id='.$id.'
-  ');
-    if (! (db_query($q))) {
-    }
+            name=\''.quote(app('data')->frm['hname']).('\',
+            q_days = '.$q_days.',
+            period = \'').quote(app('data')->frm['hperiod']).'\',
+            status = \''.quote(app('data')->frm['hstatus']).('\',
+            return_profit = \''.$return_profit.'\',
+            return_profit_percent = '.$return_profit_percent.',
+            use_compound = '.$use_compound.',
+            work_week = '.$work_week.',
+            parent = '.$parent.',
+            withdraw_principal = '.$withdraw_principal.',
+            withdraw_principal_percent = '.$withdraw_principal_percent.',
+            withdraw_principal_duration = '.$withdraw_principal_duration.',
+            withdraw_principal_duration_max = '.$withdraw_principal_duration_max.',
+            compound_min_deposit = '.$compound_min_deposit.',
+            compound_max_deposit = '.$compound_max_deposit.',
+            compound_percents_type = '.$compound_percents_type.',
+            compound_min_percent = '.$compound_min_percent.',
+            compound_max_percent = '.$compound_max_percent.',
+            compound_percents = \''.$compound_percents.'\',
+            closed = '.$closed.',
+            dsc=\''.$desc.'\',
+            hold = '.$hold.',
+            delay = '.$delay.'
+            where id='.$id);
+    db_query($q);
 
     $parent = $id;
     $q = 'delete from plans where parent = '.$id;
@@ -1422,13 +1334,12 @@ if (app('data')->frm['action'] == 'edit_hyip') {
             $max_amount = sprintf('%0.2f', app('data')->frm['rate_max_amount'][$i]);
             $percent = sprintf('%0.2f', app('data')->frm['rate_percent'][$i]);
             $q = 'insert into plans set
-		parent='.$parent.',
-		name=\''.$name.'\',
-		min_deposit = '.$min_amount.',
-		max_deposit = '.$max_amount.',
-		percent = '.$percent;
-            if (! (db_query($q))) {
-            }
+                    parent='.$parent.',
+                    name=\''.$name.'\',
+                    min_deposit = '.$min_amount.',
+                    max_deposit = '.$max_amount.',
+                    percent = '.$percent;
+        db_query($q);
 
             continue;
         }
@@ -1503,7 +1414,7 @@ if ((app('data')->frm['a'] == 'thistory' and app('data')->frm['action2'] == 'dow
     echo '"Transaction Type","User","Amount","Currency","Date","Description"';
     for ($i = 0; $i < count($trans); ++$i) {
         echo '"'.config('hm.transtype')[$trans[$i]['type']].'","'.$trans[$i]['username'].'","$'.number_format(abs($trans[$i]['actual_amount']),
-                2).'","'.app('data')->exchange_systems[$trans[$i]['ec']]['name'].'","'.$trans[$i]['d'].'","'.$trans[$i]['description'].'"'.'';
+                2).'","'.app('data')->exchange_systems[$trans[$i]['ec']]['name'].'","'.$trans[$i]['d'].'","'.$trans[$i]['description'].'"';
     }
 }
 
@@ -1540,12 +1451,11 @@ if ((app('data')->frm['a'] == 'add_processing' and app('data')->frm[action] == '
 
         ++$max_id;
         $q = 'insert into processings set
-             id = '.$max_id.',
-             status = '.$status.',
-             name = \''.$name.'\',
-             description = \''.$description.'\',
-             infofields = \''.quote($qfields).'\'
-         ';
+                 id = '.$max_id.',
+                 status = '.$status.',
+                 name = \''.$name.'\',
+                 description = \''.$description.'\',
+                 infofields = \''.quote($qfields).'\'';
         db_query($q);
     }
 
@@ -1577,12 +1487,11 @@ if ((app('data')->frm['a'] == 'edit_processing' and app('data')->frm[action] == 
 
         $qfields = serialize($fields);
         $q = 'update processings set
-             status = '.$status.',
-             name = \''.$name.'\',
-             description = \''.$description.'\',
-             infofields = \''.quote($qfields).('\'
-           where id = '.$pid.'
-         ');
+                status = '.$status.',
+                name = \''.$name.'\',
+                description = \''.$description.'\',
+                infofields = \''.quote($qfields).'\'
+                where id = '.$pid;
         db_query($q);
     }
 
@@ -1625,15 +1534,15 @@ include app_path('Hm').'/inc/admin/html.header.php';
 echo '
   <tr>
     <td valign="top">
-	 <table cellspacing=0 cellpadding=1 border=0 width=100% height=100% bgcolor=#ff8d00>
-	   <tr>
-	     <td>
+     <table cellspacing=0 cellpadding=1 border=0 width=100% height=100% bgcolor=#ff8d00>
+       <tr>
+         <td>
            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
              <tr bgcolor="#FFFFFF" valign="top">
               <td width=300 align=center>
-				   <!-- Image Table: Start -->';
+                   <!-- Image Table: Start -->';
 include app_path('Hm').'/inc/admin/menu.php';
-echo '				   <br>
+echo '                 <br>
 
               </td>
               <td bgcolor="#ff8d00" valign="top" width=1><img src=images/q.gif width=1 height=1></td>
