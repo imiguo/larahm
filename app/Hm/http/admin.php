@@ -1339,7 +1339,7 @@ if (app('data')->frm['action'] == 'edit_hyip') {
                     min_deposit = '.$min_amount.',
                     max_deposit = '.$max_amount.',
                     percent = '.$percent;
-        db_query($q);
+            db_query($q);
 
             continue;
         }
