@@ -75,23 +75,28 @@ if (! function_exists('old_theme')) {
 if (! function_exists('theme')) {
     function theme()
     {
-        $theme = env('THEME');
-        if (in_array($theme, theme_list())) {
-            return $theme;
-        }
-        if ($theme == 'random') {
-            return array_rand(array_flip(theme_list()));
-        }
-        if ($theme == 'next') {
-            $themes = theme_list();
-            if ($oldTheme = old_theme()) {
-                return $themes[(array_flip($themes)[$oldTheme] + 1) % count($themes)];
+        if (! $real_theme = config('hm.real_theme')) {
+            $real_theme = $real_theme ?: 'default';
+            $theme = env('THEME');
+            if (in_array($theme, theme_list())) {
+                $real_theme = $theme;
+            }
+            if ($theme == 'random') {
+                $real_theme = array_rand(array_flip(theme_list()));
+            }
+            if ($theme == 'next') {
+                $themes = theme_list();
+                if ($oldTheme = old_theme()) {
+                    $real_theme = $themes[(array_flip($themes)[$oldTheme] + 1) % count($themes)];
+                } else {
+                    $real_theme = current($themes);
+                }
             }
 
-            return current($themes);
+            config(['hm.real_theme' => $real_theme]);
         }
 
-        return 'default';
+        return $real_theme;
     }
 }
 
@@ -104,6 +109,7 @@ if (! function_exists('refresh_theme')) {
             }
             unlink($file);
         }
+
         foreach (glob(dirname(tmpl_path()).'/public/*') as $file) {
             $target = public_path().'/'.basename($file);
             symlink($file, $target);
